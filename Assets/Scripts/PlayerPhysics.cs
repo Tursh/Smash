@@ -7,7 +7,7 @@ public enum Direction { LEFT, RIGHT, UP, DOWN }
 public class PlayerPhysics : MonoBehaviour
 {
 	[SerializeField]
-	private float mvSpeed = 0.5f, airResistance = 0.9f;
+	private float mvSpeed = 0.5f, airResistance = 0.9f, gravity = -0.1f;
 	public Vector2 velocity;
 	private BoxCollider2D bc;
 	private void Start()
@@ -16,16 +16,16 @@ public class PlayerPhysics : MonoBehaviour
 		bc = GetComponent<BoxCollider2D>();
 	}
 
-	private void OnCollisionEnter2D(Collision2D collision)
+	private void OnCollisionStay2D(Collision2D collision)
 	{
-		
+        transform.Translate(bc.Distance(collision.collider).normal * bc.Distance(collision.collider).distance);
+        Debug.Log(bc.Distance(collision.collider).normal * bc.Distance(collision.collider).distance);
 	}
-
 
 	public void Tick(object sender, TickEventArgs args)
 	{
 		velocity *= airResistance;
-		velocity.y -= 0.01f;
+		velocity.y += gravity;
 		transform.Translate(velocity);
 	}
 
