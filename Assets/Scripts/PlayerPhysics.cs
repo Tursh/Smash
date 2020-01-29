@@ -10,19 +10,27 @@ public class PlayerPhysics : MonoBehaviour
 	private float mvSpeed = 0.5f, airResistance = 0.9f, gravity = -0.1f;
 	public Vector2 velocity;
 	private BoxCollider2D bc;
+    private Rigidbody2D rb;
 	private void Start()
 	{
-		GameObject.Find("GameManager").GetComponent<TickSystem>().TickEvent += Tick;
 		bc = GetComponent<BoxCollider2D>();
+        rb = GetComponent<Rigidbody2D>();
 	}
 
-	private void OnCollisionStay2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+
+    }
+
+
+    private void OnCollisionStay2D(Collision2D collision)
 	{
         transform.Translate(bc.Distance(collision.collider).normal * bc.Distance(collision.collider).distance);
         Debug.Log(bc.Distance(collision.collider).normal * bc.Distance(collision.collider).distance);
-	}
+        velocity.y = 0;
+    }
 
-	public void Tick(object sender, TickEventArgs args)
+	public void Update()
 	{
 		velocity *= airResistance;
 		velocity.y += gravity;

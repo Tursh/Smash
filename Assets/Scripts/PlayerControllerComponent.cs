@@ -13,7 +13,6 @@ public class PlayerControllerComponent : MonoBehaviour
 
 	private void Start()
 	{
-		GameObject.Find("GameManager").GetComponent<TickSystem>().TickEvent += Tick;
 		pp = GetComponent<PlayerPhysics>();
 	}
 
@@ -22,7 +21,7 @@ public class PlayerControllerComponent : MonoBehaviour
 		
 	}
 
-	void Tick(object sender, TickEventArgs args)
+	private void Update()
     {
 		if (Input.GetKey(left))
 			pp.Move(Direction.LEFT);
