@@ -13,10 +13,8 @@ GameObject:
   - component: {fileID: 4946606578855365983}
   - component: {fileID: 4946606578855365980}
   - component: {fileID: 4946606578855365981}
-  - component: {fileID: 3021162565020942741}
-  - component: {fileID: -2782114941290320745}
   m_Layer: 9
-  m_Name: Player
+  m_Name: PlayerDummy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -130,40 +128,3 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!114 &3021162565020942741
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4946606578855365968}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26666cfdfc69c303fbee68a587875084, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mvSpeed: 0.025
-  airResistance: 0.9
-  gravity: -0.1
-  jumpCooldown: 0.25
-  PlayerPrefab: {fileID: 0}
-  velocity: {x: 0, y: 0}
---- !u!114 &-2782114941290320745
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4946606578855365968}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae54b999ba6a02ae99662e97b14d13c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  left: 97
-  right: 100
-  up: 119
-  down: 115
-  jump: 32
-  attack1: 106
-  attack2: 107

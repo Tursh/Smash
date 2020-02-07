@@ -15,9 +15,9 @@ public enum Direction
 
 public class PlayerPhysics : MonoBehaviour
 {
-    [SerializeField] private float mvSpeed = 0.5f, airResistance = 0.9f, gravity = -0.1f, jumpCooldown = 0.25f;
+    [SerializeField] private float mvSpeed = 0.025f, airResistance = 0.9f, gravity = -0.1f, jumpCooldown = 0.25f;
 
-    [SerializeField] private GameObject PlayerPrefab;
+    [SerializeField] private GameObject DummyPrefab;
 
     public Vector2 velocity;
     private Vector2 startWindowPosition, endWindowPosition, windowSizeInWorld;
@@ -34,14 +34,15 @@ public class PlayerPhysics : MonoBehaviour
         bc = GetComponent<BoxCollider2D>();
         rb = GetComponent<Rigidbody2D>();
 
+
         Camera cam = Camera.main;
 
         startWindowPosition = cam.ScreenToWorldPoint(new Vector3(0, 0, 12));
         endWindowPosition = cam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 12));
         windowSizeInWorld = endWindowPosition - startWindowPosition;
 
-        transitionPlayer =
-            GameObject.Instantiate(PlayerPrefab,
+        Dummy =
+            Instantiate(DummyPrefab,
                 startWindowPosition - Vector2.down * 10,
                 Quaternion.identity);
     }
@@ -150,7 +151,7 @@ public class PlayerPhysics : MonoBehaviour
     }
 
     private bool[] onBorder = new bool[2];
-    private GameObject transitionPlayer;
+    private GameObject Dummy;
 
     void checkWindowBorders()
     {
@@ -160,51 +161,65 @@ public class PlayerPhysics : MonoBehaviour
         //x et y, x: 0, y: 1
         for (int axis = 0; axis < 2; ++axis)
         {
-            //To the left
-            if (velocity[axis] < 0 && bounds.min[axis] < startWindowPosition[axis])
+            //To the left / down
+            //Is the player partly in the border
+            if (bounds.min[axis] < startWindowPosition[axis])
             {
+                //Is the player out of the screen
                 if (bounds.max[axis] < startWindowPosition[axis])
                 {
-                    if (onBorder[axis])
-                    {
-                    }
-                    else
-                    {
-                        position[axis] += windowSizeInWorld[axis];
-                        transform.position = position;
-                    }
+                    //Set to the other side of the window
+                    position[axis] += windowSizeInWorld[axis];
+                    transform.position = position;
 
                     onBorder[axis] = false;
                 }
-                else if (!onBorder[axis])
+                else
                 {
                     onBorder[axis] = true;
-                    //Create a second player for the transition
+
+                    Vector3 dummyPosition = Dummy.transform.position;
+                    dummyPosition[axis] = position[axis] + windowSizeInWorld[axis];
+
+                    if (!onBorder[(axis + 1) % 2])
+                        dummyPosition[(axis + 1) % 2] = position[(axis + 1) % 2];
+
+                    Dummy.transform.position = dummyPosition;
                 }
             }
+            else
+                onBorder[axis] = false;
 
-            //To right
-            else if (velocity.x > 0 && endWindowPosition.x < bounds.max.x)
+            //To right / up
+            if (endWindowPosition[axis] < bounds.max[axis])
             {
-                if (bounds.min.x < endWindowPosition.x)
+                //Is the player out of the screen
+                if (endWindowPosition[axis] < bounds.min[axis])
                 {
-                    if (onBorder[axis])
-                    {
-                    }
-                    else
-                    {
-                        position.x -= windowSizeInWorld.x;
-                        transform.position = position;
-                    }
+                    //Set to the other side of the window
+                    position[axis] -= windowSizeInWorld[axis];
+                    transform.position = position;
 
                     onBorder[axis] = false;
                 }
-                else if (!onBorder[axis])
+                else
                 {
                     onBorder[axis] = true;
-                    //Create a second player for the transition
+
+                    Vector3 dummyPosition = Dummy.transform.position;
+                    dummyPosition[axis] = position[axis] - windowSizeInWorld[axis];
+
+                    if (!onBorder[(axis + 1) % 2])
+                        dummyPosition[(axis + 1) % 2] = position[(axis + 1) % 2];
+
+                    Dummy.transform.position = dummyPosition;
                 }
             }
+            else
+                onBorder[axis] = false;
+
+            if (!onBorder[0] && !onBorder[1])
+                Dummy.transform.position = -windowSizeInWorld;
         }
     }
 }
