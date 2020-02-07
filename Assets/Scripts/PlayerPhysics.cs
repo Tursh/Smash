@@ -16,7 +16,11 @@ public enum Direction
 public class PlayerPhysics : MonoBehaviour
 {
     [SerializeField] private float mvSpeed = 0.5f, airResistance = 0.9f, gravity = -0.1f, jumpCooldown = 0.25f;
+
+    [SerializeField] private GameObject PlayerPrefab;
+
     public Vector2 velocity;
+    private Vector2 startWindowPosition, endWindowPosition, windowSizeInWorld;
 
     BoxCollider2D bc;
     Rigidbody2D rb;
@@ -29,6 +33,17 @@ public class PlayerPhysics : MonoBehaviour
     {
         bc = GetComponent<BoxCollider2D>();
         rb = GetComponent<Rigidbody2D>();
+
+        Camera cam = Camera.main;
+
+        startWindowPosition = cam.ScreenToWorldPoint(new Vector3(0, 0, 12));
+        endWindowPosition = cam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 12));
+        windowSizeInWorld = endWindowPosition - startWindowPosition;
+
+        transitionPlayer =
+            GameObject.Instantiate(PlayerPrefab,
+                startWindowPosition - Vector2.down * 10,
+                Quaternion.identity);
     }
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -38,11 +53,11 @@ public class PlayerPhysics : MonoBehaviour
         if (other.collider.gameObject.layer == stateLayer)
         {
             Vector3 normal = other.contacts[0].normal;
-            
+
             if (normal == new Vector3(0, 1, 0))
             {
                 onGround = true;
-                transform.SetParent(GameObject.Find("Stage").transform);
+                transform.SetParent(other.transform);
             }
 
             if (normal.y != 0)
@@ -62,7 +77,6 @@ public class PlayerPhysics : MonoBehaviour
                 transform.position = position;
                 velocity.x = 0;
             }
-
         }
     }
 
@@ -75,8 +89,6 @@ public class PlayerPhysics : MonoBehaviour
         }
     }
 
-    private bool first = true;
-
     public void FixedUpdate()
     {
         velocity *= airResistance;
@@ -86,10 +98,7 @@ public class PlayerPhysics : MonoBehaviour
 
         transform.Translate(velocity);
 
-        if (onGround && first)
-        {
-            first = false;
-        }
+        checkWindowBorders();
     }
 
     public void Move(Direction direction)
@@ -137,6 +146,65 @@ public class PlayerPhysics : MonoBehaviour
         {
             velocity.y = 1;
             lastJump = Time.time;
+        }
+    }
+
+    private bool[] onBorder = new bool[2];
+    private GameObject transitionPlayer;
+
+    void checkWindowBorders()
+    {
+        Vector3 position = transform.position;
+        Bounds bounds = bc.bounds;
+
+        //x et y, x: 0, y: 1
+        for (int axis = 0; axis < 2; ++axis)
+        {
+            //To the left
+            if (velocity[axis] < 0 && bounds.min[axis] < startWindowPosition[axis])
+            {
+                if (bounds.max[axis] < startWindowPosition[axis])
+                {
+                    if (onBorder[axis])
+                    {
+                    }
+                    else
+                    {
+                        position[axis] += windowSizeInWorld[axis];
+                        transform.position = position;
+                    }
+
+                    onBorder[axis] = false;
+                }
+                else if (!onBorder[axis])
+                {
+                    onBorder[axis] = true;
+                    //Create a second player for the transition
+                }
+            }
+
+            //To right
+            else if (velocity.x > 0 && endWindowPosition.x < bounds.max.x)
+            {
+                if (bounds.min.x < endWindowPosition.x)
+                {
+                    if (onBorder[axis])
+                    {
+                    }
+                    else
+                    {
+                        position.x -= windowSizeInWorld.x;
+                        transform.position = position;
+                    }
+
+                    onBorder[axis] = false;
+                }
+                else if (!onBorder[axis])
+                {
+                    onBorder[axis] = true;
+                    //Create a second player for the transition
+                }
+            }
         }
     }
 }
