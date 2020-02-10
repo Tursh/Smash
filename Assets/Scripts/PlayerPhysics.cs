@@ -13,9 +13,14 @@ public enum Direction
     DOWN
 }
 
+public enum PLAYER_STATE
+{
+    ON_GROUND, IN_AIR, ON_EDGE
+}
+
 public class PlayerPhysics : MonoBehaviour
 {
-    [SerializeField] private float mvSpeed = 0.025f, airResistance = 0.9f, gravity = -0.1f, jumpCooldown = 0.25f;
+    [SerializeField] private float mvSpeed = 0.025f, airResistance = 0.9f, gravity = -0.05f, jumpCooldown = 0.25f;
 
     [SerializeField] private GameObject DummyPrefab;
 
@@ -25,7 +30,7 @@ public class PlayerPhysics : MonoBehaviour
     BoxCollider2D bc;
     Rigidbody2D rb;
 
-    public bool onGround { get; private set; } = false;
+    public PLAYER_STATE PlayerState { get; private set; } = PLAYER_STATE.IN_AIR;
 
     private int playerLayer = 9, stateLayer = 8;
 
@@ -41,12 +46,15 @@ public class PlayerPhysics : MonoBehaviour
         endWindowPosition = cam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 12));
         windowSizeInWorld = endWindowPosition - startWindowPosition;
 
-        Dummy =
-            Instantiate(DummyPrefab,
-                startWindowPosition - Vector2.down * 10,
-                Quaternion.identity);
+        for (int i = 0; i < 2; ++i)
+            Dummies[i] =
+                Instantiate(DummyPrefab,
+                    startWindowPosition - Vector2.down * 10,
+                    Quaternion.identity);
     }
 
+    private float lastCollision = 0;
+    
     private void OnCollisionEnter2D(Collision2D other)
     {
         //TODO: Do damage depending on the velocity
@@ -57,7 +65,7 @@ public class PlayerPhysics : MonoBehaviour
 
             if (normal == new Vector3(0, 1, 0))
             {
-                onGround = true;
+                PlayerState = PLAYER_STATE.ON_GROUND;
                 transform.SetParent(other.transform);
             }
 
@@ -65,27 +73,42 @@ public class PlayerPhysics : MonoBehaviour
             {
                 Vector2 position = transform.position;
 
-                position.y = (onGround ? other.collider.bounds.max : other.collider.bounds.min).y +
+                position.y = (PlayerState == PLAYER_STATE.ON_GROUND ? other.collider.bounds.max : other.collider.bounds.min).y +
                              bc.bounds.extents.y * normal.y;
                 transform.position = position;
                 velocity.y = 0;
             }
             else
             {
-                Vector2 position = transform.position;
-                position.x = (normal.x > 0 ? other.collider.bounds.max : other.collider.bounds.min).x +
-                             (bc.bounds.extents.x + 0.03f) * normal.x;
-                transform.position = position;
-                velocity.x = 0;
+                //Vector2 position = transform.position;
+                //position.x = (normal.x > 0 ? other.collider.bounds.max : other.collider.bounds.min).x +
+                //             (bc.bounds.extents.x + 0.03f) * normal.x;
+                //transform.position = position;
+                //velocity.x = 0;
+                velocity = Vector2.zero;
+
+                PlayerState = PLAYER_STATE.ON_EDGE;
+                transform.SetParent(other.transform);
+
+                Bounds stageBounds = other.collider.bounds;
+
+                Vector2 edgePosition;
+                edgePosition.x = (normal.x > 0 ? stageBounds.max.x : stageBounds.min.x) + bc.bounds.extents.x * normal.x;
+                edgePosition.y = stageBounds.max.y - bc.bounds.extents.y;
+
+                transform.position = edgePosition;
             }
         }
+
+        lastCollision = Time.time;
+        
     }
 
     private void OnCollisionExit2D(Collision2D other)
     {
         if (other.collider.gameObject.layer == stateLayer)
         {
-            onGround = false;
+            PlayerState = PLAYER_STATE.IN_AIR;
             transform.SetParent(null);
         }
     }
@@ -94,7 +117,7 @@ public class PlayerPhysics : MonoBehaviour
     {
         velocity *= airResistance;
 
-        if (!onGround)
+        if (PlayerState == PLAYER_STATE.IN_AIR)
             velocity.y += gravity;
 
         transform.Translate(velocity);
@@ -104,6 +127,7 @@ public class PlayerPhysics : MonoBehaviour
 
     public void Move(Direction direction)
     {
+        if(PlayerState != PLAYER_STATE.ON_EDGE)
         switch (direction)
         {
             case Direction.LEFT:
@@ -122,6 +146,7 @@ public class PlayerPhysics : MonoBehaviour
 
     public void StartMovement(Direction direction)
     {
+        if(PlayerState != PLAYER_STATE.ON_EDGE)
         switch (direction)
         {
             case Direction.LEFT:
@@ -151,7 +176,7 @@ public class PlayerPhysics : MonoBehaviour
     }
 
     private bool[] onBorder = new bool[2];
-    private GameObject Dummy;
+    private GameObject[] Dummies = new GameObject[2];
 
     void checkWindowBorders()
     {
@@ -178,13 +203,13 @@ public class PlayerPhysics : MonoBehaviour
                 {
                     onBorder[axis] = true;
 
-                    Vector3 dummyPosition = Dummy.transform.position;
+                    Vector3 dummyPosition = Dummies[axis].transform.position;
                     dummyPosition[axis] = position[axis] + windowSizeInWorld[axis];
 
                     if (!onBorder[(axis + 1) % 2])
                         dummyPosition[(axis + 1) % 2] = position[(axis + 1) % 2];
 
-                    Dummy.transform.position = dummyPosition;
+                    Dummies[axis].transform.position = dummyPosition;
                 }
             }
             else
@@ -206,20 +231,20 @@ public class PlayerPhysics : MonoBehaviour
                 {
                     onBorder[axis] = true;
 
-                    Vector3 dummyPosition = Dummy.transform.position;
+                    Vector3 dummyPosition = Dummies[axis].transform.position;
                     dummyPosition[axis] = position[axis] - windowSizeInWorld[axis];
 
                     if (!onBorder[(axis + 1) % 2])
                         dummyPosition[(axis + 1) % 2] = position[(axis + 1) % 2];
 
-                    Dummy.transform.position = dummyPosition;
+                    Dummies[axis].transform.position = dummyPosition;
                 }
             }
             else
                 onBorder[axis] = false;
 
-            if (!onBorder[0] && !onBorder[1])
-                Dummy.transform.position = -windowSizeInWorld;
+            if (!onBorder[axis])
+                Dummies[axis].transform.position = -windowSizeInWorld;
         }
     }
 }
