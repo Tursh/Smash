@@ -23,15 +23,15 @@ namespace GitHub.Unity
             }
         }
 
-        private static bool inSourceMode = false;
-        private const string sourceModePath = "Assets/Editor/build/";
-        private const string realPath = "Assets/Plugins/GitHub/Editor/";
+        private static bool _inSourceMode = false;
+        private const string SourceModePath = "Assets/Editor/build/";
+        private const string RealPath = "Assets/Plugins/GitHub/Editor/";
 
-        private static string[] assemblies20 = { "System.Threading.dll", "AsyncBridge.Net35.dll", "ReadOnlyCollectionsInterfaces.dll", "GitHub.Api.dll", "GitHub.Unity.dll" };
-        private static string[] assemblies45 = { "GitHub.Api.45.dll", "GitHub.Unity.45.dll" };
+        private static string[] _assemblies20 = { "System.Threading.dll", "AsyncBridge.Net35.dll", "ReadOnlyCollectionsInterfaces.dll", "GitHub.Api.dll", "GitHub.Unity.dll" };
+        private static string[] _assemblies45 = { "GitHub.Api.45.dll", "GitHub.Unity.45.dll" };
 
-        private const string GITHUB_UNITY_DISABLE = "GITHUB_UNITY_DISABLE";
-        private static bool IsDisabled { get { return Environment.GetEnvironmentVariable(GITHUB_UNITY_DISABLE) == "1"; } }
+        private const string GithubUnityDisable = "GITHUB_UNITY_DISABLE";
+        private static bool IsDisabled { get { return Environment.GetEnvironmentVariable(GithubUnityDisable) == "1"; } }
 
         static ExtensionLoader()
         {
@@ -51,7 +51,7 @@ namespace GitHub.Unity
             //if (!ExtensionLoader.instance.Initialized)
             {
                 var scriptPath = Path.Combine(Application.dataPath, "Editor" + Path.DirectorySeparatorChar + "GitHub.Unity" + Path.DirectorySeparatorChar + "EntryPoint.cs");
-                inSourceMode = File.Exists(scriptPath);
+                _inSourceMode = File.Exists(scriptPath);
                 ToggleAssemblies();
                 //ExtensionLoader.instance.Initialized = true;
                 AssetDatabase.SaveAssets();
@@ -61,10 +61,10 @@ namespace GitHub.Unity
 
         private static void ToggleAssemblies()
         {
-            var path = inSourceMode ? sourceModePath : realPath;
+            var path = _inSourceMode ? SourceModePath : RealPath;
 #if NET_4_6
-            ToggleAssemblies(path, assemblies20, false);
-            ToggleAssemblies(path, assemblies45, true);
+            ToggleAssemblies(path, _assemblies20, false);
+            ToggleAssemblies(path, _assemblies45, true);
 #else
             ToggleAssemblies(path, assemblies45, false);
             ToggleAssemblies(path, assemblies20, true);

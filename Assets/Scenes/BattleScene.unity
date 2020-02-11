@@ -160,8 +160,8 @@ MonoBehaviour:
   up: 119
   down: 115
   jump: 32
-  attack1: 106
-  attack2: 107
+  light: 106
+  heavy: 107
 --- !u!114 &303031223
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -178,7 +178,7 @@ MonoBehaviour:
   airResistance: 0.9
   gravity: -0.025
   jumpCooldown: 0.25
-  DummyPrefab: {fileID: 4946606578855365968, guid: 304d19dffd8cb53c3956f3ae9002e8a1,
+  dummyPrefab: {fileID: 4946606578855365968, guid: 9c149bee1579c4f459f985577a4f9828,
     type: 3}
   velocity: {x: 0, y: 0}
 --- !u!50 &303031224
@@ -318,7 +318,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74a2011b9c266684198bc8c87a33dc3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetFPS: 60
+  targetFps: 60
   vSyncEnabled: 0
 --- !u!4 &932496646
 Transform:

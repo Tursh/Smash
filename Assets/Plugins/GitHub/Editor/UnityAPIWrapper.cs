@@ -6,9 +6,9 @@ using System;
 namespace GitHub.Unity
 {
     [InitializeOnLoad]
-    public class UnityAPIWrapper : ScriptableSingleton<UnityAPIWrapper>
+    public class UnityApiWrapper : ScriptableSingleton<UnityApiWrapper>
     {
-        static UnityAPIWrapper()
+        static UnityApiWrapper()
         {
 #if UNITY_2018_2_OR_NEWER
             Editor.finishedDefaultHeaderGUI += editor => {

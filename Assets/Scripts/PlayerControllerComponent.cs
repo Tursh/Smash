@@ -8,41 +8,43 @@ using UnityEngine;
 public class PlayerControllerComponent : MonoBehaviour
 {
 	[SerializeField]
-	KeyCode left = KeyCode.A, right = KeyCode.D, up = KeyCode.W, down = KeyCode.S, jump = KeyCode.Space, attack1 = KeyCode.J, attack2 = KeyCode.K;
+	KeyCode left = KeyCode.A, right = KeyCode.D, up = KeyCode.W, down = KeyCode.S, jump = KeyCode.Space, light = KeyCode.J, heavy = KeyCode.K;
 
+	private AttackManager am;
 	private PlayerPhysics pp;
 
 	private void Start()
 	{
+		am = GetComponent<AttackManager>();
 		pp = GetComponent<PlayerPhysics>();
-	}
-
-	private void OnCollisionEnter2D(Collision2D collision)
-	{
-		
 	}
 
 	private void Update()
     {
 		if (Input.GetKey(left))
-			pp.Move(Direction.LEFT);
+			pp.Move(Direction.Left);
 		if (Input.GetKey(right))
-			pp.Move(Direction.RIGHT);
+			pp.Move(Direction.Right);
 		if (Input.GetKey(up))
-			pp.Move(Direction.UP);
+			pp.Move(Direction.Up);
 		if (Input.GetKey(down))
-			pp.Move(Direction.DOWN);
+			pp.Move(Direction.Down);
 
 		if (Input.GetKeyDown(left))
-			pp.StartMovement(Direction.LEFT);
+			pp.StartMovement(Direction.Left);
 		if (Input.GetKeyDown(right))
-			pp.StartMovement(Direction.RIGHT);
+			pp.StartMovement(Direction.Right);
 		if (Input.GetKeyDown(up))
-			pp.StartMovement(Direction.UP);
+			pp.StartMovement(Direction.Up);
 		if (Input.GetKeyDown(down))
-			pp.StartMovement(Direction.DOWN);
+			pp.StartMovement(Direction.Down);
 
 		if (Input.GetKeyDown(jump))
 			pp.Jump();
-	}
+
+		if (Input.GetKeyDown(light))
+			am.Light();
+		if (Input.GetKeyDown(heavy))
+			am.Heavy();
+    }
 }
