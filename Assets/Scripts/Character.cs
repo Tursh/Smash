@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Character
+public abstract class CharacterData
 {
-    public abstract AttackGroup[] LightGrounded { get; set; }
-    public abstract AttackGroup[] HeavyGrounded { get; set; }
-    public abstract AttackGroup[] LightAerial { get; set; }
-    public abstract AttackGroup[] HeavyAerial { get; set; }
+    public abstract AttackSet AttackSet { get; set; }
 }

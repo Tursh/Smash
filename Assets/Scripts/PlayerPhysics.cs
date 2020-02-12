@@ -19,28 +19,36 @@ public enum PlayerState
     OnGround, InAir, OnEdge
 }
 
+public enum PlayerSubState
+{
+    Idle, Attacking, Moving
+}
+
+public class OnGroundEnventArgs { }
+
 public class PlayerPhysics : MonoBehaviour
 {
     [SerializeField] private float mvSpeed = 0.025f, airResistance = 0.9f, gravity = -0.05f, jumpCooldown = 0.25f;
-
-    [FormerlySerializedAs("DummyPrefab")] [SerializeField] private GameObject dummyPrefab;
-
+    [SerializeField] private GameObject dummyPrefab;
+    
+    public Vector2 Facing = Vector2.left;
     public Vector2 velocity;
     private Vector2 startWindowPosition, endWindowPosition, windowSizeInWorld;
 
-    BoxCollider2D bc;
-    Rigidbody2D rb;
+    BoxCollider2D BoxCollider;
+    Rigidbody2D RigidBody;
 
     public PlayerState PlayerState { get; private set; } = PlayerState.InAir;
+    public PlayerSubState PlayerSubState { get; set; } = PlayerSubState.Idle;
 
     private int playerLayer = 9, stateLayer = 8;
 
     private void Start()
     {
-        bc = GetComponent<BoxCollider2D>();
-        rb = GetComponent<Rigidbody2D>();
-
-
+        BoxCollider = GetComponent<BoxCollider2D>();
+        RigidBody = GetComponent<Rigidbody2D>();
+        
+        
         Camera cam = Camera.main;
 
         startWindowPosition = cam.ScreenToWorldPoint(new Vector3(0, 0, 12));
@@ -55,7 +63,7 @@ public class PlayerPhysics : MonoBehaviour
     }
 
     private float lastCollision = 0;
-    
+    public EventHandler<OnGroundEnventArgs> OnGroundEventHandler;
     private void OnCollisionEnter2D(Collision2D other)
     {
         //TODO: Do damage depending on the velocity
@@ -68,6 +76,7 @@ public class PlayerPhysics : MonoBehaviour
             {
                 PlayerState = PlayerState.OnGround;
                 transform.SetParent(other.transform);
+                OnGroundEventHandler?.Invoke(this, new OnGroundEnventArgs());
             }
 
             if (normal.y != 0)
@@ -75,7 +84,7 @@ public class PlayerPhysics : MonoBehaviour
                 Vector2 position = transform.position;
 
                 position.y = (PlayerState == PlayerState.OnGround ? other.collider.bounds.max : other.collider.bounds.min).y +
-                             bc.bounds.extents.y * normal.y;
+                             BoxCollider.bounds.extents.y * normal.y;
                 transform.position = position;
                 velocity.y = 0;
             }
@@ -94,8 +103,8 @@ public class PlayerPhysics : MonoBehaviour
                 Bounds stageBounds = other.collider.bounds;
 
                 Vector2 edgePosition;
-                edgePosition.x = (normal.x > 0 ? stageBounds.max.x : stageBounds.min.x) + bc.bounds.extents.x * normal.x;
-                edgePosition.y = stageBounds.max.y - bc.bounds.extents.y;
+                edgePosition.x = (normal.x > 0 ? stageBounds.max.x : stageBounds.min.x) + BoxCollider.bounds.extents.x * normal.x;
+                edgePosition.y = stageBounds.max.y - BoxCollider.bounds.extents.y;
 
                 transform.position = edgePosition;
             }
@@ -128,14 +137,16 @@ public class PlayerPhysics : MonoBehaviour
 
     public void Move(Direction direction)
     {
-        if(PlayerState != PlayerState.OnEdge)
+        if(PlayerState != PlayerState.OnEdge && PlayerSubState != PlayerSubState.Attacking)
             switch (direction)
                 {
                 case Direction.Left:
                     velocity += Vector2.left * mvSpeed;
+                    Facing = Vector2.left;
                     break;
                 case Direction.Right:
                     velocity += Vector2.right * mvSpeed;
+                    Facing = Vector2.right;
                     break;
                 case Direction.Up:
     
@@ -147,7 +158,7 @@ public class PlayerPhysics : MonoBehaviour
 
     public void StartMovement(Direction direction)
     {
-        if(PlayerState != PlayerState.OnEdge)
+        if(PlayerState != PlayerState.OnEdge && PlayerSubState != PlayerSubState.Attacking)
             switch (direction)
             {
                 case Direction.Left:
@@ -169,7 +180,7 @@ public class PlayerPhysics : MonoBehaviour
 
     public void Jump()
     {
-        if (Time.time - lastJump >= jumpCooldown)
+        if (Time.time - lastJump >= jumpCooldown && PlayerSubState != PlayerSubState.Attacking)
         {
             velocity.y = 1;
             lastJump = Time.time;
@@ -182,7 +193,7 @@ public class PlayerPhysics : MonoBehaviour
     void CheckWindowBorders()
     {
         Vector3 position = transform.position;
-        Bounds bounds = bc.bounds;
+        Bounds bounds = BoxCollider.bounds;
 
         //x et y, x: 0, y: 1
         for (int axis = 0; axis < 2; ++axis)
