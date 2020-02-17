@@ -15,7 +15,9 @@ public enum Direction
 
 public enum PLAYER_STATE
 {
-    ON_GROUND, IN_AIR, ON_EDGE
+    ON_GROUND,
+    IN_AIR,
+    ON_EDGE
 }
 
 public class PlayerPhysics : MonoBehaviour
@@ -54,7 +56,7 @@ public class PlayerPhysics : MonoBehaviour
     }
 
     private float lastCollision = 0;
-    
+
     private void OnCollisionEnter2D(Collision2D other)
     {
         //TODO: Do damage depending on the velocity
@@ -73,7 +75,9 @@ public class PlayerPhysics : MonoBehaviour
             {
                 Vector2 position = transform.position;
 
-                position.y = (PlayerState == PLAYER_STATE.ON_GROUND ? other.collider.bounds.max : other.collider.bounds.min).y +
+                position.y = (PlayerState == PLAYER_STATE.ON_GROUND
+                                 ? other.collider.bounds.max
+                                 : other.collider.bounds.min).y +
                              bc.bounds.extents.y * normal.y;
                 transform.position = position;
                 velocity.y = 0;
@@ -93,7 +97,8 @@ public class PlayerPhysics : MonoBehaviour
                 Bounds stageBounds = other.collider.bounds;
 
                 Vector2 edgePosition;
-                edgePosition.x = (normal.x > 0 ? stageBounds.max.x : stageBounds.min.x) + bc.bounds.extents.x * normal.x;
+                edgePosition.x = (normal.x > 0 ? stageBounds.max.x : stageBounds.min.x) +
+                                 bc.bounds.extents.x * normal.x;
                 edgePosition.y = stageBounds.max.y - bc.bounds.extents.y;
 
                 transform.position = edgePosition;
@@ -101,7 +106,6 @@ public class PlayerPhysics : MonoBehaviour
         }
 
         lastCollision = Time.time;
-        
     }
 
     private void OnCollisionExit2D(Collision2D other)
@@ -127,41 +131,41 @@ public class PlayerPhysics : MonoBehaviour
 
     public void Move(Direction direction)
     {
-        if(PlayerState != PLAYER_STATE.ON_EDGE)
-        switch (direction)
-        {
-            case Direction.LEFT:
-                velocity += Vector2.left * mvSpeed;
-                break;
-            case Direction.RIGHT:
-                velocity += Vector2.right * mvSpeed;
-                break;
-            case Direction.UP:
+        if (PlayerState != PLAYER_STATE.ON_EDGE)
+            switch (direction)
+            {
+                case Direction.LEFT:
+                    velocity += Vector2.left * mvSpeed;
+                    break;
+                case Direction.RIGHT:
+                    velocity += Vector2.right * mvSpeed;
+                    break;
+                case Direction.UP:
 
-                break;
-            case Direction.DOWN:
-                break;
-        }
+                    break;
+                case Direction.DOWN:
+                    break;
+            }
     }
 
     public void StartMovement(Direction direction)
     {
-        if(PlayerState != PLAYER_STATE.ON_EDGE)
-        switch (direction)
-        {
-            case Direction.LEFT:
-                velocity += Vector2.left * mvSpeed * 10;
-                break;
-            case Direction.RIGHT:
-                velocity += Vector2.right * mvSpeed * 10;
-                break;
-            case Direction.UP:
-                GameObject.Find("Stage").transform.Translate(Vector3.up * 0.1f);
-                break;
-            case Direction.DOWN:
-                velocity += Vector2.down * mvSpeed * 10;
-                break;
-        }
+        if (PlayerState != PLAYER_STATE.ON_EDGE)
+            switch (direction)
+            {
+                case Direction.LEFT:
+                    velocity += Vector2.left * mvSpeed * 10;
+                    break;
+                case Direction.RIGHT:
+                    velocity += Vector2.right * mvSpeed * 10;
+                    break;
+                case Direction.UP:
+                    GameObject.Find("Stage").transform.Translate(Vector3.up * 0.1f);
+                    break;
+                case Direction.DOWN:
+                    velocity += Vector2.down * mvSpeed * 10;
+                    break;
+            }
     }
 
     private float lastJump;
@@ -216,7 +220,7 @@ public class PlayerPhysics : MonoBehaviour
                 onBorder[axis] = false;
 
             //To right / up
-            if (endWindowPosition[axis] < bounds.max[axis])
+            if (endWindowPosition[axis] < bounds.max[axis] + 0.5f)
             {
                 //Is the player out of the screen
                 if (endWindowPosition[axis] < bounds.min[axis])

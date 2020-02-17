@@ -139,14 +139,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 4946606578855365968}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26666cfdfc69c303fbee68a587875084, type: 3}
+  m_Script: {fileID: 11500000, guid: 4cb05227c0ff60a4b8f894f0b7ccdf38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   mvSpeed: 0.025
   airResistance: 0.9
-  gravity: -0.1
+  gravity: -0.05
   jumpCooldown: 0.25
-  PlayerPrefab: {fileID: 0}
+  DummyPrefab: {fileID: 4946606578855365968, guid: 304d19dffd8cb53c3956f3ae9002e8a1,
+    type: 3}
   velocity: {x: 0, y: 0}
 --- !u!114 &-2782114941290320745
 MonoBehaviour:
@@ -157,7 +158,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4946606578855365968}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae54b999ba6a02ae99662e97b14d13c9, type: 3}
+  m_Script: {fileID: 11500000, guid: a7cf72a68b88c7248bed44da8ffd8724, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   left: 97
