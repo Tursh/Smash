@@ -8,6 +8,16 @@ public class AttackSet
     public AttackGroup HeavyGrounded { get; set; }
     public AttackGroup LightAerial { get; set; }
     public AttackGroup HeavyAerial { get; set; }
+
+    public AttackSet(AttackGroup lightGrounded, AttackGroup heavyGrounded, AttackGroup lightAerial,
+        AttackGroup heavyAerial)
+    {
+        LightGrounded = lightGrounded;
+        HeavyGrounded = heavyGrounded;
+        LightAerial = lightAerial;
+        HeavyAerial = heavyAerial;
+    }
+    
 }
 
 public class Attack
@@ -34,6 +44,11 @@ public class AttackGroup
     public Attack[] Down { get; private set; }
     public Attack[] Forward { get; private set; }
     public Attack[] Back { get; private set; }
+
+    public AttackGroup()
+    {
+        
+    }
     
     public AttackGroup(Attack[] up, Attack[] down, Attack[] forward, Attack[] back)
     {

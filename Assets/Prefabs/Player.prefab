@@ -15,7 +15,9 @@ GameObject:
   - component: {fileID: 4946606578855365981}
   - component: {fileID: 3021162565020942741}
   - component: {fileID: -2782114941290320745}
+  - component: {fileID: 6420628189056972948}
   - component: {fileID: 5547225930952820046}
+  - component: {fileID: 2098891247}
   m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
@@ -144,13 +146,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cabaaa904beadf948ba2a68fa07aa778, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  left: 97
-  right: 100
-  up: 119
-  down: 115
-  jump: 32
-  light: 106
-  heavy: 107
+  left: 0
+  right: 0
+  up: 0
+  down: 0
+  jump: 0
+  light: 0
+  heavy: 0
 --- !u!114 &-2782114941290320745
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -171,6 +173,21 @@ MonoBehaviour:
     type: 3}
   Facing: {x: -1, y: 0}
   velocity: {x: 0, y: 0}
+  playerInfo: {fileID: 0}
+--- !u!114 &6420628189056972948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4946606578855365968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca920f5183096094080497c1ac2c4955, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Damage: 0
+  Stocks: 4
 --- !u!114 &5547225930952820046
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181,6 +198,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9c8732472bd9cf4398976f044de453c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2098891247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4946606578855365968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ea5801eb27b2f443876a942549480e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &8418644854105030628
@@ -249,6 +278,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Hurtbox
+      objectReference: {fileID: 0}
+    - target: {fileID: 5280320822287857134, guid: 76d6da2dfac9d4a40928dc132ce27cdd,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5833276351763404186, guid: 76d6da2dfac9d4a40928dc132ce27cdd,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76d6da2dfac9d4a40928dc132ce27cdd, type: 3}

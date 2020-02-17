@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class CharacterData
+public abstract class CharacterData : MonoBehaviour
 {
     public abstract AttackSet AttackSet { get; set; }
 }

@@ -36,7 +36,7 @@ public class PlayerPhysics : MonoBehaviour
     private Vector2 startWindowPosition, endWindowPosition, windowSizeInWorld;
 
     BoxCollider2D BoxCollider;
-    Rigidbody2D RigidBody;
+    public PlayerInfo playerInfo;
 
     public PlayerState PlayerState { get; private set; } = PlayerState.InAir;
     public PlayerSubState PlayerSubState { get; set; } = PlayerSubState.Idle;
@@ -46,7 +46,7 @@ public class PlayerPhysics : MonoBehaviour
     private void Start()
     {
         BoxCollider = GetComponent<BoxCollider2D>();
-        RigidBody = GetComponent<Rigidbody2D>();
+        playerInfo = GetComponent<PlayerInfo>();
         
         
         Camera cam = Camera.main;
@@ -71,20 +71,22 @@ public class PlayerPhysics : MonoBehaviour
         if (other.collider.gameObject.layer == stateLayer)
         {
             Vector3 normal = other.contacts[0].normal;
-
+            
+            //Check if normal is pointed downwards
             if (normal == new Vector3(0, 1, 0))
             {
                 PlayerState = PlayerState.OnGround;
                 transform.SetParent(other.transform);
                 OnGroundEventHandler?.Invoke(this, new OnGroundEnventArgs());
             }
-
+            
             if (normal.y != 0)
             {
                 Vector2 position = transform.position;
 
                 position.y = (PlayerState == PlayerState.OnGround ? other.collider.bounds.max : other.collider.bounds.min).y +
                              BoxCollider.bounds.extents.y * normal.y;
+            
                 transform.position = position;
                 velocity.y = 0;
             }

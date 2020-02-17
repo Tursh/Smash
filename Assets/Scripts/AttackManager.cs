@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Playables;
 
 public class AttackManager : MonoBehaviour
 {
@@ -16,7 +17,9 @@ public class AttackManager : MonoBehaviour
         PlayerPhysics = GetComponent<PlayerPhysics>();
         CharacterData = GetComponent<CharacterData>();
         HurtboxComponent = GetComponentInChildren<HurtboxComponent>();
-        HurtboxCollider = GetComponentInChildren<BoxCollider2D>();
+        HurtboxCollider = HurtboxComponent.transform.GetComponent<BoxCollider2D>();
+
+        PlayerPhysics.OnGroundEventHandler += OnGround;
     }
 
     void FixedUpdate()
@@ -31,34 +34,63 @@ public class AttackManager : MonoBehaviour
 
             HurtboxCollider.size = currentFrame.BoxSize;
             HurtboxCollider.offset = currentFrame.Offset;
-
-            if (CurrentAttackFrame > CurrentAttack.Length)
+            
+            ++CurrentAttackFrame;
+            if (CurrentAttackFrame >= CurrentAttack.Length)
             {
-                PlayerPhysics.PlayerSubState = PlayerSubState.Idle;
-                
-            }
-            else
-            {
-                ++CurrentAttackFrame;
-                HurtboxComponent.Enabled = false;
+                DisableAttack();
             }
         }
     }
-    
+
+    void DisableAttack()
+    {
+        PlayerPhysics.PlayerSubState = PlayerSubState.Idle;
+        HurtboxComponent.Enabled = false;
+        CurrentAttackFrame = 0;
+    }
+    void OnGround(object sender, OnGroundEnventArgs args)
+    {
+        DisableAttack();
+    }
+
+
     public void Light()
     {
-        PlayerPhysics.PlayerSubState = PlayerSubState.Attacking;
+        
         HurtboxComponent.Enabled = true;
-        if (PlayerPhysics.PlayerState == PlayerState.OnGround)
+        if (PlayerPhysics.PlayerSubState == PlayerSubState.Idle)
         {
-            CurrentAttack = CharacterData.AttackSet.LightGrounded.Forward;
+            if (PlayerPhysics.PlayerState == PlayerState.OnGround)
+            {
+                CurrentAttack = CharacterData.AttackSet.LightGrounded.Forward;
+            }
+            else if (PlayerPhysics.PlayerState == PlayerState.InAir)
+            {
+                CurrentAttack = CharacterData.AttackSet.LightAerial.Forward;
+            }
+
+            CurrentAttackFrame = 0;
+            PlayerPhysics.PlayerSubState = PlayerSubState.Attacking;
         }
     }
 
     public void Heavy()
     {
-        PlayerPhysics.PlayerSubState = PlayerSubState.Attacking;
         HurtboxComponent.Enabled = true;
+        if (PlayerPhysics.PlayerSubState == PlayerSubState.Idle)
+        {
+            if (PlayerPhysics.PlayerState == PlayerState.OnGround)
+            {
+                CurrentAttack = CharacterData.AttackSet.HeavyGrounded.Forward;
+            }
+            else if (PlayerPhysics.PlayerState == PlayerState.InAir)
+            {
+                CurrentAttack = CharacterData.AttackSet.HeavyAerial.Forward;
+            }
+            
+            CurrentAttackFrame = 0;
+            PlayerPhysics.PlayerSubState = PlayerSubState.Attacking;
+        }
     }
-
 }
