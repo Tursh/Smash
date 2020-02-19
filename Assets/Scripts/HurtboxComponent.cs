@@ -9,15 +9,32 @@ public class HurtboxComponent : MonoBehaviour
     [SerializeField] public float Damage;
     [SerializeField] public float Multiplier;
     [SerializeField] public bool Enabled;
+    
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.layer == 9 && Enabled)
+        if (Enabled)
         {
-            PlayerPhysics playerPhysics = other.gameObject.GetComponent<PlayerPhysics>();
-            PlayerInfo playerInfo = other.gameObject.GetComponent<PlayerInfo>();
-            playerPhysics.velocity += Direction * (Multiplier * (playerInfo.Damage + 1));
-            playerInfo.Damage += Damage;
+            if (other.gameObject.layer == 9)
+            {
+                hurt(other.gameObject);
+            }
+            else if (other.gameObject.layer == 11)
+            {
+                hurt(other.gameObject.GetComponent<DummyComponent>().PlayerReference);
+            }
         }
-            
-     }
+    }
+
+    private void hurt(GameObject player)
+    {
+        PlayerPhysics playerPhysics = player.gameObject.GetComponent<PlayerPhysics>();
+        PlayerInfo playerInfo = player.gameObject.GetComponent<PlayerInfo>();
+        playerPhysics.velocity += Direction * (Multiplier * (playerInfo.Damage + 1));
+        playerInfo.Damage += Damage;
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        OnTriggerEnter2D(other);
+    }
 }

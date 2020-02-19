@@ -16,20 +16,28 @@ public enum Direction
 
 public enum PlayerState
 {
-    OnGround, InAir, OnEdge
+    OnGround,
+    InAir,
+    OnEdge
 }
 
 public enum PlayerSubState
 {
-    Idle, Attacking, Moving
+    Idle,
+    Attacking,
+    Moving
 }
 
-public class OnGroundEnventArgs { }
+public class OnGroundEnventArgs
+{
+}
 
 public class PlayerPhysics : MonoBehaviour
 {
     [SerializeField] private float mvSpeed = 0.025f, airResistance = 0.9f, gravity = -0.05f, jumpCooldown = 0.25f;
     [SerializeField] private GameObject dummyPrefab;
+    [SerializeField] private PlayerState _playerState;
+    [SerializeField] private PlayerSubState _playerSubState;
     
     public Vector2 Facing = Vector2.left;
     public Vector2 velocity;
@@ -37,7 +45,6 @@ public class PlayerPhysics : MonoBehaviour
 
     BoxCollider2D BoxCollider;
     public PlayerInfo playerInfo;
-
     public PlayerState PlayerState { get; private set; } = PlayerState.InAir;
     public PlayerSubState PlayerSubState { get; set; } = PlayerSubState.Idle;
 
@@ -47,8 +54,8 @@ public class PlayerPhysics : MonoBehaviour
     {
         BoxCollider = GetComponent<BoxCollider2D>();
         playerInfo = GetComponent<PlayerInfo>();
-        
-        
+
+
         Camera cam = Camera.main;
 
         startWindowPosition = cam.ScreenToWorldPoint(new Vector3(0, 0, 12));
@@ -56,14 +63,18 @@ public class PlayerPhysics : MonoBehaviour
         windowSizeInWorld = endWindowPosition - startWindowPosition;
 
         for (int i = 0; i < 2; ++i)
+        {
             dummies[i] =
                 Instantiate(dummyPrefab,
                     startWindowPosition - Vector2.down * 10,
                     Quaternion.identity);
+            dummies[i].GetComponent<DummyComponent>().PlayerReference = gameObject;
+        }
     }
 
     private float lastCollision = 0;
     public EventHandler<OnGroundEnventArgs> OnGroundEventHandler;
+
     private void OnCollisionEnter2D(Collision2D other)
     {
         //TODO: Do damage depending on the velocity
@@ -71,7 +82,7 @@ public class PlayerPhysics : MonoBehaviour
         if (other.collider.gameObject.layer == stateLayer)
         {
             Vector3 normal = other.contacts[0].normal;
-            
+
             //Check if normal is pointed downwards
             if (normal == new Vector3(0, 1, 0))
             {
@@ -79,14 +90,16 @@ public class PlayerPhysics : MonoBehaviour
                 transform.SetParent(other.transform);
                 OnGroundEventHandler?.Invoke(this, new OnGroundEnventArgs());
             }
-            
+
             if (normal.y != 0)
             {
                 Vector2 position = transform.position;
 
-                position.y = (PlayerState == PlayerState.OnGround ? other.collider.bounds.max : other.collider.bounds.min).y +
+                position.y = (PlayerState == PlayerState.OnGround
+                                 ? other.collider.bounds.max
+                                 : other.collider.bounds.min).y +
                              BoxCollider.bounds.extents.y * normal.y;
-            
+
                 transform.position = position;
                 velocity.y = 0;
             }
@@ -105,7 +118,8 @@ public class PlayerPhysics : MonoBehaviour
                 Bounds stageBounds = other.collider.bounds;
 
                 Vector2 edgePosition;
-                edgePosition.x = (normal.x > 0 ? stageBounds.max.x : stageBounds.min.x) + BoxCollider.bounds.extents.x * normal.x;
+                edgePosition.x = (normal.x > 0 ? stageBounds.max.x : stageBounds.min.x) +
+                                 BoxCollider.bounds.extents.x * normal.x;
                 edgePosition.y = stageBounds.max.y - BoxCollider.bounds.extents.y;
 
                 transform.position = edgePosition;
@@ -113,7 +127,6 @@ public class PlayerPhysics : MonoBehaviour
         }
 
         lastCollision = Time.time;
-        
     }
 
     private void OnCollisionExit2D(Collision2D other)
@@ -127,11 +140,14 @@ public class PlayerPhysics : MonoBehaviour
 
     public void FixedUpdate()
     {
+        _playerState = PlayerState;
+        _playerSubState = PlayerSubState;
+        
         velocity *= airResistance;
 
         if (PlayerState == PlayerState.InAir)
             velocity.y += gravity;
-
+        
         transform.Translate(velocity);
 
         CheckWindowBorders();
@@ -139,36 +155,44 @@ public class PlayerPhysics : MonoBehaviour
 
     public void Move(Direction direction)
     {
-        if(PlayerState != PlayerState.OnEdge && PlayerSubState != PlayerSubState.Attacking)
+        if (PlayerState != PlayerState.OnEdge && PlayerSubState != PlayerSubState.Attacking)
             switch (direction)
-                {
+            {
                 case Direction.Left:
                     velocity += Vector2.left * mvSpeed;
-                    Facing = Vector2.left;
+                    
+                    if (PlayerState == PlayerState.OnGround)
+                        Facing = Vector2.left;
                     break;
                 case Direction.Right:
                     velocity += Vector2.right * mvSpeed;
-                    Facing = Vector2.right;
+                    if (PlayerState == PlayerState.OnGround)
+                        Facing = Vector2.right;
                     break;
                 case Direction.Up:
-    
+
                     break;
                 case Direction.Down:
                     break;
-                }
+            }
     }
 
     public void StartMovement(Direction direction)
     {
-        if(PlayerState != PlayerState.OnEdge && PlayerSubState != PlayerSubState.Attacking)
+        if (PlayerState != PlayerState.OnEdge && PlayerSubState != PlayerSubState.Attacking)
             switch (direction)
             {
                 case Direction.Left:
                     velocity += Vector2.left * (mvSpeed * 10);
+                    if (PlayerState == PlayerState.OnGround)
+                        Facing = Vector2.left;
                     break;
                 case Direction.Right:
                     velocity += Vector2.right * (mvSpeed * 10);
+                    if (PlayerState == PlayerState.OnGround)
+                        Facing = Vector2.right;
                     break;
+                
                 case Direction.Up:
                     //GameObject.Find("Stage").transform.Translate(Vector3.up * 0.1f);
                     break;
@@ -189,7 +213,6 @@ public class PlayerPhysics : MonoBehaviour
         }
     }
 
-    private bool[] onBorder = new bool[2];
     private GameObject[] dummies = new GameObject[2];
 
     void CheckWindowBorders()
@@ -202,63 +225,25 @@ public class PlayerPhysics : MonoBehaviour
         {
             //To the left / down
             //Is the player partly in the border
-            if (bounds.min[axis] < startWindowPosition[axis])
+            if (bounds.min[axis] < startWindowPosition[axis] && bounds.max[axis] < startWindowPosition[axis])
             {
-                //Is the player out of the screen
-                if (bounds.max[axis] < startWindowPosition[axis])
-                {
                     //Set to the other side of the window
                     position[axis] += windowSizeInWorld[axis];
                     transform.position = position;
-
-                    onBorder[axis] = false;
-                }
-                else
-                {
-                    onBorder[axis] = true;
-
-                    Vector3 dummyPosition = dummies[axis].transform.position;
-                    dummyPosition[axis] = position[axis] + windowSizeInWorld[axis];
-
-                    if (!onBorder[(axis + 1) % 2])
-                        dummyPosition[(axis + 1) % 2] = position[(axis + 1) % 2];
-
-                    dummies[axis].transform.position = dummyPosition;
-                }
             }
-            else
-                onBorder[axis] = false;
 
             //To right / up
-            if (endWindowPosition[axis] < bounds.max[axis])
+            else if (endWindowPosition[axis] < bounds.max[axis] && endWindowPosition[axis] < bounds.min[axis])
             {
-                //Is the player out of the screen
-                if (endWindowPosition[axis] < bounds.min[axis])
-                {
                     //Set to the other side of the window
                     position[axis] -= windowSizeInWorld[axis];
                     transform.position = position;
-
-                    onBorder[axis] = false;
-                }
-                else
-                {
-                    onBorder[axis] = true;
-
-                    Vector3 dummyPosition = dummies[axis].transform.position;
-                    dummyPosition[axis] = position[axis] - windowSizeInWorld[axis];
-
-                    if (!onBorder[(axis + 1) % 2])
-                        dummyPosition[(axis + 1) % 2] = position[(axis + 1) % 2];
-
-                    dummies[axis].transform.position = dummyPosition;
-                }
             }
-            else
-                onBorder[axis] = false;
 
-            if (!onBorder[axis])
-                dummies[axis].transform.position = -windowSizeInWorld;
+            Vector3 dummyPositon = dummies[axis].transform.position;
+            dummyPositon[axis] = transform.position[axis] + (transform.position[axis] > 0 ? -1 : 1) * windowSizeInWorld[axis];
+            dummyPositon[(axis + 1) % 2] = transform.position[(axis + 1) % 2];
+            dummies[axis].transform.position = dummyPositon;
         }
     }
 }

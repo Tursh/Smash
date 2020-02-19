@@ -29,11 +29,19 @@ public class AttackManager : MonoBehaviour
             Attack currentFrame = CurrentAttack[CurrentAttackFrame];
 
             HurtboxComponent.Damage = currentFrame.Damage;
-            HurtboxComponent.Direction = currentFrame.Direction;
             HurtboxComponent.Multiplier = currentFrame.Multiplier;
-
             HurtboxCollider.size = currentFrame.BoxSize;
-            HurtboxCollider.offset = currentFrame.Offset;
+
+            if (PlayerPhysics.Facing == Vector2.left)
+            {
+                HurtboxComponent.Direction = new Vector2(- currentFrame.Direction.x,currentFrame.Direction.y);
+                HurtboxCollider.offset = new Vector2(- currentFrame.Offset.x,currentFrame.Offset.y);
+            }
+            else
+            {
+                HurtboxComponent.Direction = currentFrame.Direction;
+                HurtboxCollider.offset = currentFrame.Offset;
+            }
             
             ++CurrentAttackFrame;
             if (CurrentAttackFrame >= CurrentAttack.Length)
@@ -49,6 +57,7 @@ public class AttackManager : MonoBehaviour
         HurtboxComponent.Enabled = false;
         CurrentAttackFrame = 0;
     }
+
     void OnGround(object sender, OnGroundEnventArgs args)
     {
         DisableAttack();
@@ -57,8 +66,6 @@ public class AttackManager : MonoBehaviour
 
     public void Light()
     {
-        
-        HurtboxComponent.Enabled = true;
         if (PlayerPhysics.PlayerSubState == PlayerSubState.Idle)
         {
             if (PlayerPhysics.PlayerState == PlayerState.OnGround)
@@ -73,11 +80,12 @@ public class AttackManager : MonoBehaviour
             CurrentAttackFrame = 0;
             PlayerPhysics.PlayerSubState = PlayerSubState.Attacking;
         }
+        HurtboxComponent.Enabled = true;
     }
 
+    
     public void Heavy()
     {
-        HurtboxComponent.Enabled = true;
         if (PlayerPhysics.PlayerSubState == PlayerSubState.Idle)
         {
             if (PlayerPhysics.PlayerState == PlayerState.OnGround)
@@ -88,9 +96,10 @@ public class AttackManager : MonoBehaviour
             {
                 CurrentAttack = CharacterData.AttackSet.HeavyAerial.Forward;
             }
-            
+
             CurrentAttackFrame = 0;
             PlayerPhysics.PlayerSubState = PlayerSubState.Attacking;
         }
+        HurtboxComponent.Enabled = true;
     }
 }

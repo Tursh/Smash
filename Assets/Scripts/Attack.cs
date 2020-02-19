@@ -17,7 +17,6 @@ public class AttackSet
         LightAerial = lightAerial;
         HeavyAerial = heavyAerial;
     }
-    
 }
 
 public class Attack
@@ -47,9 +46,8 @@ public class AttackGroup
 
     public AttackGroup()
     {
-        
     }
-    
+
     public AttackGroup(Attack[] up, Attack[] down, Attack[] forward, Attack[] back)
     {
         Up = up;

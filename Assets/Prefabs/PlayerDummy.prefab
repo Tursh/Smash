@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 4946606578855365983}
   - component: {fileID: 4946606578855365980}
   - component: {fileID: 4946606578855365981}
-  m_Layer: 9
+  - component: {fileID: 7365054512006327874}
+  m_Layer: 11
   m_Name: PlayerDummy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -128,3 +129,16 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
+--- !u!114 &7365054512006327874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4946606578855365968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebafa45bd5cf2074dba24feb8f361433, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerReference: {fileID: 0}
