@@ -126,7 +126,8 @@ public class PlayerPhysics : MonoBehaviour
 
         transform.Translate(velocity);
 
-        checkWindowBorders();
+        if (PlayerState == PLAYER_STATE.IN_AIR)
+            checkWindowBorders();
     }
 
     public void Move(Direction direction)
