@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5833276351763404186}
   - component: {fileID: 4043399674881395040}
   m_Layer: 0
-  m_Name: Attack
+  m_Name: Hurtbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -67,7 +67,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5280320822287857134}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d94e6ee1bd8953745a8215c81bb06927, type: 3}
+  m_Script: {fileID: 11500000, guid: f23734265abdea4fb82e2412745b1383, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Direction: {x: 0, y: 0}
