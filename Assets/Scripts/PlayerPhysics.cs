@@ -38,7 +38,7 @@ public class PlayerPhysics : MonoBehaviour
     [SerializeField] private GameObject dummyPrefab;
     [SerializeField] private PlayerState _playerState;
     [SerializeField] private PlayerSubState _playerSubState;
-    
+
     public Vector2 Facing = Vector2.left;
     public Vector2 velocity;
     private Vector2 startWindowPosition, endWindowPosition, windowSizeInWorld;
@@ -48,7 +48,7 @@ public class PlayerPhysics : MonoBehaviour
     public PlayerState PlayerState { get; private set; } = PlayerState.InAir;
     public PlayerSubState PlayerSubState { get; set; } = PlayerSubState.Idle;
 
-    private int playerLayer = 9, stateLayer = 8;
+    private int playerLayer = 9, stageLayer = 8, semiPlatformLayer = 12;
 
     private void Start()
     {
@@ -72,17 +72,16 @@ public class PlayerPhysics : MonoBehaviour
         }
     }
 
-    private float lastCollision = 0;
     public EventHandler<OnGroundEnventArgs> OnGroundEventHandler;
 
     private void OnCollisionEnter2D(Collision2D other)
     {
         //TODO: Do damage depending on the velocity
 
-        if (other.collider.gameObject.layer == stateLayer)
-        {
-            Vector3 normal = other.contacts[0].normal;
+        Vector3 normal = other.contacts[0].normal;
 
+        if (other.collider.gameObject.layer == stageLayer)
+        {
             //Check if normal is pointed downwards
             if (normal == new Vector3(0, 1, 0))
             {
@@ -94,22 +93,15 @@ public class PlayerPhysics : MonoBehaviour
             if (normal.y != 0)
             {
                 Vector2 position = transform.position;
-
-                position.y = (PlayerState == PlayerState.OnGround
-                                 ? other.collider.bounds.max
-                                 : other.collider.bounds.min).y +
-                             BoxCollider.bounds.extents.y * normal.y;
-
+                position.y =
+                    (PlayerState == PlayerState.OnGround ? other.collider.bounds.max : other.collider.bounds.min).y
+                    + BoxCollider.bounds.extents.y * normal.y;
                 transform.position = position;
+
                 velocity.y = 0;
             }
             else
             {
-                //Vector2 position = transform.position;
-                //position.x = (normal.x > 0 ? other.collider.bounds.max : other.collider.bounds.min).x +
-                //             (bc.bounds.extents.x + 0.03f) * normal.x;
-                //transform.position = position;
-                //velocity.x = 0;
                 velocity = Vector2.zero;
 
                 PlayerState = PlayerState.OnEdge;
@@ -125,13 +117,37 @@ public class PlayerPhysics : MonoBehaviour
                 transform.position = edgePosition;
             }
         }
+        else if (other.gameObject.layer == semiPlatformLayer && normal == new Vector3(0, 1, 0))
+        {
+            if (PlayerState != PlayerState.OnGround)
+            {
+                Debug.Log("OnGround");
+                //Set the player on ground
+                PlayerState = PlayerState.OnGround;
+                transform.SetParent(other.transform);
+                OnGroundEventHandler?.Invoke(this, new OnGroundEnventArgs());
 
-        lastCollision = Time.time;
+                //Set player to the top of the platform
+                Vector2 position = transform.position;
+                position.y = other.collider.bounds.max.y + BoxCollider.bounds.extents.y;
+                transform.position = position;
+
+                //Remove all vertical velocity
+                velocity.y = 0;
+            }
+            else if(transform.parent != other.transform)
+            {
+                transform.SetParent(other.transform);
+                Vector2 position = transform.position;
+                position.y = other.collider.bounds.max.y + BoxCollider.bounds.extents.y;
+                transform.position = position;
+            }
+        }
     }
 
     private void OnCollisionExit2D(Collision2D other)
     {
-        if (other.collider.gameObject.layer == stateLayer)
+        if (other.transform == transform.parent)
         {
             PlayerState = PlayerState.InAir;
             transform.SetParent(null);
@@ -142,12 +158,12 @@ public class PlayerPhysics : MonoBehaviour
     {
         _playerState = PlayerState;
         _playerSubState = PlayerSubState;
-        
+
         velocity *= airResistance;
 
         if (PlayerState == PlayerState.InAir)
             velocity.y += gravity;
-        
+
         transform.Translate(velocity);
 
         CheckWindowBorders();
@@ -160,7 +176,7 @@ public class PlayerPhysics : MonoBehaviour
             {
                 case Direction.Left:
                     velocity += Vector2.left * mvSpeed;
-                    
+
                     if (PlayerState == PlayerState.OnGround)
                         Facing = Vector2.left;
                     break;
@@ -192,7 +208,7 @@ public class PlayerPhysics : MonoBehaviour
                     if (PlayerState == PlayerState.OnGround)
                         Facing = Vector2.right;
                     break;
-                
+
                 case Direction.Up:
                     //GameObject.Find("Stage").transform.Translate(Vector3.up * 0.1f);
                     break;
@@ -227,21 +243,22 @@ public class PlayerPhysics : MonoBehaviour
             //Is the player partly in the border
             if (bounds.min[axis] < startWindowPosition[axis] && bounds.max[axis] < startWindowPosition[axis])
             {
-                    //Set to the other side of the window
-                    position[axis] += windowSizeInWorld[axis];
-                    transform.position = position;
+                //Set to the other side of the window
+                position[axis] += windowSizeInWorld[axis];
+                transform.position = position;
             }
 
             //To right / up
             else if (endWindowPosition[axis] < bounds.max[axis] && endWindowPosition[axis] < bounds.min[axis])
             {
-                    //Set to the other side of the window
-                    position[axis] -= windowSizeInWorld[axis];
-                    transform.position = position;
+                //Set to the other side of the window
+                position[axis] -= windowSizeInWorld[axis];
+                transform.position = position;
             }
 
             Vector3 dummyPositon = dummies[axis].transform.position;
-            dummyPositon[axis] = transform.position[axis] + (transform.position[axis] > 0 ? -1 : 1) * windowSizeInWorld[axis];
+            dummyPositon[axis] = transform.position[axis] +
+                                 (transform.position[axis] > 0 ? -1 : 1) * windowSizeInWorld[axis];
             dummyPositon[(axis + 1) % 2] = transform.position[(axis + 1) % 2];
             dummies[axis].transform.position = dummyPositon;
         }

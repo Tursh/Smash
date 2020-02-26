@@ -35,7 +35,7 @@ public class SplineController : MonoBehaviour
     Vector2 getRandomPointInMap(Vector2 centerPoint, float radius)
     {
         Vector2 point = new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f));
-        point = centerPoint + (point + (-centerPoint + Vector2.down * 2).normalized * 0.2f).normalized * radius;
+        point = centerPoint + point.normalized * radius;
         return point;
     }
 
