@@ -1,6 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Playables;
+
+public enum AttackType { PHYSICAL, PROJECTILE }
 
 public class AttackSet
 {
@@ -19,21 +23,56 @@ public class AttackSet
     }
 }
 
+public class FrameDataPhysical
+{
+    public readonly float Damage;
+    public readonly float Multiplier;
+    public readonly float Radius;
+    public Vector2 Direction;
+    public Vector2 Offset;
+
+    public FrameDataPhysical()
+    {
+        Damage = 0;
+        Multiplier = 0;
+        Radius = 0;
+        Direction = Vector2.zero;
+        Offset = Vector2.zero;
+    }
+
+    public FrameDataPhysical(float Damage, float Multiplier, float Radius, Vector2 Direction, Vector2 Offset)
+    {
+        this.Damage = Damage;
+        this.Multiplier = Multiplier;
+        this.Radius = Radius;
+        this.Direction = Direction;
+        this.Offset = Offset;
+    }
+
+    public FrameDataPhysical reversed()
+    {
+        return new FrameDataPhysical(Damage,
+            Multiplier, Radius, new Vector2(-Direction.x, Direction.y), new Vector2(-Offset.x, Offset.y));
+    } 
+}
+
 public class Attack
 {
-    public Vector2 Direction { get; private set; }
-    public float Damage { get; private set; }
-    public float Multiplier { get; private set; }
-    public Vector2 BoxSize { get; private set; }
-    public Vector2 Offset { get; private set; }
+    private Func<GameObject, bool> Function; 
 
-    public Attack(Vector2 direction, float damage, float multiplier, Vector2 boxSize, Vector2 offset)
+    public Attack()
     {
-        Direction = direction;
-        Damage = damage;
-        Multiplier = multiplier;
-        BoxSize = boxSize;
-        Offset = offset;
+        Function = o => false;
+    }
+
+    public Attack(Func<GameObject, bool> function)
+    {
+        Function = function;
+    }
+    
+    public void Act(GameObject player)
+    {
+        Function(player);
     }
 }
 

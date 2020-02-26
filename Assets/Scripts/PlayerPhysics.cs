@@ -21,12 +21,7 @@ public enum PlayerState
     OnEdge
 }
 
-public enum PlayerSubState
-{
-    Idle,
-    Attacking,
-    Moving
-}
+
 
 public class OnGroundEnventArgs
 {
@@ -36,26 +31,22 @@ public class PlayerPhysics : MonoBehaviour
 {
     [SerializeField] private float mvSpeed = 0.025f, airResistance = 0.9f, gravity = -0.05f, jumpCooldown = 0.25f;
     [SerializeField] private GameObject dummyPrefab;
-    [SerializeField] private PlayerState _playerState;
-    [SerializeField] private PlayerSubState _playerSubState;
-    
+    [SerializeField] public PlayerState PlayerState = PlayerState.InAir;
+
+    private AttackManager AttackManager;
+
     public Vector2 Facing = Vector2.left;
     public Vector2 velocity;
     private Vector2 startWindowPosition, endWindowPosition, windowSizeInWorld;
 
     BoxCollider2D BoxCollider;
-    public PlayerInfo playerInfo;
-    public PlayerState PlayerState { get; private set; } = PlayerState.InAir;
-    public PlayerSubState PlayerSubState { get; set; } = PlayerSubState.Idle;
-
+    
     private int playerLayer = 9, stateLayer = 8;
 
     private void Start()
     {
         BoxCollider = GetComponent<BoxCollider2D>();
-        playerInfo = GetComponent<PlayerInfo>();
-
-
+        AttackManager = GetComponent<AttackManager>();
         Camera cam = Camera.main;
 
         startWindowPosition = cam.ScreenToWorldPoint(new Vector3(0, 0, 12));
@@ -71,8 +62,6 @@ public class PlayerPhysics : MonoBehaviour
             dummies[i].GetComponent<DummyComponent>().PlayerReference = gameObject;
         }
     }
-
-    private float lastCollision = 0;
     public EventHandler<OnGroundEnventArgs> OnGroundEventHandler;
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -126,7 +115,6 @@ public class PlayerPhysics : MonoBehaviour
             }
         }
 
-        lastCollision = Time.time;
     }
 
     private void OnCollisionExit2D(Collision2D other)
@@ -140,9 +128,6 @@ public class PlayerPhysics : MonoBehaviour
 
     public void FixedUpdate()
     {
-        _playerState = PlayerState;
-        _playerSubState = PlayerSubState;
-        
         velocity *= airResistance;
 
         if (PlayerState == PlayerState.InAir)
@@ -155,7 +140,7 @@ public class PlayerPhysics : MonoBehaviour
 
     public void Move(Direction direction)
     {
-        if (PlayerState != PlayerState.OnEdge && PlayerSubState != PlayerSubState.Attacking)
+        if (PlayerState != PlayerState.OnEdge && AttackManager.AttackState != AttackState.Attacking)
             switch (direction)
             {
                 case Direction.Left:
@@ -179,7 +164,7 @@ public class PlayerPhysics : MonoBehaviour
 
     public void StartMovement(Direction direction)
     {
-        if (PlayerState != PlayerState.OnEdge && PlayerSubState != PlayerSubState.Attacking)
+        if (PlayerState != PlayerState.OnEdge && AttackManager.AttackState != AttackState.Attacking)
             switch (direction)
             {
                 case Direction.Left:
@@ -206,7 +191,7 @@ public class PlayerPhysics : MonoBehaviour
 
     public void Jump()
     {
-        if (Time.time - lastJump >= jumpCooldown && PlayerSubState != PlayerSubState.Attacking)
+        if (Time.time - lastJump >= jumpCooldown && AttackManager.AttackState != AttackState.Attacking)
         {
             velocity.y = 1;
             lastJump = Time.time;

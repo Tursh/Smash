@@ -2,13 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
+using UnityEngine.Serialization;
+
+public enum AttackState
+{
+    Idle,
+    Attacking
+}
 
 public class AttackManager : MonoBehaviour
 {
-    private PlayerPhysics PlayerPhysics;
+    [SerializeField] public AttackState AttackState = AttackState.Idle;
     private CharacterData CharacterData;
-    private HurtboxComponent HurtboxComponent;
-    private BoxCollider2D HurtboxCollider;
+    private PlayerPhysics PlayerPhysics;
+    private GameObject Hurtbox;
     private Attack[] CurrentAttack;
     private int CurrentAttackFrame = 0;
 
@@ -16,32 +23,18 @@ public class AttackManager : MonoBehaviour
     {
         PlayerPhysics = GetComponent<PlayerPhysics>();
         CharacterData = GetComponent<CharacterData>();
-        HurtboxComponent = GetComponentInChildren<HurtboxComponent>();
-        HurtboxCollider = HurtboxComponent.transform.GetComponent<BoxCollider2D>();
+        
 
         PlayerPhysics.OnGroundEventHandler += OnGround;
     }
 
     void FixedUpdate()
     {
-        if (PlayerPhysics.PlayerSubState == PlayerSubState.Attacking)
+        if (AttackState == AttackState.Attacking)
         {
-            Attack currentFrame = CurrentAttack[CurrentAttackFrame];
+            Attack CurrentFrameAttack = CurrentAttack[CurrentAttackFrame];
 
-            HurtboxComponent.Damage = currentFrame.Damage;
-            HurtboxComponent.Multiplier = currentFrame.Multiplier;
-            HurtboxCollider.size = currentFrame.BoxSize;
-
-            if (PlayerPhysics.Facing == Vector2.left)
-            {
-                HurtboxComponent.Direction = new Vector2(- currentFrame.Direction.x,currentFrame.Direction.y);
-                HurtboxCollider.offset = new Vector2(- currentFrame.Offset.x,currentFrame.Offset.y);
-            }
-            else
-            {
-                HurtboxComponent.Direction = currentFrame.Direction;
-                HurtboxCollider.offset = currentFrame.Offset;
-            }
+            CurrentFrameAttack.Act(gameObject);
             
             ++CurrentAttackFrame;
             if (CurrentAttackFrame >= CurrentAttack.Length)
@@ -53,8 +46,7 @@ public class AttackManager : MonoBehaviour
 
     void DisableAttack()
     {
-        PlayerPhysics.PlayerSubState = PlayerSubState.Idle;
-        HurtboxComponent.Enabled = false;
+        AttackState = AttackState.Idle;
         CurrentAttackFrame = 0;
     }
 
@@ -66,7 +58,7 @@ public class AttackManager : MonoBehaviour
 
     public void Light()
     {
-        if (PlayerPhysics.PlayerSubState == PlayerSubState.Idle)
+        if (AttackState == AttackState.Idle)
         {
             if (PlayerPhysics.PlayerState == PlayerState.OnGround)
             {
@@ -78,15 +70,15 @@ public class AttackManager : MonoBehaviour
             }
 
             CurrentAttackFrame = 0;
-            PlayerPhysics.PlayerSubState = PlayerSubState.Attacking;
+            AttackState = AttackState.Attacking;
         }
-        HurtboxComponent.Enabled = true;
+        //HurtboxComponent.Enabled = true;
     }
 
     
     public void Heavy()
     {
-        if (PlayerPhysics.PlayerSubState == PlayerSubState.Idle)
+        if (AttackState == AttackState.Idle)
         {
             if (PlayerPhysics.PlayerState == PlayerState.OnGround)
             {
@@ -98,8 +90,8 @@ public class AttackManager : MonoBehaviour
             }
 
             CurrentAttackFrame = 0;
-            PlayerPhysics.PlayerSubState = PlayerSubState.Attacking;
+            AttackState = AttackState.Attacking;
         }
-        HurtboxComponent.Enabled = true;
+        //HurtboxComponent.Enabled = true;
     }
 }

@@ -16,16 +16,16 @@ public class HurtboxComponent : MonoBehaviour
         {
             if (other.gameObject.layer == 9)
             {
-                hurt(other.gameObject);
+                Hurt(other.gameObject);
             }
             else if (other.gameObject.layer == 11)
             {
-                hurt(other.gameObject.GetComponent<DummyComponent>().PlayerReference);
+                Hurt(other.gameObject.GetComponent<DummyComponent>().PlayerReference);
             }
         }
     }
 
-    private void hurt(GameObject player)
+    private void Hurt(GameObject player)
     {
         PlayerPhysics playerPhysics = player.gameObject.GetComponent<PlayerPhysics>();
         PlayerInfo playerInfo = player.gameObject.GetComponent<PlayerInfo>();
