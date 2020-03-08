@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions.Comparers;
 using UnityEngine.Playables;
 
 public enum AttackType { PHYSICAL, PROJECTILE }
@@ -35,7 +36,7 @@ public class FrameDataPhysical
     {
         Damage = 0;
         Multiplier = 0;
-        Radius = 0;
+        Radius = 1;
         Direction = Vector2.zero;
         Offset = Vector2.zero;
     }
@@ -56,10 +57,51 @@ public class FrameDataPhysical
     } 
 }
 
+public class FrameDataProjectile
+{
+    public readonly float Damage;
+    public readonly float Multiplier;
+    public readonly float Radius;
+    public Vector2 Direction;
+    public Vector2 Velocity;
+    public float TimeToLive;
+    
+    public FrameDataProjectile()
+    {
+        Damage = 1;
+        Multiplier = 1;
+        Radius = 1;
+        Direction = Vector2.right;
+        Velocity = Vector2.right;
+        TimeToLive = 1;
+    }
+    public FrameDataProjectile(float damage, float multiplier, float radius, Vector2 direction, Vector2 velocity, float timeToLive)
+    {
+        Damage = damage;
+        Multiplier = multiplier;
+        Radius = radius;
+        Direction = direction;
+        Velocity = velocity;
+        TimeToLive = timeToLive;
+    }
+    
+
+    public FrameDataProjectile reversed()
+    {
+        return new FrameDataProjectile(
+            Damage, 
+            Multiplier,
+            Radius,
+            new Vector2(-Direction.x, Direction.y), 
+            new Vector2(-Velocity.x, Velocity.y), 
+            TimeToLive);
+    }
+}
+
 public class Attack
 {
-    private Func<GameObject, bool> Function; 
-
+    private Func<GameObject, bool> Function;
+    
     public Attack()
     {
         Function = o => false;

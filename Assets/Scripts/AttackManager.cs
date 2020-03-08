@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Serialization;
@@ -12,34 +14,36 @@ public enum AttackState
 
 public class AttackManager : MonoBehaviour
 {
-    [SerializeField] public AttackState AttackState = AttackState.Idle;
+    public AttackState AttackState = AttackState.Idle;
+    public GameObject[] ProjectilePrefabs;
     private CharacterData CharacterData;
     private PlayerPhysics PlayerPhysics;
-    private GameObject Hurtbox;
     private Attack[] CurrentAttack;
     private int CurrentAttackFrame = 0;
+    private HurtboxComponent[] HurtboxComponents; 
 
     void Start()
     {
         PlayerPhysics = GetComponent<PlayerPhysics>();
         CharacterData = GetComponent<CharacterData>();
-        
+        HurtboxComponents = GetComponentsInChildren<HurtboxComponent>();
 
         PlayerPhysics.OnGroundEventHandler += OnGround;
+        
+        CurrentAttack = new Attack[] {};
     }
 
     void FixedUpdate()
     {
+
         if (AttackState == AttackState.Attacking)
         {
-            Attack CurrentFrameAttack = CurrentAttack[CurrentAttackFrame];
-
-            CurrentFrameAttack.Act(gameObject);
-            
-            ++CurrentAttackFrame;
             if (CurrentAttackFrame >= CurrentAttack.Length)
-            {
                 DisableAttack();
+            else
+            {
+                CurrentAttack[CurrentAttackFrame].Act(gameObject);
+                ++CurrentAttackFrame;
             }
         }
     }
@@ -48,6 +52,7 @@ public class AttackManager : MonoBehaviour
     {
         AttackState = AttackState.Idle;
         CurrentAttackFrame = 0;
+        HurtboxComponents.All(o => o.Enabled = false);
     }
 
     void OnGround(object sender, OnGroundEnventArgs args)
@@ -72,7 +77,6 @@ public class AttackManager : MonoBehaviour
             CurrentAttackFrame = 0;
             AttackState = AttackState.Attacking;
         }
-        //HurtboxComponent.Enabled = true;
     }
 
     
@@ -92,6 +96,5 @@ public class AttackManager : MonoBehaviour
             CurrentAttackFrame = 0;
             AttackState = AttackState.Attacking;
         }
-        //HurtboxComponent.Enabled = true;
     }
 }

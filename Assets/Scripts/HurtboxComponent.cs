@@ -5,10 +5,16 @@ using UnityEngine;
 
 public class HurtboxComponent : MonoBehaviour
 {
-    [SerializeField] public Vector2 Direction;
-    [SerializeField] public float Damage;
-    [SerializeField] public float Multiplier;
-    [SerializeField] public bool Enabled;
+    public Vector2 Direction;
+    public float Damage;
+    public float Multiplier;
+    public bool Enabled;
+    private AttackManager parentAttackManager;
+
+    private void Start()
+    {
+        parentAttackManager = GetComponentInParent<AttackManager>();
+    }
     
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -31,6 +37,7 @@ public class HurtboxComponent : MonoBehaviour
         PlayerInfo playerInfo = player.gameObject.GetComponent<PlayerInfo>();
         playerPhysics.velocity += Direction * (Multiplier * (playerInfo.Damage + 1));
         playerInfo.Damage += Damage;
+        Enabled = true;
     }
 
     private void OnTriggerStay2D(Collider2D other)
