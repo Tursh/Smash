@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using UnityEngine;
 using UnityEngine.Assertions.Comparers;
 using UnityEngine.Playables;
@@ -31,30 +32,55 @@ public class FrameDataPhysical
     public readonly float Radius;
     public Vector2 Direction;
     public Vector2 Offset;
+    public GameObject HurtboxPrefab;
+    public int FramesOfLife;
 
-    public FrameDataPhysical()
+    public FrameDataPhysical(GameObject hurtboxPrefab)
     {
-        Damage = 0;
-        Multiplier = 0;
+        Damage = 0.1f;
+        Multiplier = 1;
         Radius = 1;
         Direction = Vector2.zero;
         Offset = Vector2.zero;
+        HurtboxPrefab = hurtboxPrefab;
+        FramesOfLife = 1;
     }
 
-    public FrameDataPhysical(float Damage, float Multiplier, float Radius, Vector2 Direction, Vector2 Offset)
+    public FrameDataPhysical(
+        GameObject hurtboxPrefab,
+        Vector2 direction,
+        Vector2 offset,
+        float damage = 0.1f, 
+        float multiplier = 1, 
+        float radius = 1,
+        int framesOfLife = 1)
     {
-        this.Damage = Damage;
-        this.Multiplier = Multiplier;
-        this.Radius = Radius;
-        this.Direction = Direction;
-        this.Offset = Offset;
+        Damage = damage;
+        Multiplier = multiplier;
+        Radius = radius;
+        Direction = direction;
+        Offset = offset;
+        HurtboxPrefab = hurtboxPrefab;
+        FramesOfLife = framesOfLife;
     }
 
-    public FrameDataPhysical reversed()
+
+    public FrameDataPhysical Reversed()
     {
-        return new FrameDataPhysical(Damage,
-            Multiplier, Radius, new Vector2(-Direction.x, Direction.y), new Vector2(-Offset.x, Offset.y));
-    } 
+        return new FrameDataPhysical(
+            HurtboxPrefab,
+            new Vector2(-Direction.x, Direction.y),
+            new Vector2(-Offset.x, Offset.y),
+            Damage,
+            Multiplier,
+            Radius );
+    }
+
+    public void Reverse()
+    {
+        Direction = new Vector2(-Direction.x,Direction.y);
+        Offset = new Vector2(-Offset.x, Offset.y);
+    }
 }
 
 public class FrameDataProjectile
@@ -64,37 +90,54 @@ public class FrameDataProjectile
     public readonly float Radius;
     public Vector2 Direction;
     public Vector2 Velocity;
-    public float TimeToLive;
+    public GameObject ProjectilePrefab;
+    public readonly int FramesOfLife;
     
-    public FrameDataProjectile()
+    public FrameDataProjectile(GameObject projectilePrefab)
     {
+        ProjectilePrefab = projectilePrefab;
         Damage = 1;
         Multiplier = 1;
         Radius = 1;
         Direction = Vector2.right;
         Velocity = Vector2.right;
-        TimeToLive = 1;
+        FramesOfLife = 60;
     }
-    public FrameDataProjectile(float damage, float multiplier, float radius, Vector2 direction, Vector2 velocity, float timeToLive)
+    public FrameDataProjectile(
+        GameObject projectilePrefab,
+        Vector2 direction, 
+        Vector2 velocity,
+        float damage = 1, 
+        float multiplier = 1, 
+        float radius = 1,
+        int framesOfLife = 60)
     {
         Damage = damage;
         Multiplier = multiplier;
         Radius = radius;
         Direction = direction;
         Velocity = velocity;
-        TimeToLive = timeToLive;
+        FramesOfLife = framesOfLife;
+        ProjectilePrefab = projectilePrefab;
     }
     
 
-    public FrameDataProjectile reversed()
+    public FrameDataProjectile Reversed()
     {
         return new FrameDataProjectile(
-            Damage, 
+            ProjectilePrefab,
+            new Vector2(-Direction.x, Direction.y), 
+            new Vector2(-Velocity.x, Velocity.y),
+            Damage,
             Multiplier,
             Radius,
-            new Vector2(-Direction.x, Direction.y), 
-            new Vector2(-Velocity.x, Velocity.y), 
-            TimeToLive);
+            FramesOfLife);
+    }
+
+    public void Reverse()
+    {
+        Direction = new Vector2(-Direction.x, Direction.y);
+        Velocity = new Vector2(-Velocity.x, Velocity.y);
     }
 }
 

@@ -8,14 +8,12 @@ public class Projectile : MonoBehaviour
     public float Damage;
     public Vector2 Direction;
     public Vector2 Velocity;
-    public float TimeLeftToLive;
+    public float FramesOfLife;
     void FixedUpdate()
     {
-        TimeLeftToLive -= Time.deltaTime;
-        
         transform.position += new Vector3(Velocity.x,Velocity.y);
         
-        if (TimeLeftToLive <= 0)
+        if (FramesOfLife-- <= 0)
             Destroy(gameObject);
     }
 

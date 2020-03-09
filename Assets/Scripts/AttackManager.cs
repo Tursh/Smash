@@ -15,18 +15,15 @@ public enum AttackState
 public class AttackManager : MonoBehaviour
 {
     public AttackState AttackState = AttackState.Idle;
-    public GameObject[] ProjectilePrefabs;
     private CharacterData CharacterData;
     private PlayerPhysics PlayerPhysics;
     private Attack[] CurrentAttack;
     private int CurrentAttackFrame = 0;
-    private HurtboxComponent[] HurtboxComponents; 
 
     void Start()
     {
         PlayerPhysics = GetComponent<PlayerPhysics>();
         CharacterData = GetComponent<CharacterData>();
-        HurtboxComponents = GetComponentsInChildren<HurtboxComponent>();
 
         PlayerPhysics.OnGroundEventHandler += OnGround;
         
@@ -52,7 +49,6 @@ public class AttackManager : MonoBehaviour
     {
         AttackState = AttackState.Idle;
         CurrentAttackFrame = 0;
-        HurtboxComponents.All(o => o.Enabled = false);
     }
 
     void OnGround(object sender, OnGroundEnventArgs args)
