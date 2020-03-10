@@ -121,7 +121,6 @@ public class PlayerPhysics : MonoBehaviour
         {
             if (PlayerState != PlayerState.OnGround)
             {
-                Debug.Log("OnGround");
                 //Set the player on ground
                 PlayerState = PlayerState.OnGround;
                 transform.SetParent(other.transform);
