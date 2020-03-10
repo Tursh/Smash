@@ -3,17 +3,60 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using UnityEngine.Playables;
+using UnityEngine.InputSystem;
 
 public abstract class CharacterData : MonoBehaviour
 {
-    public abstract AttackSet AttackSet { get; set; }
+    public virtual float mvSpeed { get; set; } = 0.025f;
+    public virtual float airResistance { get; set; } = 0.9f;
+    public virtual float gravity { get; set; } = -0.05f;
+    public virtual float jumpCooldown { get; set; } = 0.25f;
+    public abstract GameObject[] Prefabs { get; set; }
     
-    protected static Func<GameObject,bool> SimplePhysicalAttack(FrameDataPhysical frameDataPhysical)
-    {
+    protected Vector2 LeftJoystickPosition;
+    protected Vector2 RightJoystickPosition;
+    protected float LTPosition;
+    protected float RTPosition;
 
+
+    protected virtual void OnLeftJoystick(InputValue value)
+    {
+        LeftJoystickPosition = value.Get<Vector2>();
+    }
+
+    protected virtual void OnLeftJoystickPress(){}
+
+    protected virtual void OnRightJoystick(InputValue value)
+    {
+        RightJoystickPosition = value.Get<Vector2>();
+    }
+    protected virtual void OnRightJoystickPress(){}
+    protected virtual void OnA(){}
+    protected virtual void OnB(){}
+    protected virtual void OnX(){}
+    protected virtual void OnY(){}
+    protected virtual void OnLB(){}
+    protected virtual void OnRB(){}
+
+    protected virtual void OnLT(InputValue value)
+    {
+        LTPosition = value.Get<float>();
+    }
+
+    protected virtual void OnRT(InputValue value)
+    {
+        RTPosition = value.Get<float>();
+    }
+    protected virtual void OnDPad(InputValue value){}
+    protected virtual void OnStart(){}
+    protected virtual void OnSelect(){}
+    
+    
+    protected static Func<GameObject, bool> SimplePhysicalAttack(FrameDataPhysical frameDataPhysical)
+    {
         return o =>
         {
-            GameObject hurtboxGameObject = Instantiate(frameDataPhysical.HurtboxPrefab, o.transform);
+            GameObject hurtboxGameObject = Instantiate(o.GetComponent<CharacterData>().Prefabs[frameDataPhysical.PrefabIndex], o.transform);
             CircleCollider2D circleCollider2D = hurtboxGameObject.GetComponent<CircleCollider2D>();
             HurtboxComponent hurtboxComponent = hurtboxGameObject.GetComponent<HurtboxComponent>();
 
@@ -32,8 +75,8 @@ public abstract class CharacterData : MonoBehaviour
             return true;
         };
     }
-    
-    protected static Func<GameObject,bool> ComplexPhysicalAttack(FrameDataPhysical[] framesDataPhysical)
+
+    protected static Func<GameObject, bool> ComplexPhysicalAttack(FrameDataPhysical[] framesDataPhysical)
     {
         return o =>
         {
@@ -44,12 +87,12 @@ public abstract class CharacterData : MonoBehaviour
                     currentFrameData = framesDataPhysical[i].Reversed();
                 else
                     currentFrameData = framesDataPhysical[i];
-                
-                GameObject hurtboxGameObject = Instantiate(currentFrameData.HurtboxPrefab, o.transform);
+
+                GameObject hurtboxGameObject = Instantiate(o.GetComponent<CharacterData>().Prefabs[framesDataPhysical[i].PrefabIndex], o.transform);
                 CircleCollider2D circleCollider2D = hurtboxGameObject.GetComponent<CircleCollider2D>();
                 HurtboxComponent hurtboxComponent = hurtboxGameObject.GetComponent<HurtboxComponent>();
-                
-                
+
+
                 circleCollider2D.radius = currentFrameData.Radius;
                 circleCollider2D.offset = currentFrameData.Offset;
                 hurtboxComponent.Damage = currentFrameData.Damage;
@@ -72,7 +115,10 @@ public abstract class CharacterData : MonoBehaviour
             else
                 tempFrameDataProjectile = frameDataProjectile;
 
-            GameObject projectileGameObject = Instantiate(frameDataProjectile.ProjectilePrefab,o.transform.position, o.transform.localRotation);
+            GameObject projectileGameObject = Instantiate(
+                o.GetComponent<CharacterData>().Prefabs[frameDataProjectile.PrefabIndex], 
+                o.transform.position,
+                o.transform.localRotation);
             Projectile projectile = projectileGameObject.GetComponent<Projectile>();
             projectile.FramesOfLife = tempFrameDataProjectile.FramesOfLife;
             projectile.Multiplier = tempFrameDataProjectile.Multiplier;
@@ -81,9 +127,8 @@ public abstract class CharacterData : MonoBehaviour
             projectile.Velocity = tempFrameDataProjectile.Velocity;
             projectile.FramesOfLife = tempFrameDataProjectile.FramesOfLife;
             projectile.GetComponent<CircleCollider2D>().radius = tempFrameDataProjectile.Radius;
-            
+
             return true;
         };
-
     }
 }

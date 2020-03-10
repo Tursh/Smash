@@ -29,24 +29,28 @@ public class OnGroundEnventArgs
 
 public class PlayerPhysics : MonoBehaviour
 {
-    [SerializeField] private float mvSpeed = 0.025f, airResistance = 0.9f, gravity = -0.05f, jumpCooldown = 0.25f;
+
     [SerializeField] private GameObject dummyPrefab;
     [SerializeField] public PlayerState PlayerState = PlayerState.InAir;
 
     private AttackManager AttackManager;
+    private BoxCollider2D BoxCollider;
+    private CharacterData CharacterData;
 
     public Vector2 Facing = Vector2.left;
     public Vector2 velocity;
     private Vector2 startWindowPosition, endWindowPosition, windowSizeInWorld;
 
-    BoxCollider2D BoxCollider;
     
-    private int playerLayer = 9, stateLayer = 8;
+    private int playerLayer = 9, stageLayer = 8;
+    
+    public EventHandler<OnGroundEnventArgs> OnGroundEventHandler;
 
     private void Start()
     {
         BoxCollider = GetComponent<BoxCollider2D>();
         AttackManager = GetComponent<AttackManager>();
+        CharacterData = GetComponent<CharacterData>();
         Camera cam = Camera.main;
 
         startWindowPosition = cam.ScreenToWorldPoint(new Vector3(0, 0, 12));
@@ -62,13 +66,15 @@ public class PlayerPhysics : MonoBehaviour
             dummies[i].GetComponent<DummyComponent>().PlayerReference = gameObject;
         }
     }
-    public EventHandler<OnGroundEnventArgs> OnGroundEventHandler;
 
     private void OnCollisionEnter2D(Collision2D other)
     {
         //TODO: Do damage depending on the velocity
 
-        if (other.collider.gameObject.layer == stateLayer)
+        if (other.otherCollider.gameObject.layer != playerLayer)
+            return;
+        
+        if (other.collider.gameObject.layer == stageLayer)
         {
             Vector3 normal = other.contacts[0].normal;
 
@@ -119,7 +125,9 @@ public class PlayerPhysics : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D other)
     {
-        if (other.collider.gameObject.layer == stateLayer)
+        if (other.otherCollider.gameObject.layer != playerLayer)
+            return;
+        if (other.collider.gameObject.layer == stageLayer)
         {
             PlayerState = PlayerState.InAir;
             transform.SetParent(null);
@@ -128,70 +136,21 @@ public class PlayerPhysics : MonoBehaviour
 
     public void FixedUpdate()
     {
-        velocity *= airResistance;
+        velocity *= CharacterData.airResistance;
 
         if (PlayerState == PlayerState.InAir)
-            velocity.y += gravity;
+            velocity.y += CharacterData.gravity;
         
         transform.Translate(velocity);
 
         CheckWindowBorders();
     }
 
-    public void Move(Direction direction)
-    {
-        if (PlayerState != PlayerState.OnEdge && AttackManager.AttackState != AttackState.Attacking)
-            switch (direction)
-            {
-                case Direction.Left:
-                    velocity += Vector2.left * mvSpeed;
-                    
-                    if (PlayerState == PlayerState.OnGround)
-                        Facing = Vector2.left;
-                    break;
-                case Direction.Right:
-                    velocity += Vector2.right * mvSpeed;
-                    if (PlayerState == PlayerState.OnGround)
-                        Facing = Vector2.right;
-                    break;
-                case Direction.Up:
-
-                    break;
-                case Direction.Down:
-                    break;
-            }
-    }
-
-    public void StartMovement(Direction direction)
-    {
-        if (PlayerState != PlayerState.OnEdge && AttackManager.AttackState != AttackState.Attacking)
-            switch (direction)
-            {
-                case Direction.Left:
-                    velocity += Vector2.left * (mvSpeed * 10);
-                    if (PlayerState == PlayerState.OnGround)
-                        Facing = Vector2.left;
-                    break;
-                case Direction.Right:
-                    velocity += Vector2.right * (mvSpeed * 10);
-                    if (PlayerState == PlayerState.OnGround)
-                        Facing = Vector2.right;
-                    break;
-                
-                case Direction.Up:
-                    //GameObject.Find("Stage").transform.Translate(Vector3.up * 0.1f);
-                    break;
-                case Direction.Down:
-                    velocity += Vector2.down * (mvSpeed * 10);
-                    break;
-            }
-    }
-
     private float lastJump;
 
     public void Jump()
     {
-        if (Time.time - lastJump >= jumpCooldown && AttackManager.AttackState != AttackState.Attacking)
+        if (Time.time - lastJump >= CharacterData.jumpCooldown && AttackManager.AttackState != AttackState.Attacking)
         {
             velocity.y = 1;
             lastJump = Time.time;

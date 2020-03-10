@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5070257731587802992}
   - component: {fileID: 2035568924023848698}
   - component: {fileID: 4043399674881395040}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Hurtbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -57,10 +57,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 5280320822287857134}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8ec20fb6a5d8584e95404b1e6e6ad2e, type: 3}
+  m_Script: {fileID: 11500000, guid: 52850a5b13a74354daf637e9ae24a15e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Direction: {x: 0, y: 0}
   Damage: 0
   Multiplier: 0
-  Enabled: 0
+  FramesOfLife: 0

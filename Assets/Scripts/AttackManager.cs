@@ -55,42 +55,4 @@ public class AttackManager : MonoBehaviour
     {
         DisableAttack();
     }
-
-
-    public void Light()
-    {
-        if (AttackState == AttackState.Idle)
-        {
-            if (PlayerPhysics.PlayerState == PlayerState.OnGround)
-            {
-                CurrentAttack = CharacterData.AttackSet.LightGrounded.Forward;
-            }
-            else if (PlayerPhysics.PlayerState == PlayerState.InAir)
-            {
-                CurrentAttack = CharacterData.AttackSet.LightAerial.Forward;
-            }
-
-            CurrentAttackFrame = 0;
-            AttackState = AttackState.Attacking;
-        }
-    }
-
-    
-    public void Heavy()
-    {
-        if (AttackState == AttackState.Idle)
-        {
-            if (PlayerPhysics.PlayerState == PlayerState.OnGround)
-            {
-                CurrentAttack = CharacterData.AttackSet.HeavyGrounded.Forward;
-            }
-            else if (PlayerPhysics.PlayerState == PlayerState.InAir)
-            {
-                CurrentAttack = CharacterData.AttackSet.HeavyAerial.Forward;
-            }
-
-            CurrentAttackFrame = 0;
-            AttackState = AttackState.Attacking;
-        }
-    }
 }

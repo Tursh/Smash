@@ -1,28 +1,42 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.InputSystem;
+
+
+[RequireComponent(
+    typeof(AttackManager))]
+[RequireComponent(
+    typeof(PlayerPhysics),
+    typeof(PlayerInfo))]
 
 public class DefaultCharacter : CharacterData
 {
-    private static GameObject[] ProjectilePrefabs;
-    private static GameObject[] HurtboxPrefabs;
+
+    public override GameObject[] Prefabs { get; set; }
+
+    private PlayerPhysics playerPhysics;
     
-    public override AttackSet AttackSet { get; set; } = new AttackSet(new AttackGroup(
-            new Attack[] { },
-            new Attack[] { },
-            new Attack[]
-            {
-                new Attack(SimplePhysicalAttack(new FrameDataPhysical(HurtboxPrefabs[0])))
-            },
-            new Attack[] { }),
-        new AttackGroup(),
-        new AttackGroup(
-            new Attack[] { },
-            new Attack[] { },
-            new Attack[] { },
-            new Attack[] { }),
-        new AttackGroup());
-    
-    
+    private void Start()
+    {
+        playerPhysics = GetComponent<PlayerPhysics>();
+    }
+
+    private void FixedUpdate()
+    {
+        playerPhysics.velocity.x += LeftJoystickPosition.x * mvSpeed;
+    }
+
+    protected override void OnB()
+    {
+        playerPhysics.Jump();
+    }
+
+    protected override void OnY()
+    {
+        OnB();
+    }
+
 }
