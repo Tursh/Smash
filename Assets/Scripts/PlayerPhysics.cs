@@ -73,11 +73,9 @@ public class PlayerPhysics : MonoBehaviour
 
         if (other.otherCollider.gameObject.layer != playerLayer)
             return;
-        
+
         if (other.collider.gameObject.layer == stageLayer)
         {
-            Vector3 normal = other.contacts[0].normal;
-
             //Check if normal is pointed downwards
             if (normal == new Vector3(0, 1, 0))
             {
@@ -89,22 +87,15 @@ public class PlayerPhysics : MonoBehaviour
             if (normal.y != 0)
             {
                 Vector2 position = transform.position;
-
-                position.y = (PlayerState == PlayerState.OnGround
-                                 ? other.collider.bounds.max
-                                 : other.collider.bounds.min).y +
-                             BoxCollider.bounds.extents.y * normal.y;
-
+                position.y =
+                    (PlayerState == PlayerState.OnGround ? other.collider.bounds.max : other.collider.bounds.min).y
+                    + BoxCollider.bounds.extents.y * normal.y;
                 transform.position = position;
+
                 velocity.y = 0;
             }
             else
             {
-                //Vector2 position = transform.position;
-                //position.x = (normal.x > 0 ? other.collider.bounds.max : other.collider.bounds.min).x +
-                //             (bc.bounds.extents.x + 0.03f) * normal.x;
-                //transform.position = position;
-                //velocity.x = 0;
                 velocity = Vector2.zero;
 
                 PlayerState = PlayerState.OnEdge;
@@ -120,6 +111,19 @@ public class PlayerPhysics : MonoBehaviour
                 transform.position = edgePosition;
             }
         }
+        else if (other.gameObject.layer == semiPlatformLayer && normal == new Vector3(0, 1, 0))
+        {
+            if (PlayerState != PlayerState.OnGround)
+            {
+                //Set the player on ground
+                PlayerState = PlayerState.OnGround;
+                transform.SetParent(other.transform);
+                OnGroundEventHandler?.Invoke(this, new OnGroundEnventArgs());
+
+                //Set player to the top of the platform
+                Vector2 position = transform.position;
+                position.y = other.collider.bounds.max.y + BoxCollider.bounds.extents.y;
+                transform.position = position;
 
     }
 
@@ -171,21 +175,22 @@ public class PlayerPhysics : MonoBehaviour
             //Is the player partly in the border
             if (bounds.min[axis] < startWindowPosition[axis] && bounds.max[axis] < startWindowPosition[axis])
             {
-                    //Set to the other side of the window
-                    position[axis] += windowSizeInWorld[axis];
-                    transform.position = position;
+                //Set to the other side of the window
+                position[axis] += windowSizeInWorld[axis];
+                transform.position = position;
             }
 
             //To right / up
             else if (endWindowPosition[axis] < bounds.max[axis] && endWindowPosition[axis] < bounds.min[axis])
             {
-                    //Set to the other side of the window
-                    position[axis] -= windowSizeInWorld[axis];
-                    transform.position = position;
+                //Set to the other side of the window
+                position[axis] -= windowSizeInWorld[axis];
+                transform.position = position;
             }
 
             Vector3 dummyPositon = dummies[axis].transform.position;
-            dummyPositon[axis] = transform.position[axis] + (transform.position[axis] > 0 ? -1 : 1) * windowSizeInWorld[axis];
+            dummyPositon[axis] = transform.position[axis] +
+                                 (transform.position[axis] > 0 ? -1 : 1) * windowSizeInWorld[axis];
             dummyPositon[(axis + 1) % 2] = transform.position[(axis + 1) % 2];
             dummies[axis].transform.position = dummyPositon;
         }
