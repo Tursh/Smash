@@ -142,10 +142,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 4946606578855365968}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 481c345152c844f42905dc11bb66ecb4, type: 3}
+  m_Script: {fileID: 11500000, guid: 4cb05227c0ff60a4b8f894f0b7ccdf38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AttackState: 0
+  dummyPrefab: {fileID: 4946606578855365968, guid: 33e9b84ded5e74e5ea4f9381fdd888e5,
+    type: 3}
+  PlayerState: 1
+  Facing: {x: -1, y: 0}
+  velocity: {x: 0, y: 0}
 --- !u!114 &885142819419708378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -155,7 +159,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4946606578855365968}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0bc6d0b8e96e31346abd970c8c9c4cfe, type: 3}
+  m_Script: {fileID: 11500000, guid: b2fe2d9c139169d40804459bffee49c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &472879519311320460
@@ -167,7 +171,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4946606578855365968}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9fad4b506b9485d48833b383f954cdf3, type: 3}
+  m_Script: {fileID: 11500000, guid: 5636291410be363cc9b1705f6b319204, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Player: 1
@@ -182,18 +186,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 4946606578855365968}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20db3823202744341b0b21382d39f451, type: 3}
+  m_Script: {fileID: 11500000, guid: 0c1f5d5b2becb82919c3541ba9e5b009, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mvSpeed: 0.025
-  airResistance: 0.9
-  gravity: -0.05
-  jumpCooldown: 0.25
-  dummyPrefab: {fileID: 4946606578855365968, guid: 4b49016f4bead2245a3e8d9ebcde4b47,
-    type: 3}
-  PlayerState: 1
-  Facing: {x: -1, y: 0}
-  velocity: {x: 0, y: 0}
+  AttackState: 0
 --- !u!114 &8401654285690579820
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,7 +202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: 9c4e10caf7bbd2945b52b9e6b87f3a28,
+  m_Actions: {fileID: -944628639613478452, guid: bff27701087dcf383b1fe064c2133305,
     type: 3}
   m_NotificationBehavior: 0
   m_UIInputModule: {fileID: 0}

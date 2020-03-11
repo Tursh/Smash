@@ -22,14 +22,12 @@ public enum PlayerState
 }
 
 
-
 public class OnGroundEnventArgs
 {
 }
 
 public class PlayerPhysics : MonoBehaviour
 {
-
     [SerializeField] private GameObject dummyPrefab;
     [SerializeField] public PlayerState PlayerState = PlayerState.InAir;
 
@@ -41,9 +39,9 @@ public class PlayerPhysics : MonoBehaviour
     public Vector2 velocity;
     private Vector2 startWindowPosition, endWindowPosition, windowSizeInWorld;
 
-    
-    private int playerLayer = 9, stageLayer = 8;
-    
+
+    private int playerLayer = 9, stageLayer = 8, semiPlatformLayer = 12;
+
     public EventHandler<OnGroundEnventArgs> OnGroundEventHandler;
 
     private void Start()
@@ -70,6 +68,7 @@ public class PlayerPhysics : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D other)
     {
         //TODO: Do damage depending on the velocity
+        Vector3 normal = other.contacts[0].normal;
 
         if (other.otherCollider.gameObject.layer != playerLayer)
             return;
@@ -124,7 +123,8 @@ public class PlayerPhysics : MonoBehaviour
                 Vector2 position = transform.position;
                 position.y = other.collider.bounds.max.y + BoxCollider.bounds.extents.y;
                 transform.position = position;
-
+            }
+        }
     }
 
     private void OnCollisionExit2D(Collision2D other)
@@ -144,7 +144,7 @@ public class PlayerPhysics : MonoBehaviour
 
         if (PlayerState == PlayerState.InAir)
             velocity.y += CharacterData.gravity;
-        
+
         transform.Translate(velocity);
 
         CheckWindowBorders();
