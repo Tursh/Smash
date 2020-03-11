@@ -38,5 +38,4 @@ public class DefaultCharacter : CharacterData
     {
         OnB();
     }
-
 }

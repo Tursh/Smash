@@ -124,6 +124,30 @@
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "KeyA",
+                    "type": "Button",
+                    "id": "b5a8dd48-7eb7-4504-aed2-b05d924f730c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=2)"
+                },
+                {
+                    "name": "KeyD",
+                    "type": "Button",
+                    "id": "e3be107f-6f15-4565-84e5-b1260f1890a1",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Press(behavior=2)"
+                },
+                {
+                    "name": "KeySpace",
+                    "type": "Button",
+                    "id": "6a4e3ecb-5e54-4bc4-955b-d3f96cfcd50b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -289,6 +313,39 @@
                     "processors": "",
                     "groups": "",
                     "action": "RightJoystickPress",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f5f0bc3c-4d05-4210-ae84-f2d32302e318",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "KeyA",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cfa2142f-619f-495e-ac13-c811a6cbf6a1",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "KeyD",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "53b8a0f9-b4ac-4a35-a998-cc0c898fb24f",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "KeySpace",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

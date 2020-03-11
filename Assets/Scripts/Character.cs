@@ -18,17 +18,36 @@ public abstract class CharacterData : MonoBehaviour
     protected float LTPosition;
     protected float RTPosition;
 
-
-    protected virtual void OnLeftJoystick(InputValue value)
+    protected virtual void OnKeySpace()
     {
-        LeftJoystickPosition = value.Get<Vector2>();
+        gameObject.SendMessage("OnB");
+    }
+
+    protected virtual void OnKeyA(InputValue value)
+    { 
+        Debug.Log(value.Get<bool>());
+        
+        LeftJoystickPosition = Vector2.left;
+    }
+
+    protected virtual void OnKeyD(InputAction.CallbackContext value)
+    {
+        if (value.performed)
+            LeftJoystickPosition = Vector2.right;
+        else
+            LeftJoystickPosition = Vector2.zero;
+    }
+    
+    protected virtual void OnLeftJoystick(InputAction.CallbackContext value)
+    {
+        LeftJoystickPosition = value.ReadValue<Vector2>();
     }
 
     protected virtual void OnLeftJoystickPress(){}
 
-    protected virtual void OnRightJoystick(InputValue value)
+    protected virtual void OnRightJoystick(InputAction.CallbackContext value)
     {
-        RightJoystickPosition = value.Get<Vector2>();
+        RightJoystickPosition = value.ReadValue<Vector2>();
     }
     protected virtual void OnRightJoystickPress(){}
     protected virtual void OnA(){}
