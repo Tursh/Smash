@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 101736398}
   - component: {fileID: 101736397}
   - component: {fileID: 101736396}
+  - component: {fileID: 101736400}
   - component: {fileID: 101736395}
   m_Layer: 12
   m_Name: Blue Stage
@@ -242,6 +243,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &101736400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 101736394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cde0412e6f7faef59ddc617b454aa0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dummyPrefab: {fileID: 2315099279880968067, guid: a6fc23f5de988ae6e93d0c0a13123e42,
+    type: 3}
 --- !u!1 &220217363
 GameObject:
   m_ObjectHideFlags: 0
@@ -346,6 +361,7 @@ GameObject:
   - component: {fileID: 362364324}
   - component: {fileID: 362364323}
   - component: {fileID: 362364322}
+  - component: {fileID: 362364327}
   - component: {fileID: 362364326}
   m_Layer: 12
   m_Name: Green Stage
@@ -455,6 +471,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   KeyPointCount: 5
   Precision: 75
+--- !u!114 &362364327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 362364321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cde0412e6f7faef59ddc617b454aa0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dummyPrefab: {fileID: 6499281641674566209, guid: 72ec69516ea31f81589a72123cffca01,
+    type: 3}
 --- !u!1 &406090601
 GameObject:
   m_ObjectHideFlags: 0
@@ -550,6 +580,7 @@ GameObject:
   - component: {fileID: 1801781589}
   - component: {fileID: 1801781588}
   - component: {fileID: 1801781587}
+  - component: {fileID: 1801781591}
   - component: {fileID: 1801781586}
   m_Layer: 12
   m_Name: Red Stage
@@ -567,11 +598,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1801781585}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef3f6a9ba20388608a0fdadbfc46b7c2, type: 3}
+  m_Script: {fileID: 11500000, guid: 1cde0412e6f7faef59ddc617b454aa0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  KeyPointCount: 5
-  Precision: 75
+  dummyPrefab: {fileID: 2594392480657516790, guid: 6db19463f49a5c28190f50afe1a5d188,
+    type: 3}
 --- !u!61 &1801781587
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -659,6 +690,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1801781591
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1801781585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef3f6a9ba20388608a0fdadbfc46b7c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  KeyPointCount: 5
+  Precision: 75
 --- !u!1001 &2115000602
 PrefabInstance:
   m_ObjectHideFlags: 0

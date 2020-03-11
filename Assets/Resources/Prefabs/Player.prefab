@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 4048038431612926618}
   - component: {fileID: 3535074169587937183}
   - component: {fileID: 1163946364982242745}
-  - component: {fileID: 2288033685974245555}
+  - component: {fileID: 321199552635610285}
   m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
@@ -174,10 +174,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 4946606578855365968}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9c8732472bd9cf4398976f044de453c, type: 3}
+  m_Script: {fileID: 11500000, guid: 4cb05227c0ff60a4b8f894f0b7ccdf38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AttackState: 0
+  PlayerState: 1
+  Facing: {x: -1, y: 0}
+  velocity: {x: 0, y: 0}
 --- !u!114 &4048038431612926618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -187,14 +189,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 4946606578855365968}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b82556989edab734c84457dc3b5bbe2f, type: 3}
+  m_Script: {fileID: 11500000, guid: 5636291410be363cc9b1705f6b319204, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dummyPrefab: {fileID: 4946606578855365968, guid: 8377235368e1071428c58578abd27c13,
-    type: 3}
-  PlayerState: 1
-  Facing: {x: -1, y: 0}
-  velocity: {x: 0, y: 0}
+  Player: 1
+  Damage: 0
+  Stocks: 4
 --- !u!114 &3535074169587937183
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -204,12 +204,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 4946606578855365968}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca920f5183096094080497c1ac2c4955, type: 3}
+  m_Script: {fileID: 11500000, guid: b2fe2d9c139169d40804459bffee49c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: 1
-  Damage: 0
-  Stocks: 4
 --- !u!114 &1163946364982242745
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -219,10 +216,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 4946606578855365968}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ea5801eb27b2f443876a942549480e4, type: 3}
+  m_Script: {fileID: 11500000, guid: 0c1f5d5b2becb82919c3541ba9e5b009, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2288033685974245555
+  AttackState: 0
+--- !u!114 &321199552635610285
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -231,9 +229,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 4946606578855365968}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca920f5183096094080497c1ac2c4955, type: 3}
+  m_Script: {fileID: 11500000, guid: 1cde0412e6f7faef59ddc617b454aa0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: 1
-  Damage: 0
-  Stocks: 4
+  dummyPrefab: {fileID: 4946606578855365968, guid: 33e9b84ded5e74e5ea4f9381fdd888e5,
+    type: 3}

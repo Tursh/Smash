@@ -28,7 +28,6 @@ public class OnGroundEnventArgs
 
 public class PlayerPhysics : MonoBehaviour
 {
-    [SerializeField] private GameObject dummyPrefab;
     [SerializeField] public PlayerState PlayerState = PlayerState.InAir;
 
     private AttackManager AttackManager;
@@ -37,9 +36,7 @@ public class PlayerPhysics : MonoBehaviour
 
     public Vector2 Facing = Vector2.left;
     public Vector2 velocity;
-    private Vector2 startWindowPosition, endWindowPosition, windowSizeInWorld;
-
-
+    
     private int playerLayer = 9, stageLayer = 8, semiPlatformLayer = 12;
 
     public EventHandler<OnGroundEnventArgs> OnGroundEventHandler;
@@ -49,20 +46,6 @@ public class PlayerPhysics : MonoBehaviour
         BoxCollider = GetComponent<BoxCollider2D>();
         AttackManager = GetComponent<AttackManager>();
         CharacterData = GetComponent<CharacterData>();
-        Camera cam = Camera.main;
-
-        startWindowPosition = cam.ScreenToWorldPoint(new Vector3(0, 0, 12));
-        endWindowPosition = cam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 12));
-        windowSizeInWorld = endWindowPosition - startWindowPosition;
-
-        for (int i = 0; i < 2; ++i)
-        {
-            dummies[i] =
-                Instantiate(dummyPrefab,
-                    startWindowPosition - Vector2.down * 10,
-                    Quaternion.identity);
-            dummies[i].GetComponent<DummyComponent>().PlayerReference = gameObject;
-        }
     }
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -146,8 +129,6 @@ public class PlayerPhysics : MonoBehaviour
             velocity.y += CharacterData.gravity;
 
         transform.Translate(velocity);
-
-        CheckWindowBorders();
     }
 
     private float lastJump;
@@ -161,38 +142,4 @@ public class PlayerPhysics : MonoBehaviour
         }
     }
 
-    private GameObject[] dummies = new GameObject[2];
-
-    void CheckWindowBorders()
-    {
-        Vector3 position = transform.position;
-        Bounds bounds = BoxCollider.bounds;
-
-        //x et y, x: 0, y: 1
-        for (int axis = 0; axis < 2; ++axis)
-        {
-            //To the left / down
-            //Is the player partly in the border
-            if (bounds.min[axis] < startWindowPosition[axis] && bounds.max[axis] < startWindowPosition[axis])
-            {
-                //Set to the other side of the window
-                position[axis] += windowSizeInWorld[axis];
-                transform.position = position;
-            }
-
-            //To right / up
-            else if (endWindowPosition[axis] < bounds.max[axis] && endWindowPosition[axis] < bounds.min[axis])
-            {
-                //Set to the other side of the window
-                position[axis] -= windowSizeInWorld[axis];
-                transform.position = position;
-            }
-
-            Vector3 dummyPositon = dummies[axis].transform.position;
-            dummyPositon[axis] = transform.position[axis] +
-                                 (transform.position[axis] > 0 ? -1 : 1) * windowSizeInWorld[axis];
-            dummyPositon[(axis + 1) % 2] = transform.position[(axis + 1) % 2];
-            dummies[axis].transform.position = dummyPositon;
-        }
-    }
 }

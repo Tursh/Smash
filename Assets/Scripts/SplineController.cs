@@ -167,6 +167,8 @@ public class SplineController : MonoBehaviour
 
         PointCount = stopPoint;
         Vector2[] splinePoints = new Vector2[PointCount];
+        
+        Debug.Log(lastDistance);
 
         for (int i = 0; i < stopPoint; ++i)
             splinePoints[i] = points[i];
