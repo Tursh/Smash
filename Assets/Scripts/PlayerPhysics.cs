@@ -30,7 +30,6 @@ public class PlayerPhysics : MonoBehaviour
 {
     [SerializeField] public PlayerState PlayerState = PlayerState.InAir;
 
-    private AttackManager AttackManager;
     private BoxCollider2D BoxCollider;
     private CharacterData CharacterData;
 
@@ -44,7 +43,6 @@ public class PlayerPhysics : MonoBehaviour
     private void Start()
     {
         BoxCollider = GetComponent<BoxCollider2D>();
-        AttackManager = GetComponent<AttackManager>();
         CharacterData = GetComponent<CharacterData>();
     }
 
@@ -131,15 +129,5 @@ public class PlayerPhysics : MonoBehaviour
         transform.Translate(velocity);
     }
 
-    private float lastJump;
-
-    public void Jump()
-    {
-        if (Time.time - lastJump >= CharacterData.jumpCooldown && AttackManager.AttackState != AttackState.Attacking)
-        {
-            velocity.y = 1;
-            lastJump = Time.time;
-        }
-    }
 
 }

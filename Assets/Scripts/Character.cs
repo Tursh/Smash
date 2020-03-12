@@ -5,72 +5,157 @@ using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.InputSystem;
 
+
+
 public abstract class CharacterData : MonoBehaviour
 {
     public virtual float mvSpeed { get; set; } = 0.025f;
     public virtual float airResistance { get; set; } = 0.9f;
     public virtual float gravity { get; set; } = -0.05f;
     public virtual float jumpCooldown { get; set; } = 0.25f;
+
     public abstract GameObject[] Prefabs { get; set; }
     
+    protected PlayerControls PlayerControls;
+    protected PlayerPhysics PlayerPhysics;
+
     protected Vector2 LeftJoystickPosition;
     protected Vector2 RightJoystickPosition;
     protected float LTPosition;
     protected float RTPosition;
 
-    protected virtual void OnKeySpace()
-    {
-        gameObject.SendMessage("OnB");
-    }
+    protected Attack Attack;
+    public AttackState AttackState = AttackState.Idle;
 
-    protected virtual void OnKeyA(InputValue value)
-    { 
-        Debug.Log(value.Get<bool>());
+    protected virtual void Awake()
+    {
+        Attack = new Attack();
+        PlayerControls = new PlayerControls();
+        PlayerPhysics = GetComponent<PlayerPhysics>();
+        PlayerPhysics.OnGroundEventHandler += OnGround;
         
-        LeftJoystickPosition = Vector2.left;
+        //vector2
+        PlayerControls.Gameplay.LeftJoystick.performed += LeftJoystickOnperformed;
+        PlayerControls.Gameplay.RightJoystick.performed += RightJoystickOnperformed;
+        PlayerControls.Gameplay.DPad.performed += DPadOnperformed;
+        
+        //value
+        PlayerControls.Gameplay.LT.performed += LTOnperformed;
+        PlayerControls.Gameplay.RT.performed += RTOnperformed;
+        
+        //boolean
+        PlayerControls.Gameplay.A.performed += AOnperformed;
+        PlayerControls.Gameplay.B.performed += BOnperformed;
+        PlayerControls.Gameplay.X.performed += XOnperformed;
+        PlayerControls.Gameplay.Y.performed += YOnperformed;
+        PlayerControls.Gameplay.LB.performed += LBOnperformed;
+        PlayerControls.Gameplay.RB.performed += RBOnperformed;
+        PlayerControls.Gameplay.Start.performed += StartOnperformed;
+        PlayerControls.Gameplay.Select.performed += SelectOnperformed;
+        PlayerControls.Gameplay.LeftJoystickPress.performed += LeftJoystickPressOnperformed;
+        PlayerControls.Gameplay.RightJoystickPress.performed += RightJoystickPressOnperformed;
+        
+        
+        //debug stuff with keyboard
+        PlayerControls.Gameplay.KeyA.performed += KeyAOnperformed;
+        PlayerControls.Gameplay.KeyD.performed += KeyDOnperformed;
+        PlayerControls.Gameplay.KeySpace.performed += KeySpaceOnperformed;
     }
 
-    protected virtual void OnKeyD(InputAction.CallbackContext value)
+    protected virtual void LeftJoystickOnperformed(InputAction.CallbackContext ctx)
     {
-        if (value.performed)
-            LeftJoystickPosition = Vector2.right;
+        LeftJoystickPosition = ctx.ReadValue<Vector2>();
+    }
+
+    protected virtual void RightJoystickOnperformed(InputAction.CallbackContext ctx)
+    {
+        RightJoystickPosition = ctx.ReadValue<Vector2>();
+    }
+
+    protected virtual void DPadOnperformed(InputAction.CallbackContext ctx) { }
+
+    protected virtual void LTOnperformed(InputAction.CallbackContext ctx)
+    {
+        LTPosition = ctx.ReadValue<float>();
+    }
+
+    protected virtual void RTOnperformed(InputAction.CallbackContext ctx)
+    {
+        RTPosition = ctx.ReadValue<float>();
+    }
+    protected virtual void AOnperformed(InputAction.CallbackContext ctx) { }
+    protected virtual void BOnperformed(InputAction.CallbackContext ctx) { }
+    protected virtual void XOnperformed(InputAction.CallbackContext ctx) { }
+    protected virtual void YOnperformed(InputAction.CallbackContext ctx) { }
+    protected virtual void LBOnperformed(InputAction.CallbackContext ctx) { }
+    protected virtual void RBOnperformed(InputAction.CallbackContext ctx) { }
+    protected virtual void StartOnperformed(InputAction.CallbackContext ctx) { }
+    protected virtual void SelectOnperformed(InputAction.CallbackContext ctx) { }
+    protected virtual void LeftJoystickPressOnperformed(InputAction.CallbackContext obj) { }
+    protected virtual void RightJoystickPressOnperformed(InputAction.CallbackContext obj) { }
+
+
+    //debug purposes
+    protected virtual void KeySpaceOnperformed(InputAction.CallbackContext ctx)
+    {
+        if (ctx.ReadValueAsButton()) Jump();
+    }
+
+    protected virtual void KeyAOnperformed(InputAction.CallbackContext ctx)
+    {
+        if (ctx.ReadValueAsButton())
+            LeftJoystickPosition += Vector2.left;
         else
-            LeftJoystickPosition = Vector2.zero;
-    }
-    
-    protected virtual void OnLeftJoystick(InputAction.CallbackContext value)
-    {
-        LeftJoystickPosition = value.ReadValue<Vector2>();
+            LeftJoystickPosition += Vector2.right;
     }
 
-    protected virtual void OnLeftJoystickPress(){}
-
-    protected virtual void OnRightJoystick(InputAction.CallbackContext value)
+    protected virtual void KeyDOnperformed(InputAction.CallbackContext ctx)
     {
-        RightJoystickPosition = value.ReadValue<Vector2>();
-    }
-    protected virtual void OnRightJoystickPress(){}
-    protected virtual void OnA(){}
-    protected virtual void OnB(){}
-    protected virtual void OnX(){}
-    protected virtual void OnY(){}
-    protected virtual void OnLB(){}
-    protected virtual void OnRB(){}
-
-    protected virtual void OnLT(InputValue value)
-    {
-        LTPosition = value.Get<float>();
+        if (ctx.ReadValueAsButton())
+            LeftJoystickPosition += Vector2.right;
+        else
+            LeftJoystickPosition += Vector2.left;
     }
 
-    protected virtual void OnRT(InputValue value)
+    protected float lastJump;
+    protected virtual void Jump()
     {
-        RTPosition = value.Get<float>();
+        if (Time.time - lastJump >= jumpCooldown && AttackState != AttackState.Attacking)
+        {
+            PlayerPhysics.velocity.y = 1;
+            lastJump = Time.time;
+        }
     }
-    protected virtual void OnDPad(InputValue value){}
-    protected virtual void OnStart(){}
-    protected virtual void OnSelect(){}
-    
-    
+
+    protected virtual void FixedUpdate()
+    {
+        if (!Attack.IsEmpty())
+        {
+            AttackState = AttackState.Attacking;
+            Attack.Pop().Act(gameObject);
+        }
+        else
+        {
+            AttackState = AttackState.Idle;
+        }
+    }
+
+    protected virtual void OnGround(object sender, OnGroundEnventArgs args)
+    {
+        DisableAttack();
+    }
+
+    protected void DisableAttack()
+    {
+        AttackState = AttackState.Idle;
+        Attack.Clear();
+    }
+
+    private void OnEnable()
+    {
+        PlayerControls.Enable();
+    }
+
     protected static Func<GameObject, bool> SimplePhysicalAttack(FrameDataPhysical frameDataPhysical)
     {
         return o =>
@@ -124,7 +209,7 @@ public abstract class CharacterData : MonoBehaviour
         };
     }
 
-    private static Func<GameObject, bool> simpleProjectileAttack(FrameDataProjectile frameDataProjectile)
+    private static Func<GameObject, bool> SimpleProjectileAttack(FrameDataProjectile frameDataProjectile)
     {
         return o =>
         {

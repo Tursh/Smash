@@ -28,7 +28,7 @@ public class LoopComponent : MonoBehaviour
                 Instantiate(dummyPrefab,
                     startWindowPosition - Vector2.down * 10,
                     Quaternion.identity);
-1            dummies[i].GetComponent<DummyComponent>().PlayerReference = gameObject;
+            dummies[i].GetComponent<DummyComponent>().PlayerReference = gameObject;
         }
     }
 

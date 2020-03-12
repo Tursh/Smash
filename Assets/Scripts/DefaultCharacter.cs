@@ -5,9 +5,6 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-
-[RequireComponent(
-    typeof(AttackManager))]
 [RequireComponent(
     typeof(PlayerPhysics),
     typeof(PlayerInfo))]
@@ -24,18 +21,13 @@ public class DefaultCharacter : CharacterData
         playerPhysics = GetComponent<PlayerPhysics>();
     }
 
-    private void FixedUpdate()
+    protected override void FixedUpdate()
     {
+        base.FixedUpdate();
         playerPhysics.velocity.x += LeftJoystickPosition.x * mvSpeed;
     }
 
-    protected override void OnB()
-    {
-        playerPhysics.Jump();
-    }
+    
+    
 
-    protected override void OnY()
-    {
-        OnB();
-    }
 }

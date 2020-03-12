@@ -1,65 +1,61 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using UnityEngine;
 using UnityEngine.Assertions.Comparers;
 using UnityEngine.Playables;
 
-public class AttackSet
+public enum AttackState
 {
-    public AttackGroup LightGrounded { get; set; }
-    public AttackGroup HeavyGrounded { get; set; }
-    public AttackGroup LightAerial { get; set; }
-    public AttackGroup HeavyAerial { get; set; }
-
-    public AttackSet(AttackGroup lightGrounded, AttackGroup heavyGrounded, AttackGroup lightAerial,
-        AttackGroup heavyAerial)
-    {
-        LightGrounded = lightGrounded;
-        HeavyGrounded = heavyGrounded;
-        LightAerial = lightAerial;
-        HeavyAerial = heavyAerial;
-    }
+    Attacking,
+    Idle
 }
 
-
-public class Attack
+public class FrameOfAttack
 {
     private Func<GameObject, bool> Function;
-    
-    public Attack()
+
+    public FrameOfAttack()
     {
         Function = o => false;
     }
 
-    public Attack(Func<GameObject, bool> function)
+    public FrameOfAttack(Func<GameObject, bool> function)
     {
         Function = function;
     }
     
-    public void Act(GameObject player)
+    public bool Act(GameObject player)
     {
-        Function(player);
+        return Function(player);
     }
 }
 
-public class AttackGroup
+public class Attack
 {
-    public Attack[] Up { get; private set; }
-    public Attack[] Down { get; private set; }
-    public Attack[] Forward { get; private set; }
-    public Attack[] Back { get; private set; }
+    private Stack<FrameOfAttack> FramesOfAttack;
 
-    public AttackGroup()
+    public Attack(FrameOfAttack[] framesOfAttack)
     {
+        FramesOfAttack = new Stack<FrameOfAttack>();
+        for (int i = framesOfAttack.Length; i < 1; --i)
+            FramesOfAttack.Push(framesOfAttack[i]);
     }
 
-    public AttackGroup(Attack[] up, Attack[] down, Attack[] forward, Attack[] back)
+    public Attack()
     {
-        Up = up;
-        Down = down;
-        Forward = forward;
-        Back = back;
+        FramesOfAttack = new Stack<FrameOfAttack>();
     }
+
+    public FrameOfAttack Pop()
+    {
+        if (FramesOfAttack.Any())
+            return FramesOfAttack.Pop();
+        return new FrameOfAttack();
+    }
+
+    public void Clear() => FramesOfAttack.Clear();
+    public bool IsEmpty() => !FramesOfAttack.Any();
 }
