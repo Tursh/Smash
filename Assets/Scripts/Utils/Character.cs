@@ -14,7 +14,7 @@ public abstract class CharacterData : MonoBehaviour
     public virtual float gravity { get; set; } = -0.05f;
     public virtual float jumpCooldown { get; set; } = 0.25f;
 
-    public abstract GameObject[] Prefabs { get; set; }
+    public GameObject[] Prefabs;
     
     protected PlayerControls PlayerControls;
     protected PlayerPhysics PlayerPhysics;
@@ -54,7 +54,6 @@ public abstract class CharacterData : MonoBehaviour
         PlayerControls.Gameplay.Select.performed += SelectOnperformed;
         PlayerControls.Gameplay.LeftJoystickPress.performed += LeftJoystickPressOnperformed;
         PlayerControls.Gameplay.RightJoystickPress.performed += RightJoystickPressOnperformed;
-        
         
         //debug stuff with keyboard
         PlayerControls.Gameplay.KeyA.performed += KeyAOnperformed;

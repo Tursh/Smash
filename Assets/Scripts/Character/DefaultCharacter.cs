@@ -12,9 +12,16 @@ using UnityEngine.InputSystem;
 public class DefaultCharacter : CharacterData
 {
 
-    public override GameObject[] Prefabs { get; set; }
-
     private PlayerPhysics playerPhysics;
+
+    private static FrameOfAttack[] AAttack;
+    static DefaultCharacter()
+    {
+        AAttack = new FrameOfAttack[]
+        {
+            new FrameOfAttack(SimplePhysicalAttack(new FrameDataPhysical()))
+        };
+    }
     
     private void Start()
     {
@@ -27,7 +34,16 @@ public class DefaultCharacter : CharacterData
         playerPhysics.velocity.x += LeftJoystickPosition.x * mvSpeed;
     }
 
-    
-    
+    protected override void Jump()
+    {
+        base.Jump();
+    }
 
+    protected override void AOnperformed(InputAction.CallbackContext ctx)
+    {
+        if (ctx.ReadValueAsButton())
+        {
+            
+        }
+    }
 }

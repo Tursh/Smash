@@ -35,25 +35,30 @@ public class FrameOfAttack
 
 public class Attack
 {
-    private Stack<FrameOfAttack> FramesOfAttack;
+    private Queue<FrameOfAttack> FramesOfAttack;
 
     public Attack(FrameOfAttack[] framesOfAttack)
     {
-        FramesOfAttack = new Stack<FrameOfAttack>();
-        for (int i = framesOfAttack.Length; i < 1; --i)
-            FramesOfAttack.Push(framesOfAttack[i]);
+        FramesOfAttack = new Queue<FrameOfAttack>();
+        Push(framesOfAttack);
     }
 
     public Attack()
     {
-        FramesOfAttack = new Stack<FrameOfAttack>();
+        FramesOfAttack = new Queue<FrameOfAttack>();
     }
 
     public FrameOfAttack Pop()
     {
         if (FramesOfAttack.Any())
-            return FramesOfAttack.Pop();
+            return FramesOfAttack.Dequeue();
         return new FrameOfAttack();
+    }
+
+    public void Push(FrameOfAttack[] frames)
+    {
+        for (int i = 0; i < frames.Length; ++i)
+            FramesOfAttack.Enqueue(frames[i]);
     }
 
     public void Clear() => FramesOfAttack.Clear();

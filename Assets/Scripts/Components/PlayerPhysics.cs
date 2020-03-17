@@ -33,6 +33,8 @@ public class PlayerPhysics : MonoBehaviour
     private BoxCollider2D BoxCollider;
     private CharacterData CharacterData;
 
+    public float MagicNumber;
+    
     public Vector2 Facing = Vector2.left;
     public Vector2 velocity;
     
@@ -69,7 +71,7 @@ public class PlayerPhysics : MonoBehaviour
                 Vector2 position = transform.position;
                 position.y =
                     (PlayerState == PlayerState.OnGround ? other.collider.bounds.max : other.collider.bounds.min).y
-                    + BoxCollider.bounds.extents.y * normal.y;
+                    + (BoxCollider.bounds.extents.y - BoxCollider.offset.y/MagicNumber) * normal.y;
                 transform.position = position;
 
                 velocity.y = 0;
