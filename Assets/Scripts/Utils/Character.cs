@@ -9,15 +9,16 @@ using UnityEngine.InputSystem;
 
 public abstract class CharacterData : MonoBehaviour
 {
-    public virtual float mvSpeed { get; set; } = 0.025f;
-    public virtual float airResistance { get; set; } = 0.9f;
-    public virtual float gravity { get; set; } = -0.05f;
-    public virtual float jumpCooldown { get; set; } = 0.25f;
+    public float mvSpeed = 0.025f;
+    public float airResistance = 0.9f;
+    public float gravity = -0.05f;
+    public float jumpCooldown = 0.25f;
+    public float JumpMultiplier = 10;
 
     public GameObject[] Prefabs;
     
     protected PlayerControls PlayerControls;
-    protected PlayerPhysics PlayerPhysics;
+    protected Rigidbody2D Rigidbody;
 
     protected Vector2 LeftJoystickPosition;
     protected Vector2 RightJoystickPosition;
@@ -31,8 +32,9 @@ public abstract class CharacterData : MonoBehaviour
     {
         Attack = new Attack();
         PlayerControls = new PlayerControls();
-        PlayerPhysics = GetComponent<PlayerPhysics>();
-        PlayerPhysics.OnGroundEventHandler += OnGround;
+        Rigidbody = GetComponent<Rigidbody2D>();
+        
+        //PlayerPhysics.OnGroundEventHandler += OnGround;
         
         //vector2
         PlayerControls.Gameplay.LeftJoystick.performed += LeftJoystickOnperformed;
@@ -121,7 +123,7 @@ public abstract class CharacterData : MonoBehaviour
     {
         if (Time.time - lastJump >= jumpCooldown && AttackState != AttackState.Attacking)
         {
-            PlayerPhysics.velocity.y = 1;
+            Rigidbody.AddForce(Vector2.up * JumpMultiplier, ForceMode2D.Impulse);
             lastJump = Time.time;
         }
     }

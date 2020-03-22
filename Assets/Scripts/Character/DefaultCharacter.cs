@@ -12,7 +12,7 @@ using UnityEngine.InputSystem;
 public class DefaultCharacter : CharacterData
 {
 
-    private PlayerPhysics playerPhysics;
+    private Rigidbody2D Rigidbody;
 
     private static FrameOfAttack[] AAttack;
     static DefaultCharacter()
@@ -25,13 +25,13 @@ public class DefaultCharacter : CharacterData
     
     private void Start()
     {
-        playerPhysics = GetComponent<PlayerPhysics>();
+        Rigidbody = GetComponent<Rigidbody2D>();
     }
 
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
-        playerPhysics.velocity.x += LeftJoystickPosition.x * mvSpeed;
+        Rigidbody.AddForce(Vector2.right * LeftJoystickPosition.x * mvSpeed);
     }
 
     protected override void Jump()
