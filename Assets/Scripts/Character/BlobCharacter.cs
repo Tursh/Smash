@@ -11,13 +11,8 @@ public class BlobCharacter : CharacterData
     {
         AAttack = new FrameOfAttack[]
         {
-            new FrameOfAttack(SimplePhysicalAttack(new FrameDataPhysical()))
+            new FrameOfAttack(AttackFunctions.SimplePhysicalAttack(new FrameDataPhysical()))
         };
-    }
-    
-    private void Start()
-    {
-        playerPhysics = GetComponent<PlayerPhysics>();
     }
 
     protected override void FixedUpdate()

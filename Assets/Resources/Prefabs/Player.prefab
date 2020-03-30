@@ -17,7 +17,6 @@ GameObject:
   - component: {fileID: 1098268336780644184}
   - component: {fileID: 572711067064739029}
   - component: {fileID: 4477059656697531098}
-  - component: {fileID: 1337615602}
   m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
@@ -120,13 +119,13 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4946606578855365968}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 1
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
@@ -145,7 +144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: ce174121ce58f6545917d8c47cef14f0,
+  m_Actions: {fileID: -944628639613478452, guid: 9c4e10caf7bbd2945b52b9e6b87f3a28,
     type: 3}
   m_NotificationBehavior: 3
   m_UIInputModule: {fileID: 0}
@@ -173,12 +172,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 4946606578855365968}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a69291e93fb81f41b6812ecfb85b699, type: 3}
+  m_Script: {fileID: 11500000, guid: 0bc6d0b8e96e31346abd970c8c9c4cfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: 1
-  Damage: 0
-  Stocks: 4
+  mvSpeed: 0.025
+  airResistance: 0.9
+  gravity: -0.05
+  jumpCooldown: 0.25
+  JumpMultiplier: 10
+  Prefabs: []
+  AttackState: 1
 --- !u!114 &572711067064739029
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -188,13 +191,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 4946606578855365968}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7fcc7f53454b14408cd024cb54a65f5, type: 3}
+  m_Script: {fileID: 11500000, guid: 9fad4b506b9485d48833b383f954cdf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerState: 1
-  MagicNumber: 1
-  Facing: {x: -1, y: 0}
-  velocity: {x: 0, y: 0}
+  Player: 1
+  Damage: 0
+  Stocks: 4
 --- !u!114 &4477059656697531098
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -204,22 +206,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 4946606578855365968}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9cbddc3c5d7641f4a9878344b0b6d770, type: 3}
+  m_Script: {fileID: 11500000, guid: 639490a6eea52b442af82c7fbeda9ee9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Prefabs: []
-  AttackState: 1
---- !u!114 &1337615602
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4946606578855365968}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4b5d3680660f0a4f89b11f5b792fcb9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dummyPrefab: {fileID: 4946606578855365968, guid: 92cba0808927ae2458384179e824a9de,
+  dummyPrefab: {fileID: 4946606578855365968, guid: 4b49016f4bead2245a3e8d9ebcde4b47,
     type: 3}

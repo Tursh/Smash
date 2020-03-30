@@ -14,6 +14,7 @@ public abstract class CharacterData : MonoBehaviour
     public float gravity = -0.05f;
     public float jumpCooldown = 0.25f;
     public float JumpMultiplier = 10;
+    public float distanceToGround = 1;
 
     public GameObject[] Prefabs;
     
@@ -94,8 +95,7 @@ public abstract class CharacterData : MonoBehaviour
     protected virtual void SelectOnperformed(InputAction.CallbackContext ctx) { }
     protected virtual void LeftJoystickPressOnperformed(InputAction.CallbackContext obj) { }
     protected virtual void RightJoystickPressOnperformed(InputAction.CallbackContext obj) { }
-
-
+    
     //debug purposes
     protected virtual void KeySpaceOnperformed(InputAction.CallbackContext ctx)
     {
@@ -123,7 +123,7 @@ public abstract class CharacterData : MonoBehaviour
     {
         if (Time.time - lastJump >= jumpCooldown && AttackState != AttackState.Attacking)
         {
-            Rigidbody.AddForce(Vector2.up * JumpMultiplier, ForceMode2D.Impulse);
+            Rigidbody.velocity = new Vector2(Rigidbody.velocity.x,JumpMultiplier);
             lastJump = Time.time;
         }
     }
@@ -157,83 +157,8 @@ public abstract class CharacterData : MonoBehaviour
         PlayerControls.Enable();
     }
 
-    protected static Func<GameObject, bool> SimplePhysicalAttack(FrameDataPhysical frameDataPhysical)
+    protected bool Grounded()
     {
-        return o =>
-        {
-            GameObject hurtboxGameObject = Instantiate(o.GetComponent<CharacterData>().Prefabs[frameDataPhysical.PrefabIndex], o.transform);
-            CircleCollider2D circleCollider2D = hurtboxGameObject.GetComponent<CircleCollider2D>();
-            HurtboxComponent hurtboxComponent = hurtboxGameObject.GetComponent<HurtboxComponent>();
-
-            FrameDataPhysical tempFrameDataPhysical;
-
-            if (o.GetComponent<PlayerPhysics>().Facing == Vector2.left)
-                tempFrameDataPhysical = frameDataPhysical.Reversed();
-            else
-                tempFrameDataPhysical = frameDataPhysical;
-            circleCollider2D.offset = tempFrameDataPhysical.Offset;
-            circleCollider2D.radius = tempFrameDataPhysical.Radius;
-            hurtboxComponent.Direction = tempFrameDataPhysical.Direction;
-            hurtboxComponent.Multiplier = tempFrameDataPhysical.Multiplier;
-            hurtboxComponent.Damage = tempFrameDataPhysical.Damage;
-            hurtboxComponent.FramesOfLife = tempFrameDataPhysical.FramesOfLife;
-            return true;
-        };
-    }
-
-    protected static Func<GameObject, bool> ComplexPhysicalAttack(FrameDataPhysical[] framesDataPhysical)
-    {
-        return o =>
-        {
-            for (int i = 0; i < framesDataPhysical.Length; ++i)
-            {
-                FrameDataPhysical currentFrameData;
-                if (o.GetComponent<PlayerPhysics>().Facing == Vector2.left)
-                    currentFrameData = framesDataPhysical[i].Reversed();
-                else
-                    currentFrameData = framesDataPhysical[i];
-
-                GameObject hurtboxGameObject = Instantiate(o.GetComponent<CharacterData>().Prefabs[framesDataPhysical[i].PrefabIndex], o.transform);
-                CircleCollider2D circleCollider2D = hurtboxGameObject.GetComponent<CircleCollider2D>();
-                HurtboxComponent hurtboxComponent = hurtboxGameObject.GetComponent<HurtboxComponent>();
-
-
-                circleCollider2D.radius = currentFrameData.Radius;
-                circleCollider2D.offset = currentFrameData.Offset;
-                hurtboxComponent.Damage = currentFrameData.Damage;
-                hurtboxComponent.Direction = currentFrameData.Direction;
-                hurtboxComponent.Multiplier = currentFrameData.Multiplier;
-                hurtboxComponent.FramesOfLife = currentFrameData.FramesOfLife;
-            }
-
-            return true;
-        };
-    }
-
-    private static Func<GameObject, bool> SimpleProjectileAttack(FrameDataProjectile frameDataProjectile)
-    {
-        return o =>
-        {
-            FrameDataProjectile tempFrameDataProjectile;
-            if (o.GetComponent<PlayerPhysics>().Facing == Vector2.left)
-                tempFrameDataProjectile = frameDataProjectile.Reversed();
-            else
-                tempFrameDataProjectile = frameDataProjectile;
-
-            GameObject projectileGameObject = Instantiate(
-                o.GetComponent<CharacterData>().Prefabs[frameDataProjectile.PrefabIndex], 
-                o.transform.position,
-                o.transform.localRotation);
-            Projectile projectile = projectileGameObject.GetComponent<Projectile>();
-            projectile.FramesOfLife = tempFrameDataProjectile.FramesOfLife;
-            projectile.Multiplier = tempFrameDataProjectile.Multiplier;
-            projectile.Damage = tempFrameDataProjectile.Damage;
-            projectile.Direction = tempFrameDataProjectile.Direction;
-            projectile.Velocity = tempFrameDataProjectile.Velocity;
-            projectile.FramesOfLife = tempFrameDataProjectile.FramesOfLife;
-            projectile.GetComponent<CircleCollider2D>().radius = tempFrameDataProjectile.Radius;
-
-            return true;
-        };
+        return Physics.Raycast(transform.position, Vector2.down, distanceToGround);
     }
 }
