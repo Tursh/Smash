@@ -19,7 +19,7 @@ public class DefaultCharacter : CharacterData
     {
         AAttack = new FrameOfAttack[]
         {
-            new FrameOfAttack(AttackFunctions.SimplePhysicalAttack(new FrameDataPhysical()))
+            AttackFunctions.SimplePhysicalAttack(new FrameDataPhysical())
         };
     }
 
