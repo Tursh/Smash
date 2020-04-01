@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class AttackFunctions : MonoBehaviour
 {
-public static Func<GameObject, bool> SimplePhysicalAttack(FrameDataPhysical frameDataPhysical)
+    public static Func<GameObject, bool> SimplePhysicalAttack(FrameDataPhysical frameDataPhysical)
     {
         return o =>
         {

@@ -1,9 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System;
-using UnityEngine;
-using UnityEngine.Playables;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
+
 
 
 
@@ -12,14 +9,13 @@ public abstract class CharacterData : MonoBehaviour
     public float mvSpeed = 0.025f;
     public float airResistance = 0.9f;
     public float gravity = -0.05f;
-    public float jumpCooldown = 0.25f;
-    public float JumpMultiplier = 10;
     public float distanceToGround = 1;
 
     public GameObject[] Prefabs;
     
     protected PlayerControls PlayerControls;
     protected Rigidbody2D Rigidbody;
+    protected Animator Animator;
 
     protected Vector2 LeftJoystickPosition;
     protected Vector2 RightJoystickPosition;
@@ -33,6 +29,7 @@ public abstract class CharacterData : MonoBehaviour
     {
         Attack = new Attack();
         PlayerControls = new PlayerControls();
+        Animator = GetComponent<Animator>();
         Rigidbody = GetComponent<Rigidbody2D>();
         
         //PlayerPhysics.OnGroundEventHandler += OnGround;
@@ -85,8 +82,18 @@ public abstract class CharacterData : MonoBehaviour
     {
         RTPosition = ctx.ReadValue<float>();
     }
-    protected virtual void AOnperformed(InputAction.CallbackContext ctx) { }
-    protected virtual void BOnperformed(InputAction.CallbackContext ctx) { }
+
+    protected virtual void AOnperformed(InputAction.CallbackContext ctx)
+    {
+        if (ctx.ReadValueAsButton())
+            Jump();
+    }
+
+    protected virtual void BOnperformed(InputAction.CallbackContext ctx)
+    {
+        if (ctx.ReadValueAsButton())
+            Jump();
+    }
     protected virtual void XOnperformed(InputAction.CallbackContext ctx) { }
     protected virtual void YOnperformed(InputAction.CallbackContext ctx) { }
     protected virtual void LBOnperformed(InputAction.CallbackContext ctx) { }
@@ -118,18 +125,15 @@ public abstract class CharacterData : MonoBehaviour
             LeftJoystickPosition += Vector2.left;
     }
 
-    protected float lastJump;
-    protected virtual void Jump()
-    {
-        if (Time.time - lastJump >= jumpCooldown && AttackState != AttackState.Attacking)
-        {
-            Rigidbody.velocity = new Vector2(Rigidbody.velocity.x,JumpMultiplier);
-            lastJump = Time.time;
-        }
-    }
+    protected virtual void Jump() { }
 
     protected virtual void FixedUpdate()
     {
+        Vector2 velocity = Rigidbody.velocity;
+        velocity += new Vector2(LeftJoystickPosition.x * mvSpeed,0);
+        velocity *= airResistance;
+        velocity.y += gravity;
+        
         if (!Attack.IsEmpty())
         {
             AttackState = AttackState.Attacking;
@@ -139,6 +143,7 @@ public abstract class CharacterData : MonoBehaviour
         {
             AttackState = AttackState.Idle;
         }
+        Rigidbody.velocity = velocity;
     }
 
     protected virtual void OnGround(object sender, OnGroundEnventArgs args)
@@ -155,10 +160,5 @@ public abstract class CharacterData : MonoBehaviour
     private void OnEnable()
     {
         PlayerControls.Enable();
-    }
-
-    protected bool Grounded()
-    {
-        return Physics.Raycast(transform.position, Vector2.down, distanceToGround);
     }
 }
