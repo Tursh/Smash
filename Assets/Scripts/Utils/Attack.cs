@@ -60,6 +60,11 @@ public class Attack
         for (int i = 0; i < frames.Length; ++i)
             FramesOfAttack.Enqueue(frames[i]);
     }
+    
+    public void Push(FrameOfAttack frame)
+    {
+        Push(new []{frame});
+    }
 
     public void Clear() => FramesOfAttack.Clear();
     public bool IsEmpty() => !FramesOfAttack.Any();

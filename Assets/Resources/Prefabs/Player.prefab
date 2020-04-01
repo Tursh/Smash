@@ -122,8 +122,8 @@ Rigidbody2D:
   m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 1
-  m_UseAutoMass: 0
-  m_Mass: 1
+  m_UseAutoMass: 1
+  m_Mass: 2.0000002
   m_LinearDrag: 0
   m_AngularDrag: 0
   m_GravityScale: 0
@@ -175,11 +175,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bc6d0b8e96e31346abd970c8c9c4cfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mvSpeed: 0.025
+  mvSpeed: 1
   airResistance: 0.9
-  gravity: -0.05
+  gravity: -0.8
   jumpCooldown: 0.25
-  JumpMultiplier: 10
+  JumpMultiplier: 20
+  distanceToGround: 2
   Prefabs: []
   AttackState: 1
 --- !u!114 &572711067064739029

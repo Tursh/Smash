@@ -19,7 +19,7 @@ public class DefaultCharacter : CharacterData
     {
         AAttack = new FrameOfAttack[]
         {
-            new FrameOfAttack(AttackFunctions.SimplePhysicalAttack(new FrameDataPhysical()))
+            AttackFunctions.SimplePhysicalAttack(new FrameDataPhysical())
         };
     }
 
@@ -27,15 +27,8 @@ public class DefaultCharacter : CharacterData
     {
         base.FixedUpdate();
         Vector2 velocity = Rigidbody.velocity;
-        velocity += new Vector2(LeftJoystickPosition.x * mvSpeed,0) * airResistance;
-        if (Grounded())
-        {
-            velocity.y = 0;
-        }
-        else
-        {
-            velocity.y += gravity;
-        }
+
+
         Rigidbody.velocity = velocity;
     }
 
@@ -43,6 +36,4 @@ public class DefaultCharacter : CharacterData
     {
         base.Jump();
     }
-    
-    
 }
