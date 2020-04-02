@@ -1,9 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
-
-
-
 public abstract class CharacterData : MonoBehaviour
 {
     public float mvSpeed = 0.025f;
@@ -144,11 +141,6 @@ public abstract class CharacterData : MonoBehaviour
             AttackState = AttackState.Idle;
         }
         Rigidbody.velocity = velocity;
-    }
-
-    protected virtual void OnGround(object sender, OnGroundEnventArgs args)
-    {
-        DisableAttack();
     }
 
     protected void DisableAttack()
