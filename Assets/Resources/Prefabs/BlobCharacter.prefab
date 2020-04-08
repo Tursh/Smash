@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &195168934
+--- !u!1 &1093155030
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,23 +8,23 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 195168935}
-  - component: {fileID: 195168936}
-  - component: {fileID: 195168937}
-  m_Layer: 0
-  m_Name: Feet
+  - component: {fileID: 1093155031}
+  - component: {fileID: 1093155033}
+  - component: {fileID: 1093155032}
+  m_Layer: 9
+  m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &195168935
+--- !u!4 &1093155031
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 195168934}
+  m_GameObject: {fileID: 1093155030}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -32,20 +32,20 @@ Transform:
   m_Father: {fileID: 61356361712428705}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &195168936
+--- !u!61 &1093155033
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 195168934}
+  m_GameObject: {fileID: 1093155030}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.73}
+  m_Offset: {x: 0, y: -0.6}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -56,15 +56,15 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.79, y: 1}
+  m_Size: {x: 1.84, y: 1}
   m_EdgeRadius: 0
---- !u!114 &195168937
+--- !u!114 &1093155032
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 195168934}
+  m_GameObject: {fileID: 1093155030}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6a69bbbe2185cf64084fb5943fdf8b45, type: 3}
@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 4404933546579495721}
   - component: {fileID: 3971114000957781353}
   - component: {fileID: 1605767065404202624}
-  - component: {fileID: 573181155}
+  - component: {fileID: 573181152}
   m_Layer: 9
   m_Name: BlobCharacter
   m_TagString: Untagged
@@ -106,7 +106,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.60593885, y: 0.60593885, z: 0.60593885}
   m_Children:
-  - {fileID: 195168935}
+  - {fileID: 1093155031}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -265,11 +265,11 @@ MonoBehaviour:
   mvSpeed: 0.9
   airResistance: 0.9
   gravity: -0.8
-  distanceToGround: 0.5
+  distanceToGround: 1
   Prefabs: []
   AttackState: 1
-  JumpWindup: 30
-  JumpMultiplier: 20
+  JumpWindup: 999
+  JumpMultiplier: 10
   Falling: 0
 --- !u!114 &1605767065404202624
 MonoBehaviour:
@@ -285,7 +285,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dummyPrefab: {fileID: 8530758427844192538, guid: e63b11dfedfe543449c1d6e37088f221,
     type: 3}
---- !u!95 &573181155
+--- !u!95 &573181152
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 0

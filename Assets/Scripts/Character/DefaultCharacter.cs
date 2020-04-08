@@ -31,7 +31,7 @@ public class DefaultCharacter : CharacterData
 
         Rigidbody.velocity = velocity;
     }
-
+    
     protected override void Jump()
     {
         base.Jump();

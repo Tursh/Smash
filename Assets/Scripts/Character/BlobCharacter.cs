@@ -26,6 +26,7 @@ public class BlobCharacter : CharacterData
             AttackFunctions.SimplePhysicalAttack(new FrameDataPhysical())
         };
     }
+    
     public void OnGround()
     {
         Animator.SetBool("Falling", false);
@@ -80,5 +81,10 @@ public class BlobCharacter : CharacterData
             BlobState = CharacterState.Jumping;
             jumpTimer = 0;
         }
+    }
+
+    protected override void AOnperformed(InputAction.CallbackContext ctx)
+    {
+        
     }
 }
