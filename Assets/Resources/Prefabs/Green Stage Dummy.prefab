@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6499281641674566212}
   - component: {fileID: 6499281641674566211}
   - component: {fileID: 6499281641674566210}
-  - component: {fileID: 5850846716257737083}
+  - component: {fileID: 1306944883022570772}
   m_Layer: 12
   m_Name: Green Stage Dummy
   m_TagString: Untagged
@@ -60,7 +60,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9f3d17a48c1db590f8540fded7160ee0, type: 2}
+  - {fileID: 2100000, guid: e65594b629bdccf45b9a0233dde2ef52, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -107,7 +107,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.0000001, y: 1}
   m_EdgeRadius: 0
---- !u!114 &5850846716257737083
+--- !u!114 &1306944883022570772
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -116,7 +116,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6499281641674566209}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f7f1627d1733cf85a638849d51d0ef1, type: 3}
+  m_Script: {fileID: 11500000, guid: 11024e7dc6163b842a97f7a289a85741, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerReference: {fileID: 0}

@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Utils;
+
 public class BlobCharacter : CharacterData
 {
     public float JumpWindup = 999;
@@ -10,30 +12,24 @@ public class BlobCharacter : CharacterData
 
     private enum CharacterState
     {
-        Idle, Jumping, Falling, Running
+        Idle,
+        Jumping,
+        Falling,
+        Running
     }
-    
+
     private static FrameOfAttack[] AAttack;
     private CharacterState BlobState;
     private CharacterState PreviousState;
     private BoxCollider2D feet;
     public bool Falling;
-    
+
     static BlobCharacter()
     {
         AAttack = new FrameOfAttack[]
         {
             AttackFunctions.SimplePhysicalAttack(new FrameDataPhysical())
         };
-    }
-    
-    public void OnGround()
-    {
-        Animator.SetBool("Falling", false);
-    }
-    public void InAir()
-    {
-        Animator.SetBool("Falling", true);
     }
 
     protected void Start()
@@ -43,10 +39,10 @@ public class BlobCharacter : CharacterData
     }
 
     protected override void FixedUpdate()
-    { 
+    {
         base.FixedUpdate();
 
-        if (BlobState == CharacterState.Jumping )
+        if (BlobState == CharacterState.Jumping)
             if (jumpTimer++ > JumpWindup)
                 Jump();
 
@@ -54,19 +50,15 @@ public class BlobCharacter : CharacterData
 
         //Animator.SetFloat("Velocity", Mathf.Abs(velocity.x)*0.4f);
 
-        if (Mathf.Abs(velocity.x) < 0.1f)
-            Animator.SetBool("IsRunning", false);
-        else
-            Animator.SetBool("IsRunning", true);
+        Animator.SetBool("IsRunning", Mathf.Abs(velocity.x) > 0.1f);
+
+        Animator.SetBool("Jumping", BlobState == CharacterState.Jumping);
         
-        if (BlobState == CharacterState.Jumping)
-            Animator.SetBool("Jumping", true);
-        else 
-            Animator.SetBool("Jumping", false);
         Rigidbody.velocity = velocity;
     }
 
     private float jumpTimer;
+
     protected override void Jump()
     {
         Vector2 velocity = Rigidbody.velocity;
@@ -85,6 +77,6 @@ public class BlobCharacter : CharacterData
 
     protected override void AOnperformed(InputAction.CallbackContext ctx)
     {
-        
     }
+    
 }
