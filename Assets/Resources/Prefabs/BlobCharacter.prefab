@@ -253,8 +253,7 @@ MonoBehaviour:
   distanceToGround: 1
   Prefabs: []
   AttackState: 1
-  GroundPlatform: {fileID: 0}
-  JumpWindup: 999
+  JumpWindup: 30
   JumpMultiplier: 10
   Falling: 0
 --- !u!114 &3971114000957781353

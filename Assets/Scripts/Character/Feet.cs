@@ -10,27 +10,27 @@ public class Feet : MonoBehaviour
     /// <summary>
     /// If the foot just change from a platform to another, don't execute de landing animation!
     /// </summary>
-    private bool JustChangedPlatform = false;
+    private List<GameObject> EnteredPlatfroms = new List<GameObject>();
 
-    //private bool isSemiStage = false;
+    private CharacterData Parent;
+
+    private void Awake()
+    {
+        Parent = transform.parent.GetComponent<CharacterData>();
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         int otherLayer = other.gameObject.layer;
         if (otherLayer == Layers.STAGE || otherLayer == Layers.SEMI_STAGE)
         {
-            CharacterData parent = transform.parent.GetComponent<BlobCharacter>();
-            JustChangedPlatform = parent.GroundPlatform != null;
+            CharacterData parent = transform.parent.GetComponent<CharacterData>();
+            EnteredPlatfroms.Add(other.gameObject);
+            parent.OnGround();
 
-            //Execute de landing animation
-            if (!JustChangedPlatform)
-                parent.OnGround();
-            else
-            {
-                //If the platform come from higher
-                if (other.transform.position.y > parent.GroundPlatform.transform.position.y)
-                    return;
-            }
+            //If the other platform come from higher
+            if (EnteredPlatfroms.Count > 1 && other.transform.position.y > parent.GroundPlatform.transform.position.y)
+                return;
 
             parent.GroundPlatform = other.gameObject;
         }
@@ -39,15 +39,22 @@ public class Feet : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (!JustChangedPlatform && other.gameObject.layer == Layers.STAGE ||
+        if (other.gameObject.layer == Layers.STAGE ||
             other.gameObject.layer == Layers.SEMI_STAGE)
         {
-            CharacterData parent = transform.parent.GetComponent<BlobCharacter>();
+            EnteredPlatfroms.Remove(other.gameObject);
 
-            if (parent.GroundPlatform == other.gameObject)
-                parent.InAir();
+            if (EnteredPlatfroms.Count == 0)
+            {
 
-            parent.GroundPlatform = null;
+                if (Parent.GroundPlatform == other.gameObject)
+                    Parent.InAir();
+
+                Parent.GroundPlatform = null;
+            }
+            else if (EnteredPlatfroms.Count == 1)
+                Parent.GroundPlatform = EnteredPlatfroms[0];
+                
         }
     }
 }

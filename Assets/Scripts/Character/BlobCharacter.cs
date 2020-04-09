@@ -7,7 +7,7 @@ using Utils;
 
 public class BlobCharacter : CharacterData
 {
-    public float JumpWindup = 999;
+    public float JumpWindup = 20;
     public float JumpMultiplier = 10;
 
     private enum CharacterState
@@ -30,6 +30,16 @@ public class BlobCharacter : CharacterData
         {
             AttackFunctions.SimplePhysicalAttack(new FrameDataPhysical())
         };
+    }
+
+    public override void OnGround()
+    {
+        Animator.SetBool("Falling", false);
+    }
+
+    public override void InAir()
+    {
+        Animator.SetBool("Falling", true);
     }
 
     protected void Start()

@@ -26,6 +26,7 @@ public abstract class CharacterData : MonoBehaviour
     public AttackState AttackState = AttackState.Idle;
 
     private GameObject groundPlatfrom;
+
     public GameObject GroundPlatform
     {
         get => groundPlatfrom;
@@ -196,9 +197,9 @@ public abstract class CharacterData : MonoBehaviour
             lastPlatfromPosition = position;
         }
         else
-        {
             lastPlatfromPosition = Vector3.back;
-        }
+        
+        Debug.Log(Rigidbody.velocity);
     }
 
     protected void DisableAttack()
@@ -212,18 +213,24 @@ public abstract class CharacterData : MonoBehaviour
         PlayerControls.Enable();
     }
 
-    public void OnGround()
+    public virtual void OnGround()
     {
-        Animator.SetBool("Falling", false);
     }
 
-    public void InAir()
+    public virtual void InAir()
     {
-        Animator.SetBool("Falling", true);
     }
-    
+
     private void OnTriggerEnter2D(Collider2D other)
     {
-        other.gameObject.layer = other.transform.position.y <= BoxCollider.bounds.min.y ? Layers.STAGE : Layers.SEMI_STAGE;
-    } 
+        other.gameObject.layer =
+            GroundPlatform == null || other.transform.position.y <= BoxCollider.bounds.min.y
+                ? Layers.STAGE : Layers.SEMI_STAGE;
+    }
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        other.gameObject.layer =
+            GroundPlatform == null || other.transform.position.y <= BoxCollider.bounds.min.y ? Layers.STAGE : Layers.SEMI_STAGE;
+    }
 }
