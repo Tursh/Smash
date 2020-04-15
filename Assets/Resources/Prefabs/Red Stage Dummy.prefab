@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2594392480657516786}
   - component: {fileID: 2594392480657516787}
   - component: {fileID: 2594392480657516788}
-  - component: {fileID: 7341812702190990566}
+  - component: {fileID: 1854608480985125296}
   m_Layer: 12
   m_Name: Red Stage Dummy
   m_TagString: Untagged
@@ -60,7 +60,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3459acac348c8cd188c2d7273304b9f7, type: 2}
+  - {fileID: 2100000, guid: d03e81ebef6fa1449b2ee4654748b60e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -107,7 +107,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.0000001, y: 1}
   m_EdgeRadius: 0
---- !u!114 &7341812702190990566
+--- !u!114 &1854608480985125296
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -116,7 +116,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2594392480657516790}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f7f1627d1733cf85a638849d51d0ef1, type: 3}
+  m_Script: {fileID: 11500000, guid: 11024e7dc6163b842a97f7a289a85741, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerReference: {fileID: 0}

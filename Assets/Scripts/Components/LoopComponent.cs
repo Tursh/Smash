@@ -11,6 +11,7 @@ public class LoopComponent : MonoBehaviour
     private Vector2 startWindowPosition, endWindowPosition, windowSizeInWorld;
     
     private GameObject[] dummies = new GameObject[2];
+    private DummyComponent[] dummyComponents = new DummyComponent[2];
     
     // Start is called before the first frame update
     void Start()
@@ -28,7 +29,8 @@ public class LoopComponent : MonoBehaviour
                 Instantiate(dummyPrefab,
                     startWindowPosition - Vector2.down * 10,
                     Quaternion.identity);
-            dummies[i].GetComponent<DummyComponent>().PlayerReference = gameObject;
+            dummyComponents[i] = dummies[i].GetComponent<DummyComponent>(); 
+            dummyComponents[i].PlayerReference = gameObject;
         }
     }
 
@@ -64,5 +66,11 @@ public class LoopComponent : MonoBehaviour
             dummyPositon[(axis + 1) % 2] = transform.position[(axis + 1) % 2];
             dummies[axis].transform.position = dummyPositon;
         }
+    }
+
+    public void SetDummyAnimatorState(string state, bool status)
+    {
+        foreach(var dummyComponent in dummyComponents)
+           dummyComponent.SetAnimationState(state, status);
     }
 }
