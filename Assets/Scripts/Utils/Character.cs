@@ -15,7 +15,9 @@ public abstract class CharacterData : MonoBehaviour
     protected PlayerControls PlayerControls;
     protected Rigidbody2D Rigidbody;
     protected BoxCollider2D BoxCollider;
-    protected Animator Animator;
+
+    private Animator Animator;
+    private LoopComponent LoopComponent;
 
     protected Vector2 LeftJoystickPosition;
     protected Vector2 RightJoystickPosition;
@@ -25,13 +27,24 @@ public abstract class CharacterData : MonoBehaviour
     protected Attack Attack;
     public AttackState AttackState = AttackState.Idle;
 
-    private GameObject groundPlatfrom;
+    [SerializeField] private GameObject groundPlatfrom;
 
     public GameObject GroundPlatform
     {
         get => groundPlatfrom;
         set
         {
+            if (value != null)
+            {
+                value.gameObject.layer = Layers.STAGE;
+                //Debug.Log("Now on " + value.name);
+            }
+            else
+            {
+                //Debug.Log("Leaving " + GroundPlatform.name);
+                groundPlatfrom.gameObject.layer = Layers.SEMI_STAGE;
+            }
+
             groundPlatfrom = value;
             lastPlatfromPosition = Vector3.back;
         }
@@ -46,6 +59,7 @@ public abstract class CharacterData : MonoBehaviour
         Animator = GetComponent<Animator>();
         Rigidbody = GetComponent<Rigidbody2D>();
         BoxCollider = GetComponent<BoxCollider2D>();
+        LoopComponent = GetComponent<LoopComponent>();
 
         //PlayerPhysics.OnGroundEventHandler += OnGround;
 
@@ -172,10 +186,12 @@ public abstract class CharacterData : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
+        //Apply user input, air resistance and gravity
         Vector2 velocity = Rigidbody.velocity;
         velocity += new Vector2(LeftJoystickPosition.x * mvSpeed, 0);
         velocity *= airResistance;
         velocity.y += gravity;
+
 
         if (!Attack.IsEmpty())
         {
@@ -187,8 +203,10 @@ public abstract class CharacterData : MonoBehaviour
             AttackState = AttackState.Idle;
         }
 
+        //Set rigid body velocity to new velocity
         Rigidbody.velocity = velocity;
 
+        //If on platform set position relative to it
         if (GroundPlatform != null)
         {
             Vector3 position = GroundPlatform.transform.position;
@@ -198,8 +216,6 @@ public abstract class CharacterData : MonoBehaviour
         }
         else
             lastPlatfromPosition = Vector3.back;
-        
-        Debug.Log(Rigidbody.velocity);
     }
 
     protected void DisableAttack()
@@ -213,24 +229,31 @@ public abstract class CharacterData : MonoBehaviour
         PlayerControls.Enable();
     }
 
-    public virtual void OnGround()
+    public void SetAnimatorState(string state, bool status)
     {
-    }
-
-    public virtual void InAir()
-    {
+        Animator.SetBool(state, status);
+        //Set the dummy animation state
+        if (LoopComponent != null)
+            LoopComponent.SetDummyAnimatorState(state, status);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        other.gameObject.layer =
-            GroundPlatform == null || other.transform.position.y <= BoxCollider.bounds.min.y
-                ? Layers.STAGE : Layers.SEMI_STAGE;
+        if (other.gameObject != groundPlatfrom)
+        {
+            other.gameObject.layer =
+                other.transform.position.y <= BoxCollider.bounds.min.y ? Layers.STAGE : Layers.SEMI_STAGE;
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        other.gameObject.layer =
-            GroundPlatform == null || other.transform.position.y <= BoxCollider.bounds.min.y ? Layers.STAGE : Layers.SEMI_STAGE;
+        if (other.gameObject != groundPlatfrom)
+        {
+            other.gameObject.layer =
+                other.contacts[0].normal.y < 0 && other.transform.position.y <= transform.position.y
+                    ? Layers.STAGE
+                    : Layers.SEMI_STAGE;
+        }
     }
 }

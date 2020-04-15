@@ -26,7 +26,6 @@ public class Feet : MonoBehaviour
         {
             CharacterData parent = transform.parent.GetComponent<CharacterData>();
             EnteredPlatfroms.Add(other.gameObject);
-            parent.OnGround();
 
             //If the other platform come from higher
             if (EnteredPlatfroms.Count > 1 && other.transform.position.y > parent.GroundPlatform.transform.position.y)
@@ -46,15 +45,10 @@ public class Feet : MonoBehaviour
 
             if (EnteredPlatfroms.Count == 0)
             {
-
-                if (Parent.GroundPlatform == other.gameObject)
-                    Parent.InAir();
-
                 Parent.GroundPlatform = null;
             }
             else if (EnteredPlatfroms.Count == 1)
                 Parent.GroundPlatform = EnteredPlatfroms[0];
-                
         }
     }
 }

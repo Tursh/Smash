@@ -20,6 +20,7 @@ public class BlobCharacter : CharacterData
 
     private static FrameOfAttack[] AAttack;
     private CharacterState BlobState;
+
     private CharacterState PreviousState;
     private BoxCollider2D feet;
     public bool Falling;
@@ -30,16 +31,6 @@ public class BlobCharacter : CharacterData
         {
             AttackFunctions.SimplePhysicalAttack(new FrameDataPhysical())
         };
-    }
-
-    public override void OnGround()
-    {
-        Animator.SetBool("Falling", false);
-    }
-
-    public override void InAir()
-    {
-        Animator.SetBool("Falling", true);
     }
 
     protected void Start()
@@ -60,14 +51,15 @@ public class BlobCharacter : CharacterData
 
         //Animator.SetFloat("Velocity", Mathf.Abs(velocity.x)*0.4f);
 
-        Animator.SetBool("IsRunning", Mathf.Abs(velocity.x) > 0.1f);
-
-        Animator.SetBool("Jumping", BlobState == CharacterState.Jumping);
+        //If blob is not on ground, set falling animation true
+        SetAnimatorState("Falling", GroundPlatform == null);
+        //If the blob is idle and start moving, set to running animation
+        SetAnimatorState("IsRunning", Mathf.Abs(velocity.x) > 0.1f);
         
+        SetAnimatorState("Jumping", BlobState == CharacterState.Jumping);
+
         Rigidbody.velocity = velocity;
     }
-
-    private float jumpTimer;
 
     protected override void Jump()
     {
@@ -75,6 +67,8 @@ public class BlobCharacter : CharacterData
         BlobState = CharacterState.Falling;
         Rigidbody.velocity = velocity + Vector2.up * JumpMultiplier;
     }
+
+    private int jumpTimer = 0;
 
     protected override void KeySpaceOnperformed(InputAction.CallbackContext ctx)
     {
