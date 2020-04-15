@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 1093155031}
   - component: {fileID: 1093155033}
   - component: {fileID: 1093155032}
-  m_Layer: 9
-  m_Name: GameObject
+  m_Layer: 13
+  m_Name: Feet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1093155030}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.07, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 61356361712428705}
@@ -42,7 +42,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: -0.6}
@@ -67,7 +67,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1093155030}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a69bbbe2185cf64084fb5943fdf8b45, type: 3}
+  m_Script: {fileID: 11500000, guid: 2e0396aa95d5ff341acf9bc9f4717509, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &61356361712428710
@@ -117,7 +117,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 61356361712428710}
-  m_Mesh: {fileID: -2432090755550338912, guid: eee0b8d94d954514d9df87edcee9a8ca, type: 3}
+  m_Mesh: {fileID: -2432090755550338912, guid: d75d436e1792661418f915c90c917ed1, type: 3}
 --- !u!23 &61356361712428711
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -136,7 +136,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f8abb6a4ecdf128488e4f3e642d4735c, type: 2}
+  - {fileID: 2100000, guid: 889c85fdbf891e14eb5a6b1ec77887d4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -203,7 +203,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &670004857288556378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -216,7 +216,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: 9c4e10caf7bbd2945b52b9e6b87f3a28,
+  m_Actions: {fileID: -944628639613478452, guid: 4c6b0b9d2aa81604aadebfbc9a2e3b10,
     type: 3}
   m_NotificationBehavior: 3
   m_UIInputModule: {fileID: 0}
@@ -244,12 +244,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 61356361712428710}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9fad4b506b9485d48833b383f954cdf3, type: 3}
+  m_Script: {fileID: 11500000, guid: 605e9d424624ae04bb2c212a9c77b8e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: 1
-  Damage: 0
-  Stocks: 4
+  mvSpeed: 1
+  airResistance: 0.95
+  gravity: -1
+  distanceToGround: 1
+  JumpWindup: 30
+  JumpMultiplier: 10
+  Prefabs: []
+  AttackState: 1
+  Falling: 0
 --- !u!114 &3971114000957781353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -259,18 +265,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 61356361712428710}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 542f3e9e69f80a944bec94148825e734, type: 3}
+  m_Script: {fileID: 11500000, guid: 589030d4d73cc53468c607eb69403c1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mvSpeed: 0.9
-  airResistance: 0.9
-  gravity: -0.8
-  distanceToGround: 1
-  Prefabs: []
-  AttackState: 1
-  JumpWindup: 999
-  JumpMultiplier: 10
-  Falling: 0
+  dummyPrefab: {fileID: 8530758427844192538, guid: 625b0160f9091e146af1abbe3c401051,
+    type: 3}
 --- !u!114 &1605767065404202624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -280,11 +279,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 61356361712428710}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 639490a6eea52b442af82c7fbeda9ee9, type: 3}
+  m_Script: {fileID: 11500000, guid: 2bd305d082cce954fb9957f4546007eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dummyPrefab: {fileID: 8530758427844192538, guid: e63b11dfedfe543449c1d6e37088f221,
-    type: 3}
+  Player: 1
+  Damage: 0
+  Stocks: 4
 --- !u!95 &573181152
 Animator:
   serializedVersion: 3
@@ -295,7 +295,7 @@ Animator:
   m_GameObject: {fileID: 61356361712428710}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: f7642aa6883fde542b3c9608503dcbfb, type: 2}
+  m_Controller: {fileID: 9100000, guid: 3b6e86b1023513f44ae749ffd214d0f7, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

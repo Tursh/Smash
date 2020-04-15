@@ -3,37 +3,34 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Utils;
+
 public class BlobCharacter : CharacterData
 {
-    public float JumpWindup = 999;
+    public float JumpWindup = 20;
     public float JumpMultiplier = 10;
 
     private enum CharacterState
     {
-        Idle, Jumping, Falling, Running
+        Idle,
+        Jumping,
+        Falling,
+        Running
     }
-    
+
     private static FrameOfAttack[] AAttack;
     private CharacterState BlobState;
+
     private CharacterState PreviousState;
     private BoxCollider2D feet;
     public bool Falling;
-    
+
     static BlobCharacter()
     {
         AAttack = new FrameOfAttack[]
         {
             AttackFunctions.SimplePhysicalAttack(new FrameDataPhysical())
         };
-    }
-    
-    public void OnGround()
-    {
-        Animator.SetBool("Falling", false);
-    }
-    public void InAir()
-    {
-        Animator.SetBool("Falling", true);
     }
 
     protected void Start()
@@ -43,10 +40,10 @@ public class BlobCharacter : CharacterData
     }
 
     protected override void FixedUpdate()
-    { 
+    {
         base.FixedUpdate();
 
-        if (BlobState == CharacterState.Jumping )
+        if (BlobState == CharacterState.Jumping)
             if (jumpTimer++ > JumpWindup)
                 Jump();
 
@@ -54,25 +51,24 @@ public class BlobCharacter : CharacterData
 
         //Animator.SetFloat("Velocity", Mathf.Abs(velocity.x)*0.4f);
 
-        if (Mathf.Abs(velocity.x) < 0.1f)
-            Animator.SetBool("IsRunning", false);
-        else
-            Animator.SetBool("IsRunning", true);
+        //If blob is not on ground, set falling animation true
+        SetAnimatorState("Falling", GroundPlatform == null);
+        //If the blob is idle and start moving, set to running animation
+        SetAnimatorState("IsRunning", Mathf.Abs(velocity.x) > 0.1f);
         
-        if (BlobState == CharacterState.Jumping)
-            Animator.SetBool("Jumping", true);
-        else 
-            Animator.SetBool("Jumping", false);
+        SetAnimatorState("Jumping", BlobState == CharacterState.Jumping);
+
         Rigidbody.velocity = velocity;
     }
 
-    private float jumpTimer;
     protected override void Jump()
     {
         Vector2 velocity = Rigidbody.velocity;
         BlobState = CharacterState.Falling;
         Rigidbody.velocity = velocity + Vector2.up * JumpMultiplier;
     }
+
+    private int jumpTimer = 0;
 
     protected override void KeySpaceOnperformed(InputAction.CallbackContext ctx)
     {
@@ -85,6 +81,6 @@ public class BlobCharacter : CharacterData
 
     protected override void AOnperformed(InputAction.CallbackContext ctx)
     {
-        
     }
+    
 }

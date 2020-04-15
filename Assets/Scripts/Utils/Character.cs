@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.InputSystem;
+using Utils;
 
 public abstract class CharacterData : MonoBehaviour
 {
@@ -9,10 +11,13 @@ public abstract class CharacterData : MonoBehaviour
     public float distanceToGround = 1;
 
     public GameObject[] Prefabs;
-    
+
     protected PlayerControls PlayerControls;
     protected Rigidbody2D Rigidbody;
-    protected Animator Animator;
+    protected BoxCollider2D BoxCollider;
+
+    private Animator Animator;
+    private LoopComponent LoopComponent;
 
     protected Vector2 LeftJoystickPosition;
     protected Vector2 RightJoystickPosition;
@@ -22,24 +27,51 @@ public abstract class CharacterData : MonoBehaviour
     protected Attack Attack;
     public AttackState AttackState = AttackState.Idle;
 
+    [SerializeField] private GameObject groundPlatfrom;
+
+    public GameObject GroundPlatform
+    {
+        get => groundPlatfrom;
+        set
+        {
+            if (value != null)
+            {
+                value.gameObject.layer = Layers.STAGE;
+                //Debug.Log("Now on " + value.name);
+            }
+            else
+            {
+                //Debug.Log("Leaving " + GroundPlatform.name);
+                groundPlatfrom.gameObject.layer = Layers.SEMI_STAGE;
+            }
+
+            groundPlatfrom = value;
+            lastPlatfromPosition = Vector3.back;
+        }
+    }
+
+    private Vector3 lastPlatfromPosition;
+
     protected virtual void Awake()
     {
         Attack = new Attack();
         PlayerControls = new PlayerControls();
         Animator = GetComponent<Animator>();
         Rigidbody = GetComponent<Rigidbody2D>();
-        
+        BoxCollider = GetComponent<BoxCollider2D>();
+        LoopComponent = GetComponent<LoopComponent>();
+
         //PlayerPhysics.OnGroundEventHandler += OnGround;
-        
+
         //vector2
         PlayerControls.Gameplay.LeftJoystick.performed += LeftJoystickOnperformed;
         PlayerControls.Gameplay.RightJoystick.performed += RightJoystickOnperformed;
         PlayerControls.Gameplay.DPad.performed += DPadOnperformed;
-        
+
         //value
         PlayerControls.Gameplay.LT.performed += LTOnperformed;
         PlayerControls.Gameplay.RT.performed += RTOnperformed;
-        
+
         //boolean
         PlayerControls.Gameplay.A.performed += AOnperformed;
         PlayerControls.Gameplay.B.performed += BOnperformed;
@@ -51,7 +83,7 @@ public abstract class CharacterData : MonoBehaviour
         PlayerControls.Gameplay.Select.performed += SelectOnperformed;
         PlayerControls.Gameplay.LeftJoystickPress.performed += LeftJoystickPressOnperformed;
         PlayerControls.Gameplay.RightJoystickPress.performed += RightJoystickPressOnperformed;
-        
+
         //debug stuff with keyboard
         PlayerControls.Gameplay.KeyA.performed += KeyAOnperformed;
         PlayerControls.Gameplay.KeyD.performed += KeyDOnperformed;
@@ -68,7 +100,9 @@ public abstract class CharacterData : MonoBehaviour
         RightJoystickPosition = ctx.ReadValue<Vector2>();
     }
 
-    protected virtual void DPadOnperformed(InputAction.CallbackContext ctx) { }
+    protected virtual void DPadOnperformed(InputAction.CallbackContext ctx)
+    {
+    }
 
     protected virtual void LTOnperformed(InputAction.CallbackContext ctx)
     {
@@ -91,15 +125,39 @@ public abstract class CharacterData : MonoBehaviour
         if (ctx.ReadValueAsButton())
             Jump();
     }
-    protected virtual void XOnperformed(InputAction.CallbackContext ctx) { }
-    protected virtual void YOnperformed(InputAction.CallbackContext ctx) { }
-    protected virtual void LBOnperformed(InputAction.CallbackContext ctx) { }
-    protected virtual void RBOnperformed(InputAction.CallbackContext ctx) { }
-    protected virtual void StartOnperformed(InputAction.CallbackContext ctx) { }
-    protected virtual void SelectOnperformed(InputAction.CallbackContext ctx) { }
-    protected virtual void LeftJoystickPressOnperformed(InputAction.CallbackContext obj) { }
-    protected virtual void RightJoystickPressOnperformed(InputAction.CallbackContext obj) { }
-    
+
+    protected virtual void XOnperformed(InputAction.CallbackContext ctx)
+    {
+    }
+
+    protected virtual void YOnperformed(InputAction.CallbackContext ctx)
+    {
+    }
+
+    protected virtual void LBOnperformed(InputAction.CallbackContext ctx)
+    {
+    }
+
+    protected virtual void RBOnperformed(InputAction.CallbackContext ctx)
+    {
+    }
+
+    protected virtual void StartOnperformed(InputAction.CallbackContext ctx)
+    {
+    }
+
+    protected virtual void SelectOnperformed(InputAction.CallbackContext ctx)
+    {
+    }
+
+    protected virtual void LeftJoystickPressOnperformed(InputAction.CallbackContext obj)
+    {
+    }
+
+    protected virtual void RightJoystickPressOnperformed(InputAction.CallbackContext obj)
+    {
+    }
+
     //debug purposes
     protected virtual void KeySpaceOnperformed(InputAction.CallbackContext ctx)
     {
@@ -122,15 +180,19 @@ public abstract class CharacterData : MonoBehaviour
             LeftJoystickPosition += Vector2.left;
     }
 
-    protected virtual void Jump() { }
+    protected virtual void Jump()
+    {
+    }
 
     protected virtual void FixedUpdate()
     {
+        //Apply user input, air resistance and gravity
         Vector2 velocity = Rigidbody.velocity;
-        velocity += new Vector2(LeftJoystickPosition.x * mvSpeed,0);
+        velocity += new Vector2(LeftJoystickPosition.x * mvSpeed, 0);
         velocity *= airResistance;
         velocity.y += gravity;
-        
+
+
         if (!Attack.IsEmpty())
         {
             AttackState = AttackState.Attacking;
@@ -140,7 +202,20 @@ public abstract class CharacterData : MonoBehaviour
         {
             AttackState = AttackState.Idle;
         }
+
+        //Set rigid body velocity to new velocity
         Rigidbody.velocity = velocity;
+
+        //If on platform set position relative to it
+        if (GroundPlatform != null)
+        {
+            Vector3 position = GroundPlatform.transform.position;
+            if (lastPlatfromPosition.z > -0.5f)
+                transform.position += position - lastPlatfromPosition;
+            lastPlatfromPosition = position;
+        }
+        else
+            lastPlatfromPosition = Vector3.back;
     }
 
     protected void DisableAttack()
@@ -152,5 +227,33 @@ public abstract class CharacterData : MonoBehaviour
     private void OnEnable()
     {
         PlayerControls.Enable();
+    }
+
+    public void SetAnimatorState(string state, bool status)
+    {
+        Animator.SetBool(state, status);
+        //Set the dummy animation state
+        if (LoopComponent != null)
+            LoopComponent.SetDummyAnimatorState(state, status);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject != groundPlatfrom)
+        {
+            other.gameObject.layer =
+                other.transform.position.y <= BoxCollider.bounds.min.y ? Layers.STAGE : Layers.SEMI_STAGE;
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject != groundPlatfrom)
+        {
+            other.gameObject.layer =
+                other.contacts[0].normal.y < 0 && other.transform.position.y <= transform.position.y
+                    ? Layers.STAGE
+                    : Layers.SEMI_STAGE;
+        }
     }
 }
