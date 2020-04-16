@@ -236,24 +236,4 @@ public abstract class CharacterData : MonoBehaviour
         if (LoopComponent != null)
             LoopComponent.SetDummyAnimatorState(state, status);
     }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.gameObject != groundPlatfrom)
-        {
-            other.gameObject.layer =
-                other.transform.position.y <= BoxCollider.bounds.min.y ? Layers.STAGE : Layers.SEMI_STAGE;
-        }
-    }
-
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        if (other.gameObject != groundPlatfrom)
-        {
-            other.gameObject.layer =
-                other.contacts[0].normal.y < 0 && other.transform.position.y <= transform.position.y
-                    ? Layers.STAGE
-                    : Layers.SEMI_STAGE;
-        }
-    }
 }
