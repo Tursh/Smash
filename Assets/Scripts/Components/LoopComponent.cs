@@ -73,4 +73,10 @@ public class LoopComponent : MonoBehaviour
         foreach(var dummyComponent in dummyComponents)
            dummyComponent.SetAnimationState(state, status);
     }
+    
+    public void SetDummyAnimatorState(int state, bool status)
+    {
+        foreach(var dummyComponent in dummyComponents)
+            dummyComponent.SetAnimationState(state, status);
+    }
 }

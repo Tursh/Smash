@@ -16,7 +16,7 @@ public abstract class CharacterData : MonoBehaviour
     protected Rigidbody2D Rigidbody;
     protected BoxCollider2D BoxCollider;
 
-    private Animator Animator;
+    protected Animator Animator;
     private LoopComponent LoopComponent;
 
     protected Vector2 LeftJoystickPosition;
@@ -230,6 +230,14 @@ public abstract class CharacterData : MonoBehaviour
     }
 
     public void SetAnimatorState(string state, bool status)
+    {
+        Animator.SetBool(state, status);
+        //Set the dummy animation state
+        if (LoopComponent != null)
+            LoopComponent.SetDummyAnimatorState(state, status);
+    }
+    
+    public void SetAnimatorState(int state, bool status)
     {
         Animator.SetBool(state, status);
         //Set the dummy animation state

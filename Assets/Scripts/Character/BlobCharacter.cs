@@ -14,9 +14,11 @@ public class BlobCharacter : CharacterData
     {
         Idle,
         Jumping,
-        Falling,
+        Falling ,
         Running
     }
+
+    private Dictionary<string, int> AnimationIDs = new Dictionary<string, int>();
 
     private static FrameOfAttack[] AAttack;
     private CharacterState BlobState;
@@ -37,6 +39,9 @@ public class BlobCharacter : CharacterData
     {
         BlobState = CharacterState.Idle;
         feet = GetComponentInChildren<BoxCollider2D>();
+        AnimationIDs.Add("IsRunning", Animator.StringToHash("IsRunning"));
+        AnimationIDs.Add("Falling", Animator.StringToHash("Falling"));
+        AnimationIDs.Add("Jumping", Animator.StringToHash("Jumping"));
     }
 
     protected override void FixedUpdate()
@@ -52,11 +57,11 @@ public class BlobCharacter : CharacterData
         //Animator.SetFloat("Velocity", Mathf.Abs(velocity.x)*0.4f);
 
         //If blob is not on ground, set falling animation true
-        SetAnimatorState("Falling", GroundPlatform == null);
+        SetAnimatorState(AnimationIDs["Falling"], GroundPlatform == null);
         //If the blob is idle and start moving, set to running animation
-        SetAnimatorState("IsRunning", Mathf.Abs(velocity.x) > 0.1f);
+        SetAnimatorState(AnimationIDs["IsRunning"], Mathf.Abs(velocity.x) > 0.1f);
         
-        SetAnimatorState("Jumping", BlobState == CharacterState.Jumping);
+        SetAnimatorState(AnimationIDs["Jumping"], BlobState == CharacterState.Jumping);
 
         Rigidbody.velocity = velocity;
     }
