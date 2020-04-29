@@ -17,9 +17,13 @@ public class DefaultCharacter : CharacterData
 
     static DefaultCharacter()
     {
+        
+    }
+
+    private void Start()
+    {
         AAttack = new FrameOfAttack[]
         {
-            AttackFunctions.SimplePhysicalAttack(new FrameDataPhysical())
         };
     }
 

@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Mouse
   layers:
   - Default
   - TransparentFX
@@ -19,7 +20,7 @@ TagManager:
   - Dummy
   - SemiPlatform
   - Feet
-  - 
+  - Projectile
   - 
   - 
   - 

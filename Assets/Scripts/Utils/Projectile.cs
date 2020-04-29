@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using Packages.Rider.Editor;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
@@ -9,12 +11,19 @@ public class Projectile : MonoBehaviour
     public Vector2 Direction;
     public Vector2 Velocity;
     public float FramesOfLife;
-    void FixedUpdate()
+    public GameObject Source;
+
+    private Rigidbody2D rigidbody2D;
+    private void Start()
     {
-        transform.position += new Vector3(Velocity.x,Velocity.y);
-        
+        rigidbody2D = GetComponent<Rigidbody2D>();
+        rigidbody2D.velocity = Velocity * 10;
+    }
+
+    protected virtual void FixedUpdate()
+    {
         if (FramesOfLife-- <= 0)
-            Destroy(gameObject);
+            Delete();
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -27,14 +36,21 @@ public class Projectile : MonoBehaviour
         {
             Hurt(other.gameObject.GetComponent<DummyComponent>().PlayerReference);
         }
+
+        if (other.gameObject == Source)
+            return;
+        if (other.gameObject.layer == 14 && other.gameObject.GetComponent<Projectile>().Source == Source)
+            return;
+        Delete();
     }
 
     void Hurt(GameObject player)
     {
-        PlayerPhysics playerPhysics = player.gameObject.GetComponent<PlayerPhysics>();
-        PlayerInfo playerInfo = player.gameObject.GetComponent<PlayerInfo>();
-        playerPhysics.velocity += Direction * (Multiplier * (playerInfo.Damage + 1));
-        playerInfo.Damage += Damage;
+        player.GetComponent<CharacterData>().Hurt(Direction,Multiplier,Damage);
+    }
+
+    protected virtual void Delete()
+    {
         Destroy(gameObject);
     }
 }

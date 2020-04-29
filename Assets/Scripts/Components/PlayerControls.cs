@@ -363,6 +363,52 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Menu"",
+            ""id"": ""0fa2b654-c809-41da-ae30-4684e7a10ba6"",
+            ""actions"": [
+                {
+                    ""name"": ""RightStick"",
+                    ""type"": ""Value"",
+                    ""id"": ""bfa4b9ba-3ebc-4102-8f7a-0fad0d911349"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""LeftStick"",
+                    ""type"": ""Value"",
+                    ""id"": ""714f1d50-d675-4615-8548-395b4d04c5cf"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""8ce32c91-72f6-48a2-b2de-7787710358a8"",
+                    ""path"": ""<XInputController>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RightStick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9bb94544-70cd-4d58-9aea-de8ea9d5e5fc"",
+                    ""path"": ""<XInputController>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": ""StickDeadzone(max=1)"",
+                    ""groups"": """",
+                    ""action"": ""LeftStick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -387,6 +433,10 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Gameplay_KeyA = m_Gameplay.FindAction("KeyA", throwIfNotFound: true);
         m_Gameplay_KeyD = m_Gameplay.FindAction("KeyD", throwIfNotFound: true);
         m_Gameplay_KeySpace = m_Gameplay.FindAction("KeySpace", throwIfNotFound: true);
+        // Menu
+        m_Menu = asset.FindActionMap("Menu", throwIfNotFound: true);
+        m_Menu_RightStick = m_Menu.FindAction("RightStick", throwIfNotFound: true);
+        m_Menu_LeftStick = m_Menu.FindAction("LeftStick", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -601,6 +651,47 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         }
     }
     public GameplayActions @Gameplay => new GameplayActions(this);
+
+    // Menu
+    private readonly InputActionMap m_Menu;
+    private IMenuActions m_MenuActionsCallbackInterface;
+    private readonly InputAction m_Menu_RightStick;
+    private readonly InputAction m_Menu_LeftStick;
+    public struct MenuActions
+    {
+        private @PlayerControls m_Wrapper;
+        public MenuActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @RightStick => m_Wrapper.m_Menu_RightStick;
+        public InputAction @LeftStick => m_Wrapper.m_Menu_LeftStick;
+        public InputActionMap Get() { return m_Wrapper.m_Menu; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(MenuActions set) { return set.Get(); }
+        public void SetCallbacks(IMenuActions instance)
+        {
+            if (m_Wrapper.m_MenuActionsCallbackInterface != null)
+            {
+                @RightStick.started -= m_Wrapper.m_MenuActionsCallbackInterface.OnRightStick;
+                @RightStick.performed -= m_Wrapper.m_MenuActionsCallbackInterface.OnRightStick;
+                @RightStick.canceled -= m_Wrapper.m_MenuActionsCallbackInterface.OnRightStick;
+                @LeftStick.started -= m_Wrapper.m_MenuActionsCallbackInterface.OnLeftStick;
+                @LeftStick.performed -= m_Wrapper.m_MenuActionsCallbackInterface.OnLeftStick;
+                @LeftStick.canceled -= m_Wrapper.m_MenuActionsCallbackInterface.OnLeftStick;
+            }
+            m_Wrapper.m_MenuActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @RightStick.started += instance.OnRightStick;
+                @RightStick.performed += instance.OnRightStick;
+                @RightStick.canceled += instance.OnRightStick;
+                @LeftStick.started += instance.OnLeftStick;
+                @LeftStick.performed += instance.OnLeftStick;
+                @LeftStick.canceled += instance.OnLeftStick;
+            }
+        }
+    }
+    public MenuActions @Menu => new MenuActions(this);
     public interface IGameplayActions
     {
         void OnLeftJoystick(InputAction.CallbackContext context);
@@ -621,5 +712,10 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnKeyA(InputAction.CallbackContext context);
         void OnKeyD(InputAction.CallbackContext context);
         void OnKeySpace(InputAction.CallbackContext context);
+    }
+    public interface IMenuActions
+    {
+        void OnRightStick(InputAction.CallbackContext context);
+        void OnLeftStick(InputAction.CallbackContext context);
     }
 }

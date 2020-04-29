@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class HurtboxComponent : MonoBehaviour
 {
@@ -30,10 +31,7 @@ public class HurtboxComponent : MonoBehaviour
 
 	private void Hurt(GameObject player)
 	{
-		PlayerPhysics playerPhysics = player.gameObject.GetComponent<PlayerPhysics>();
-		PlayerInfo playerInfo = player.gameObject.GetComponent<PlayerInfo>();
-		playerPhysics.velocity += Direction * (Multiplier * (playerInfo.Damage + 1));
-		playerInfo.Damage += Damage;
+		player.GetComponent<CharacterData>().Hurt(Direction,Multiplier,Damage);
 	}
 
 	private void OnTriggerStay2D(Collider2D other)

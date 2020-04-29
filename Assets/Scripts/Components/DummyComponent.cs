@@ -18,4 +18,9 @@ public class DummyComponent : MonoBehaviour
     {
         Animator.SetBool(state, status);
     }
+
+    public void TriggerAnimationState(string state)
+    {
+        Animator.SetTrigger(state);
+    }
 }

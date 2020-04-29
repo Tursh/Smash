@@ -5,23 +5,26 @@ using UnityEngine;
 public class LoopComponent : MonoBehaviour
 {
     
-    [SerializeField] private GameObject dummyPrefab;
+    [SerializeField] protected GameObject dummyPrefab;
     
-    private BoxCollider2D BoxCollider;
-    private Vector2 startWindowPosition, endWindowPosition, windowSizeInWorld;
+    protected Collider2D Collider2D;
+    protected Vector2 startWindowPosition, endWindowPosition, windowSizeInWorld;
     
-    private GameObject[] dummies = new GameObject[2];
-    private DummyComponent[] dummyComponents = new DummyComponent[2];
+    protected GameObject[] dummies = new GameObject[2];
     
     // Start is called before the first frame update
-    void Start()
+    protected void Start()
     {
-        BoxCollider = GetComponent<BoxCollider2D>();
+        Collider2D = GetComponent<Collider2D>();
         
         Camera cam = Camera.main;
         startWindowPosition = cam.ScreenToWorldPoint(new Vector3(0, 0, 12));
         endWindowPosition = cam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 12));
         windowSizeInWorld = endWindowPosition - startWindowPosition;
+        bool isDummyPrefabSelf = dummyPrefab == null;
+        
+        if (isDummyPrefabSelf)
+            dummyPrefab = gameObject;
         
         for (int i = 0; i < 2; ++i)
         {
@@ -29,16 +32,18 @@ public class LoopComponent : MonoBehaviour
                 Instantiate(dummyPrefab,
                     startWindowPosition - Vector2.down * 10,
                     Quaternion.identity);
-            dummyComponents[i] = dummies[i].GetComponent<DummyComponent>(); 
-            dummyComponents[i].PlayerReference = gameObject;
+            if (isDummyPrefabSelf)
+            {
+                dummies[i].GetComponent<LoopComponent>().enabled = false;
+            }
         }
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    protected void FixedUpdate()
     {
         Vector3 position = transform.position;
-        Bounds bounds = BoxCollider.bounds;
+        Bounds bounds = Collider2D.bounds;
 
         //x et y, x: 0, y: 1
         for (int axis = 0; axis < 2; ++axis)
@@ -65,12 +70,8 @@ public class LoopComponent : MonoBehaviour
                                  (transform.position[axis] > 0 ? -1 : 1) * windowSizeInWorld[axis];
             dummyPositon[(axis + 1) % 2] = transform.position[(axis + 1) % 2];
             dummies[axis].transform.position = dummyPositon;
+            dummies[axis].transform.rotation = transform.rotation;
         }
     }
 
-    public void SetDummyAnimatorState(string state, bool status)
-    {
-        foreach(var dummyComponent in dummyComponents)
-           dummyComponent.SetAnimationState(state, status);
-    }
 }

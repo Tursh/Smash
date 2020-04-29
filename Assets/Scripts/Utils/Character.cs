@@ -1,7 +1,11 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Utils;
+
+public enum CharacterRenderType
+{
+    Sprite, Model
+}
 
 public abstract class CharacterData : MonoBehaviour
 {
@@ -15,9 +19,11 @@ public abstract class CharacterData : MonoBehaviour
     protected PlayerControls PlayerControls;
     protected Rigidbody2D Rigidbody;
     protected BoxCollider2D BoxCollider;
+    protected CharacterRenderType CharacterRenderType;
+    protected PlayerInfo PlayerInfo;
 
     private Animator Animator;
-    private LoopComponent LoopComponent;
+    private PlayerLoopComponent PlayerLoopComponent;
 
     protected Vector2 LeftJoystickPosition;
     protected Vector2 RightJoystickPosition;
@@ -59,7 +65,8 @@ public abstract class CharacterData : MonoBehaviour
         Animator = GetComponent<Animator>();
         Rigidbody = GetComponent<Rigidbody2D>();
         BoxCollider = GetComponent<BoxCollider2D>();
-        LoopComponent = GetComponent<LoopComponent>();
+        PlayerLoopComponent = GetComponent<PlayerLoopComponent>();
+        PlayerInfo = GetComponent<PlayerInfo>();
 
         //PlayerPhysics.OnGroundEventHandler += OnGround;
 
@@ -228,13 +235,33 @@ public abstract class CharacterData : MonoBehaviour
     {
         PlayerControls.Enable();
     }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="Direction">Direction Thrown</param>
+    /// <param name="Multiplier"></param>
+    /// <param name="Damage"></param>
+    /// <param name="SetKnockback">If the knockback is set</param>
+    public virtual void Hurt(Vector2 Direction, float Multiplier, float Damage, bool SetKnockback = false)
+    {
+        PlayerInfo.Damage = Damage;
+        Rigidbody.velocity += Direction * (Multiplier * (1 + (SetKnockback ? 0 : PlayerInfo.Damage)));
+    }
 
     public void SetAnimatorState(string state, bool status)
     {
         Animator.SetBool(state, status);
         //Set the dummy animation state
-        if (LoopComponent != null)
-            LoopComponent.SetDummyAnimatorState(state, status);
+        if (PlayerLoopComponent != null)
+            PlayerLoopComponent.SetDummyAnimatorState(state, status);
+    }
+
+    public void TriggerAnimatorState(string state)
+    {
+        Animator.SetTrigger(state);
+        if (PlayerLoopComponent != null)
+            PlayerLoopComponent.TriggerDummyAnimatorState(state);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -255,5 +282,20 @@ public abstract class CharacterData : MonoBehaviour
                     ? Layers.STAGE
                     : Layers.SEMI_STAGE;
         }
+    }
+
+    protected virtual bool EvaluateAttacks(GameObject self)
+    {
+        if (!Attack.IsEmpty())
+        {
+            AttackState = AttackState.Attacking;
+            Attack.Pop().Act(self);
+        }
+        else
+        {
+            AttackState = AttackState.Idle;
+        }
+
+        return !Attack.IsEmpty();
     }
 }

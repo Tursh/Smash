@@ -3,45 +3,60 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Utils;
+
+public enum CharacterState
+{
+    Idle,
+    Jumping,
+    Falling,
+    Running
+}
 
 public class BlobCharacter : CharacterData
 {
     public float JumpWindup = 20;
     public float JumpMultiplier = 10;
 
-    private enum CharacterState
-    {
-        Idle,
-        Jumping,
-        Falling,
-        Running
-    }
-
     private static FrameOfAttack[] AAttack;
-    private CharacterState BlobState;
+    public CharacterState BlobState;
 
-    private CharacterState PreviousState;
+    public CharacterState PreviousState;
     private BoxCollider2D feet;
     public bool Falling;
-
-    static BlobCharacter()
-    {
-        AAttack = new FrameOfAttack[]
-        {
-            AttackFunctions.SimplePhysicalAttack(new FrameDataPhysical())
-        };
-    }
+    public Vector2 facing;
 
     protected void Start()
     {
         BlobState = CharacterState.Idle;
         feet = GetComponentInChildren<BoxCollider2D>();
+        facing = Vector2.left;
+        CharacterRenderType = CharacterRenderType.Model;
+        
+        AAttack = new FrameOfAttack[]
+        {
+
+        };
     }
+    
 
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
+        
+        if (BlobState != CharacterState.Falling)
+        {
+            Vector2 previousFacing = facing;
+
+            if (LeftJoystickPosition.x > 0.2f)
+                facing = Vector2.right;
+            else if (LeftJoystickPosition.x < -0.2f)
+                facing = Vector2.left;
+
+            if (previousFacing != facing)
+                TriggerAnimatorState("Turn");
+            
+            SetAnimatorState("Turned", facing == Vector2.right);
+        }
 
         if (BlobState == CharacterState.Jumping)
             if (jumpTimer++ > JumpWindup)
@@ -52,7 +67,17 @@ public class BlobCharacter : CharacterData
         //Animator.SetFloat("Velocity", Mathf.Abs(velocity.x)*0.4f);
 
         //If blob is not on ground, set falling animation true
-        SetAnimatorState("Falling", GroundPlatform == null);
+        if (GroundPlatform == null)
+        {
+            SetAnimatorState("Falling", true);
+            BlobState = CharacterState.Falling;
+        }
+        else
+        {
+            SetAnimatorState("Falling", false);
+            BlobState = CharacterState.Idle;
+        }
+        
         //If the blob is idle and start moving, set to running animation
         SetAnimatorState("IsRunning", Mathf.Abs(velocity.x) > 0.1f);
         
@@ -81,6 +106,7 @@ public class BlobCharacter : CharacterData
 
     protected override void AOnperformed(InputAction.CallbackContext ctx)
     {
+        
     }
     
 }
