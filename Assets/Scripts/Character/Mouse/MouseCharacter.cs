@@ -119,8 +119,6 @@ public class MouseCharacter : CharacterData
         }
     }
 
-
-
     private float RotateGradually(float targetDegrees, float scale)
     {
         float gradualRotation = -transform.localRotation.eulerAngles.z + targetDegrees;

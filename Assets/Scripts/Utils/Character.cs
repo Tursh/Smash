@@ -13,6 +13,7 @@ public abstract class CharacterData : MonoBehaviour
     public float airResistance = 0.9f;
     public float gravity = -0.05f;
     public float distanceToGround = 1;
+    public int PlayerNumber;
 
     public GameObject[] Prefabs;
 
@@ -21,6 +22,7 @@ public abstract class CharacterData : MonoBehaviour
     protected BoxCollider2D BoxCollider;
     protected CharacterRenderType CharacterRenderType;
     protected PlayerInfo PlayerInfo;
+    protected GameObject UiPlayerInfo;
 
     private Animator Animator;
     private PlayerLoopComponent PlayerLoopComponent;
@@ -67,6 +69,7 @@ public abstract class CharacterData : MonoBehaviour
         BoxCollider = GetComponent<BoxCollider2D>();
         PlayerLoopComponent = GetComponent<PlayerLoopComponent>();
         PlayerInfo = GetComponent<PlayerInfo>();
+        
 
         //PlayerPhysics.OnGroundEventHandler += OnGround;
 
@@ -95,6 +98,7 @@ public abstract class CharacterData : MonoBehaviour
         PlayerControls.Gameplay.KeyA.performed += KeyAOnperformed;
         PlayerControls.Gameplay.KeyD.performed += KeyDOnperformed;
         PlayerControls.Gameplay.KeySpace.performed += KeySpaceOnperformed;
+
     }
 
     protected virtual void LeftJoystickOnperformed(InputAction.CallbackContext ctx)
@@ -247,6 +251,7 @@ public abstract class CharacterData : MonoBehaviour
     {
         PlayerInfo.Damage = Damage;
         Rigidbody.velocity += Direction * (Multiplier * (1 + (SetKnockback ? 0 : PlayerInfo.Damage)));
+        
     }
 
     public void SetAnimatorState(string state, bool status)
