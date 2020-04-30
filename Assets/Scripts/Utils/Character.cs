@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Utils;
 
 public enum CharacterRenderType
 {
@@ -254,16 +253,16 @@ public abstract class CharacterData : MonoBehaviour
     {
         Animator.SetBool(state, status);
         //Set the dummy animation state
-        if (LoopComponent != null)
-            LoopComponent.SetDummyAnimatorState(state, status);
+        if (PlayerLoopComponent != null)
+            PlayerLoopComponent.SetDummyAnimatorState(state, status);
     }
     
     public void SetAnimatorState(int state, bool status)
     {
         Animator.SetBool(state, status);
         //Set the dummy animation state
-        if (LoopComponent != null)
-            LoopComponent.SetDummyAnimatorState(state, status);
+        if (PlayerLoopComponent != null)
+            PlayerLoopComponent.SetDummyAnimatorState(state, status);
     }
 
     public void TriggerAnimatorState(string state)

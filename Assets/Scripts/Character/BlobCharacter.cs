@@ -24,11 +24,13 @@ public class BlobCharacter : CharacterData
     private BoxCollider2D feet;
     public bool Falling;
     public Vector2 facing;
+    private Dictionary<string, int> AnimationIDs; 
 
     protected void Start()
     {
         BlobState = CharacterState.Idle;
         feet = GetComponentInChildren<BoxCollider2D>();
+        AnimationIDs = new Dictionary<string, int>();
         AnimationIDs.Add("IsRunning", Animator.StringToHash("IsRunning"));
         AnimationIDs.Add("Falling", Animator.StringToHash("Falling"));
     }

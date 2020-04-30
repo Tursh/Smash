@@ -11,7 +11,7 @@ public class LoopComponent : MonoBehaviour
     protected Vector2 startWindowPosition, endWindowPosition, windowSizeInWorld;
     
     protected GameObject[] dummies = new GameObject[2];
-    
+
     // Start is called before the first frame update
     protected void Start()
     {
@@ -72,17 +72,5 @@ public class LoopComponent : MonoBehaviour
             dummies[axis].transform.position = dummyPositon;
             dummies[axis].transform.rotation = transform.rotation;
         }
-    }
-    public void SetDummyAnimatorState(string state, bool status)
-    {
-        foreach(var dummyComponent in dummyComponents)
-           dummyComponent.SetAnimationState(state, status);
-    }
-    
-    
-    public void SetDummyAnimatorState(int state, bool status)
-    {
-        foreach(var dummyComponent in dummyComponents)
-            dummyComponent.SetAnimationState(state, status);
     }
 }

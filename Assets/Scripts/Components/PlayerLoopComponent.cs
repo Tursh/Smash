@@ -28,8 +28,19 @@ public class PlayerLoopComponent : LoopComponent
         foreach(var dummyComponent in dummyComponents)
            dummyComponent.SetAnimationState(state, status);
     }
+    
+    public void SetDummyAnimatorState(int state, bool status)
+    {
+        foreach(var dummyComponent in dummyComponents)
+            dummyComponent.SetAnimationState(state, status);
+    }
 
     public void TriggerDummyAnimatorState(string state)
+    {
+        foreach (var dummyComponent in dummyComponents)
+            dummyComponent.TriggerAnimationState(state);
+    }
+    public void TriggerDummyAnimatorState(int state)
     {
         foreach (var dummyComponent in dummyComponents)
             dummyComponent.TriggerAnimationState(state);
