@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -73,5 +73,16 @@ public class LoopComponent : MonoBehaviour
             dummies[axis].transform.rotation = transform.rotation;
         }
     }
-
+    public void SetDummyAnimatorState(string state, bool status)
+    {
+        foreach(var dummyComponent in dummyComponents)
+           dummyComponent.SetAnimationState(state, status);
+    }
+    
+    
+    public void SetDummyAnimatorState(int state, bool status)
+    {
+        foreach(var dummyComponent in dummyComponents)
+            dummyComponent.SetAnimationState(state, status);
+    }
 }
