@@ -14,9 +14,36 @@ public enum AttackState
     Idle
 }
 
+public class TimerFramesOfAttack
+{
+    public FrameOfAttack[] FrameOfAttacks;
+    public int timer;
+    public int time;
+
+    public TimerFramesOfAttack(int time, FrameOfAttack[] frameOfAttacks, int delay = 0)
+    {
+        List<FrameOfAttack> FrameOfAttacks;
+        this.time = time;
+        FrameOfAttacks = frameOfAttacks.ToList();
+        for (int i = 0; i < delay; i++)
+            FrameOfAttacks = FrameOfAttacks.Prepend(new FrameOfAttack()).ToList();
+        this.FrameOfAttacks = FrameOfAttacks.ToArray();
+    }
+
+    public bool CanAttack()
+    {
+        return timer > time;
+    }
+
+    public bool CanAttackInc()
+    {
+        return timer > time++;
+    }
+}
+
 public class FrameOfAttack
 {
-    private Func<GameObject, bool> Function;
+    private Func<GameObject,bool> Function;
 
     public FrameOfAttack()
     {
@@ -69,6 +96,14 @@ public class Attack
         for (int i = 0; i < frames.Length; ++i)
             FramesOfAttack.Enqueue(frames[i]);
     }
+    
+    public void Push(TimerFramesOfAttack frames)
+    {
+        frames.timer = 0;
+        for (int i = 0; i < frames.FrameOfAttacks.Length; ++i)
+            FramesOfAttack.Enqueue(frames.FrameOfAttacks[i]);
+    }
+    
 
     public FrameOfAttack[] GetFrames()
     {

@@ -20,4 +20,6 @@ public static class Utils
     public static Vector2 Degree2Vec2(float degree) => new Vector2(
         Mathf.Cos(degree * Mathf.Deg2Rad),
         Mathf.Sin(degree * Mathf.Deg2Rad));
+    
+    public static Vector2 Vec32Vec2(Vector3 vec3) => new Vector2(vec3.x,vec3.y);
 }

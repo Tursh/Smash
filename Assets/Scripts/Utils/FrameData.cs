@@ -72,12 +72,12 @@ public class FrameDataProjectile
     public Vector2 SpawnOffset;
     public Vector2 Direction;
     public Vector2 Velocity;
-    public int PrefabIndex;
+    public GameObject Prefab;
     public readonly int FramesOfLife;
     
-    public FrameDataProjectile()
+    public FrameDataProjectile(GameObject prefab)
     {
-        PrefabIndex = 0;
+        Prefab = prefab;
         Damage = 1;
         Multiplier = 1;
         Radius = 1;
@@ -90,11 +90,11 @@ public class FrameDataProjectile
         Vector2 direction, 
         Vector2 velocity,
         Vector2 spawnOffset,
+        GameObject prefab,
         float damage = 1, 
         float multiplier = 1, 
         float radius = 1,
-        int framesOfLife = 60,
-        int prefabIndex = 0)
+        int framesOfLife = 60)
     {
         Damage = damage;
         Multiplier = multiplier;
@@ -103,7 +103,7 @@ public class FrameDataProjectile
         Velocity = velocity;
         SpawnOffset = spawnOffset;
         FramesOfLife = framesOfLife;
-        PrefabIndex = prefabIndex;
+        Prefab = prefab;
     }
     
 
@@ -113,11 +113,11 @@ public class FrameDataProjectile
             new Vector2(-Direction.x, Direction.y), 
             new Vector2(-Velocity.x, Velocity.y),
             new Vector2(-SpawnOffset.x, SpawnOffset.y),
+            Prefab,
             Damage,
             Multiplier,
             Radius,
-            FramesOfLife,
-            PrefabIndex);
+            FramesOfLife);
     }
 
     public void Reverse()

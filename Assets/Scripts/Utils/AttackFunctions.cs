@@ -65,12 +65,13 @@ public class AttackFunctions : MonoBehaviour
             {
                 FrameDataProjectile tempFrameDataProjectile = frameDataProjectile;
                 GameObject projectileGameObject = Instantiate(
-                    o.GetComponent<CharacterData>().Prefabs[frameDataProjectile.PrefabIndex],
+                    frameDataProjectile.Prefab,
                     o.transform.position + 
                     new Vector3(frameDataProjectile.SpawnOffset.x, 
                                 frameDataProjectile.SpawnOffset.y),
                     o.transform.localRotation);
                 Projectile projectile = projectileGameObject.GetComponent<Projectile>();
+                projectile.Source = o;
                 projectile.FramesOfLife = tempFrameDataProjectile.FramesOfLife;
                 projectile.Multiplier = tempFrameDataProjectile.Multiplier;
                 projectile.Damage = tempFrameDataProjectile.Damage;

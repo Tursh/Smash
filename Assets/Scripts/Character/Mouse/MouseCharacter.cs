@@ -1,25 +1,39 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class MouseCharacter : CharacterData
 {
-    private Dictionary<string, FrameOfAttack[]> FramesOfAttacks;
-    
+    private Dictionary<string, TimerFramesOfAttack> TimerFramesOfAttacks;
+    private Dictionary<string, CstmAnimation> Animations;
+
     private float rotationalTarget;
-    private int shootTimer;
-    private int shootTime = 30;
     private bool firedLastTime = false;
-    
+
     void Start()
     {
         CharacterRenderType = CharacterRenderType.Sprite;
         Attack = new Attack();
-        FramesOfAttacks = new Dictionary<string, FrameOfAttack[]>
+
+        Animations = new Dictionary<string, CstmAnimation>
+        {
+            {"B", new CstmAnimation( (o,stp)=>
+                {
+                    float value = o.transform.eulerAngles.z;
+                    value += 10f;
+                    o.transform.eulerAngles = new Vector3(0,0,value);
+                    return true;
+                }, 360/10)
+                
+            }
+        };
+        
+        TimerFramesOfAttacks = new Dictionary<string, TimerFramesOfAttack>
         {
             {
-                "A", new[]
+                "A", new TimerFramesOfAttack(60,new []
                 {
                     new FrameOfAttack(
                         o =>
@@ -40,11 +54,36 @@ public class MouseCharacter : CharacterData
                                 o.transform.rotation
                             );
                             return true;
-                        }), 
-                }
+                        }),
+                })
             },
             {
-                "LT", new[]
+                "X",new TimerFramesOfAttack( 120,new []
+                {
+                    new FrameOfAttack(
+                        o =>
+                        {
+                            o.GetComponent<Rigidbody2D>().velocity =
+                                Utils.NormalizedVectorFromAngle(
+                                    o.transform.eulerAngles.z + 90f)*20f;
+                            return true;
+                        }), 
+                })
+            },
+            {
+                "B",new TimerFramesOfAttack( 60,new []
+                {
+                    new FrameOfAttack(
+                        o =>
+                        {
+                            Instantiate(Prefabs[3]);
+                            return true;
+                        }),
+                    
+                }, 30)
+            },
+            {
+                "LT", new TimerFramesOfAttack(120, new[]
                 {
                     new FrameOfAttack(o =>
                     {
@@ -56,7 +95,7 @@ public class MouseCharacter : CharacterData
                                                 (new Vector3(vectorizedAngleOfAttackOffset.x,
                                                     vectorizedAngleOfAttackOffset.y)) * 1.0f;
 
-                            GameObject projectileThrown = Instantiate(
+                        GameObject projectileThrown = Instantiate(
                             mouseCharacter.Prefabs[1], 
                             spawnPosition,
                             o.transform.rotation);
@@ -70,7 +109,7 @@ public class MouseCharacter : CharacterData
 
                         return true;
                     })
-                }
+                })
             }
         };
     }
@@ -78,7 +117,11 @@ public class MouseCharacter : CharacterData
     protected override void FixedUpdate()
     {
         var velocity = Rigidbody.velocity;
-        shootTimer++;
+        foreach (var pair in TimerFramesOfAttacks)
+        {
+            TimerFramesOfAttacks[pair.Key].timer++;
+        }
+
         if (LTPosition > 0.7f)
         {
             if (LeftJoystickPosition.normalized.magnitude > 0.3f)
@@ -89,9 +132,9 @@ public class MouseCharacter : CharacterData
 
         if (RTPosition > 0.7f)
         {
-            if (!firedLastTime && shootTimer > shootTime)
+            if (!firedLastTime && TimerFramesOfAttacks["LT"].CanAttack())
             {
-                Attack.Push(FramesOfAttacks["LT"]);
+                Attack.Push(TimerFramesOfAttacks["LT"]);
                 firedLastTime = true;
             }
             else
@@ -102,24 +145,52 @@ public class MouseCharacter : CharacterData
             firedLastTime = false;
         }
 
-
-        transform.Rotate(0,0, RotateGradually(rotationalTarget, 0.05f));
+        
+        foreach (var anim in Animations)
+        {
+            if (!anim.Value.Done)
+            {
+                anim.Value.Step(gameObject);
+            }
+        }
+        if (!AnimationIsPlaying())
+            transform.Rotate(0,0, RotateGradually(rotationalTarget, 0.05f));
+        
         velocity *= airResistance;
 
-        EvaluateAttacks(gameObject);
         Rigidbody.velocity = velocity;
+        EvaluateAttacks(gameObject);
     }
 
     protected override void AOnperformed(InputAction.CallbackContext ctx)
     {
-        if (ctx.ReadValueAsButton())
+        if (ctx.ReadValueAsButton() && TimerFramesOfAttacks["A"].CanAttack())
         {
-            Attack.Push(FramesOfAttacks["A"]);
+            Attack.Push(TimerFramesOfAttacks["A"]);
+            AttackState = AttackState.Attacking;
+        }
+    }
+    
+    protected override void BOnperformed(InputAction.CallbackContext ctx)
+    {
+        if (ctx.ReadValueAsButton() && TimerFramesOfAttacks["B"].CanAttack())
+        {
+            Attack.Push(TimerFramesOfAttacks["B"]);
+            Animations["B"].Start();
             AttackState = AttackState.Attacking;
         }
     }
 
-    private float RotateGradually(float targetDegrees, float scale)
+    protected override void XOnperformed(InputAction.CallbackContext ctx)
+    {
+        if (ctx.ReadValueAsButton() && TimerFramesOfAttacks["X"].CanAttack())
+        {
+            Attack.Push(TimerFramesOfAttacks["X"]);
+            AttackState = AttackState.Attacking;
+        }
+    }
+
+    public float RotateGradually(float targetDegrees, float scale)
     {
         float gradualRotation = -transform.localRotation.eulerAngles.z + targetDegrees;
         
@@ -133,5 +204,8 @@ public class MouseCharacter : CharacterData
         return gradualRotation;
     }
 
-
+    public bool AnimationIsPlaying()
+    {
+        return Animations.Any(o => o.Value.Done);
+    }
 }

@@ -6,7 +6,7 @@ public class LoopComponent : MonoBehaviour
 {
     
     [SerializeField] protected GameObject dummyPrefab;
-    
+    protected GameObject objectLooping;
     protected Collider2D Collider2D;
     protected Vector2 startWindowPosition, endWindowPosition, windowSizeInWorld;
     
@@ -40,7 +40,7 @@ public class LoopComponent : MonoBehaviour
     }
 
     // Update is called once per frame
-    protected void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         Vector3 position = transform.position;
         Bounds bounds = Collider2D.bounds;

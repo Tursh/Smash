@@ -29,7 +29,7 @@ public class HurtboxComponent : MonoBehaviour
 		}
 	}
 
-	private void Hurt(GameObject player)
+	protected virtual void Hurt(GameObject player)
 	{
 		player.GetComponent<CharacterData>().Hurt(Direction,Multiplier,Damage);
 	}
