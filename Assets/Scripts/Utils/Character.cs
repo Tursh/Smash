@@ -5,6 +5,10 @@ using Utils;
 
 public abstract class CharacterData : MonoBehaviour
 {
+    
+    public float JumpWindup = 20;
+    public float JumpMultiplier = 10;
+    
     public float mvSpeed = 0.025f;
     public float airResistance = 0.9f;
     public float gravity = -0.05f;
@@ -51,6 +55,7 @@ public abstract class CharacterData : MonoBehaviour
     }
 
     private Vector3 lastPlatfromPosition;
+    private bool _isLoopComponentNotNull;
 
     protected virtual void Awake()
     {
@@ -60,6 +65,7 @@ public abstract class CharacterData : MonoBehaviour
         Rigidbody = GetComponent<Rigidbody2D>();
         BoxCollider = GetComponent<BoxCollider2D>();
         LoopComponent = GetComponent<LoopComponent>();
+        _isLoopComponentNotNull = LoopComponent != null;
 
         //PlayerPhysics.OnGroundEventHandler += OnGround;
 
@@ -241,7 +247,7 @@ public abstract class CharacterData : MonoBehaviour
     {
         Animator.SetBool(state, status);
         //Set the dummy animation state
-        if (LoopComponent != null)
+        if (_isLoopComponentNotNull)
             LoopComponent.SetDummyAnimatorState(state, status);
     }
 }

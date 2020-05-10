@@ -7,7 +7,7 @@ public class LoopComponent : MonoBehaviour
     
     [SerializeField] private GameObject dummyPrefab;
     
-    private BoxCollider2D BoxCollider;
+    [SerializeField]private BoxCollider2D PlayerBoxCollider;
     private Vector2 startWindowPosition, endWindowPosition, windowSizeInWorld;
     
     private GameObject[] dummies = new GameObject[2];
@@ -16,7 +16,7 @@ public class LoopComponent : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        BoxCollider = GetComponent<BoxCollider2D>();
+        PlayerBoxCollider = GetComponent<BoxCollider2D>();
         
         Camera cam = Camera.main;
         startWindowPosition = cam.ScreenToWorldPoint(new Vector3(0, 0, 12));
@@ -38,7 +38,7 @@ public class LoopComponent : MonoBehaviour
     void FixedUpdate()
     {
         Vector3 position = transform.position;
-        Bounds bounds = BoxCollider.bounds;
+        Bounds bounds = PlayerBoxCollider.bounds;
 
         //x et y, x: 0, y: 1
         for (int axis = 0; axis < 2; ++axis)

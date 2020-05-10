@@ -7,9 +7,6 @@ using Utils;
 
 public class BlobCharacter : CharacterData
 {
-    public float JumpWindup = 20;
-    public float JumpMultiplier = 10;
-
     private enum CharacterState
     {
         Idle,
@@ -24,8 +21,6 @@ public class BlobCharacter : CharacterData
     private CharacterState BlobState;
 
     private CharacterState PreviousState;
-    private BoxCollider2D feet;
-    public bool Falling;
 
     static BlobCharacter()
     {
@@ -38,7 +33,6 @@ public class BlobCharacter : CharacterData
     protected void Start()
     {
         BlobState = CharacterState.Idle;
-        feet = GetComponentInChildren<BoxCollider2D>();
         AnimationIDs.Add("IsRunning", Animator.StringToHash("IsRunning"));
         AnimationIDs.Add("Falling", Animator.StringToHash("Falling"));
         AnimationIDs.Add("Jumping", Animator.StringToHash("Jumping"));
