@@ -10,23 +10,16 @@ public class NinjaCharacter : CharacterData
         Idle,
         Jumping,
         Falling,
-        Landing,
-        Running,
         Kicking,
-        R_Punch,
-        L_Punch,
-        UpperCut
+        Punching
     }
 
-    [SerializeField]
-    private BoxCollider2DFix BoxCollider2DFix;
-    
+    [SerializeField] private BoxCollider2DFix BoxCollider2DFix;
+
     private Dictionary<string, int> ParameterIDs = new Dictionary<string, int>();
 
     private static FrameOfAttack[] AAttack;
     private CharacterState NinjaState;
-
-    private CharacterState PreviousState;
 
     static NinjaCharacter()
     {
@@ -44,24 +37,40 @@ public class NinjaCharacter : CharacterData
         ParameterIDs.Add("Jumping", Animator.StringToHash("Jumping"));
         ParameterIDs.Add("Kicking", Animator.StringToHash("Kicking"));
         ParameterIDs.Add("PunchAttackState", Animator.StringToHash("PunchAttackState"));
-        
-        BoxCollider2DFix.AddBoxColliderFix("Idle", new ColliderFixInfo(new Vector2(1, 1.705f), new Vector2(0, -0.016f)));
-        BoxCollider2DFix.AddBoxColliderFix("Jumping", new ColliderFixInfo(new Vector2(1, 1.316f), new Vector2(-0.1f, -0.021f)));
-        BoxCollider2DFix.AddBoxColliderFix("Falling", new ColliderFixInfo(new Vector2(1.485f, 1.521f), new Vector2(-0.406f, 0.099f)));
-        BoxCollider2DFix.AddBoxColliderFix("Running", new ColliderFixInfo(new Vector2(1, 1.664f), new Vector2(0, -0.193f)));
-        
-        
+
+        BoxCollider2DFix.AddBoxColliderFix("Idle",
+            new ColliderFixInfo(new Vector2(1, 1.705f), new Vector2(0, -0.016f)));
+        BoxCollider2DFix.AddBoxColliderFix("Jumping",
+            new ColliderFixInfo(new Vector2(1, 1.316f), new Vector2(-0.1f, -0.021f)));
+        BoxCollider2DFix.AddBoxColliderFix("Falling",
+            new ColliderFixInfo(new Vector2(1.485f, 1.521f), new Vector2(-0.406f, 0.099f)));
+        BoxCollider2DFix.AddBoxColliderFix("Running",
+            new ColliderFixInfo(new Vector2(1, 1.664f), new Vector2(0, -0.193f)));
     }
 
     protected override void FixedUpdate()
     {
+        Vector2 velocity = Rigidbody.velocity;
+
         base.FixedUpdate();
 
         if (NinjaState == CharacterState.Jumping)
             if (jumpTimer++ > JumpWindup)
                 Jump();
 
-        Vector2 velocity = Rigidbody.velocity;
+        if (NinjaState == CharacterState.Kicking && kickCoolDown-- == 0)
+        {
+            SetAnimatorState(ParameterIDs["Kicking"], false);
+            NinjaState = CharacterState.Idle;
+        }
+
+        if (NinjaState == CharacterState.Punching && punchCoolDown-- == 0)
+        {
+            SetAnimatorState(ParameterIDs["PunchAttackState"], 0);
+            punchState = 0;
+            NinjaState = CharacterState.Idle;
+        }
+
 
         //Animator.SetFloat("Velocity", Mathf.Abs(velocity.x)*0.4f);
 
@@ -72,35 +81,54 @@ public class NinjaCharacter : CharacterData
 
         SetAnimatorState(ParameterIDs["Jumping"], NinjaState == CharacterState.Jumping);
 
-        Rigidbody.velocity = velocity;
+        if (velocity.x != 0)
+            setRotation(Quaternion.AngleAxis(Rigidbody.velocity.x > 0 ? 90 : -90, Vector3.up));
+    }
+
+
+    private int kickCoolDown = 0;
+
+    void kick()
+    {
+        if (NinjaState == CharacterState.Idle)
+        {
+            SetAnimatorState(ParameterIDs["Kicking"], true);
+            kickCoolDown = 20;
+            NinjaState = CharacterState.Kicking;
+        }
+    }
+
+
+    private int punchCoolDown = 0,
+        punchState = 0;
+
+    private float lastPunch;
+
+    void punch()
+    {
+        if ((NinjaState == CharacterState.Idle || NinjaState == CharacterState.Punching) &&
+            (punchState == 0 || (Time.time - lastPunch > 0.15f && punchState != 3)))
+        {
+            lastPunch = Time.time;
+            ++punchState;
+            punchCoolDown = 20;
+            SetAnimatorState(ParameterIDs["PunchAttackState"], punchState);
+            NinjaState = CharacterState.Punching;
+        }
     }
 
     protected override void Jump()
     {
         Vector2 velocity = Rigidbody.velocity;
-        NinjaState = CharacterState.Falling;
+        NinjaState = CharacterState.Idle;
         Rigidbody.velocity = velocity + Vector2.up * JumpMultiplier;
-    }
-
-    private CharacterState lastState = CharacterState.Idle;
-
-
-    /// <summary>
-    /// Since the ninja is a 3d mesh, the box collider don't follow it correctly
-    /// </summary>
-    private void FixBoxCollider()
-    {
-        var animationState = Animator.GetCurrentAnimatorStateInfo(0);
-        if (animationState.IsName("running") && lastState != CharacterState.Running)
-        {
-        }
     }
 
     private int jumpTimer = 0;
 
     protected override void KeySpaceOnperformed(InputAction.CallbackContext ctx)
     {
-        if (ctx.ReadValueAsButton())
+        if (ctx.ReadValueAsButton() && NinjaState == CharacterState.Idle)
         {
             NinjaState = CharacterState.Jumping;
             jumpTimer = 0;
@@ -109,5 +137,16 @@ public class NinjaCharacter : CharacterData
 
     protected override void AOnperformed(InputAction.CallbackContext ctx)
     {
+        KeySpaceOnperformed(ctx);
+    }
+
+    protected override void BOnperformed(InputAction.CallbackContext ctx)
+    {
+        kick();
+    }
+
+    protected override void XOnperformed(InputAction.CallbackContext ctx)
+    {
+        punch();
     }
 }

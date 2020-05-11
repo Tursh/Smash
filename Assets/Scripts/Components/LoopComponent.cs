@@ -4,32 +4,32 @@ using UnityEngine;
 
 public class LoopComponent : MonoBehaviour
 {
-    
     [SerializeField] private GameObject dummyPrefab;
-    
-    [SerializeField]private BoxCollider2D PlayerBoxCollider;
+
+    [SerializeField] private BoxCollider2D PlayerBoxCollider;
     private Vector2 startWindowPosition, endWindowPosition, windowSizeInWorld;
-    
+
     private GameObject[] dummies = new GameObject[2];
     private DummyComponent[] dummyComponents = new DummyComponent[2];
-    
+
     // Start is called before the first frame update
     void Start()
     {
-        PlayerBoxCollider = GetComponent<BoxCollider2D>();
-        
+        if (PlayerBoxCollider == null)
+            PlayerBoxCollider = GetComponent<BoxCollider2D>();
+
         Camera cam = Camera.main;
         startWindowPosition = cam.ScreenToWorldPoint(new Vector3(0, 0, 12));
         endWindowPosition = cam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 12));
         windowSizeInWorld = endWindowPosition - startWindowPosition;
-        
+
         for (int i = 0; i < 2; ++i)
         {
             dummies[i] =
                 Instantiate(dummyPrefab,
                     startWindowPosition - Vector2.down * 10,
                     Quaternion.identity);
-            dummyComponents[i] = dummies[i].GetComponent<DummyComponent>(); 
+            dummyComponents[i] = dummies[i].GetComponent<DummyComponent>();
             dummyComponents[i].PlayerReference = gameObject;
         }
     }
@@ -70,13 +70,25 @@ public class LoopComponent : MonoBehaviour
 
     public void SetDummyAnimatorState(string state, bool status)
     {
-        foreach(var dummyComponent in dummyComponents)
-           dummyComponent.SetAnimationState(state, status);
+        foreach (var dummyComponent in dummyComponents)
+            dummyComponent.SetAnimationState(state, status);
     }
-    
+
     public void SetDummyAnimatorState(int state, bool status)
     {
-        foreach(var dummyComponent in dummyComponents)
+        foreach (var dummyComponent in dummyComponents)
             dummyComponent.SetAnimationState(state, status);
+    }
+    
+    public void SetDummyAnimatorState(int state, int status)
+    {
+        foreach (var dummyComponent in dummyComponents)
+            dummyComponent.SetAnimationState(state, status);
+    }
+
+    public void setDummyRotation(Quaternion rotation)
+    {
+        foreach (var dummy in dummies)
+            dummy.transform.rotation = rotation;
     }
 }

@@ -250,4 +250,19 @@ public abstract class CharacterData : MonoBehaviour
         if (_isLoopComponentNotNull)
             LoopComponent.SetDummyAnimatorState(state, status);
     }
+    
+    public void SetAnimatorState(int state, int status)
+    {
+        Animator.SetInteger(state, status);
+        //Set the dummy animation state
+        if (_isLoopComponentNotNull)
+            LoopComponent.SetDummyAnimatorState(state, status);
+    }
+
+    public void setRotation(Quaternion rotation)
+    {
+        transform.rotation = rotation;
+        if(_isLoopComponentNotNull)
+            LoopComponent.setDummyRotation(rotation);
+    }
 }

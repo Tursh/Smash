@@ -23,4 +23,9 @@ public class DummyComponent : MonoBehaviour
     {
         Animator.SetBool(state, status);
     }
+    
+    public void SetAnimationState(int state, int status)
+    {
+        Animator.SetInteger(state, status);
+    }
 }
