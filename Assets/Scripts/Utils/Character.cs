@@ -207,7 +207,7 @@ public abstract class CharacterData : MonoBehaviour
         if (!Attack.IsEmpty())
         {
             AttackState = AttackState.Attacking;
-            Attack.Pop().Act(gameObject);
+            Attack.Dequeue().Act(gameObject);
         }
         else
         {
@@ -302,7 +302,7 @@ public abstract class CharacterData : MonoBehaviour
         if (!Attack.IsEmpty())
         {
             AttackState = AttackState.Attacking;
-            Attack.Pop().Act(self);
+            Attack.Dequeue().Act(self);
         }
         else
         {

@@ -209,6 +209,6 @@ MonoBehaviour:
   distanceToGround: 1
   PlayerNumber: 0
   Prefabs:
-  - {fileID: 0}
+  - {fileID: 3033172143268956793, guid: 94420efc86e0dbf4b8343a5036fcacfb, type: 3}
   AttackState: 1
   groundPlatfrom: {fileID: 0}

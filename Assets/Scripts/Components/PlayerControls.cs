@@ -201,7 +201,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""name"": """",
                     ""id"": ""a247d688-bb01-4494-8246-a9ce2d296d4b"",
                     ""path"": ""<XInputController>/buttonEast"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press(behavior=2)"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""B"",

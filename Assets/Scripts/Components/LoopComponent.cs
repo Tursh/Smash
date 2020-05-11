@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -72,5 +73,11 @@ public class LoopComponent : MonoBehaviour
             dummies[axis].transform.position = dummyPositon;
             dummies[axis].transform.rotation = transform.rotation;
         }
+    }
+
+    private void OnDestroy()
+    {
+        foreach ( var o in dummies)
+            Destroy(o);
     }
 }

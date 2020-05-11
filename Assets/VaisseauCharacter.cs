@@ -36,7 +36,7 @@ public class VaisseauCharacter : CharacterData
     {
         if (RBIsBeingPressed && RBTimer > 10)
         {
-            Attack.Push(RB);
+            Attack.Enqueue(RB);
             RBTimer = 0;
         }
 

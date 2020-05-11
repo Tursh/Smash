@@ -12,24 +12,18 @@ public class MouseCharacter : CharacterData
     private float rotationalTarget;
     private bool firedLastTime = false;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        PlayerInfo.Damage = 2f;
+    }
+
     void Start()
     {
         CharacterRenderType = CharacterRenderType.Sprite;
         Attack = new Attack();
 
-        Animations = new Dictionary<string, CstmAnimation>
-        {
-            {"B", new CstmAnimation( (o,stp)=>
-                {
-                    float value = o.transform.eulerAngles.z;
-                    value += 10f;
-                    o.transform.eulerAngles = new Vector3(0,0,value);
-                    return true;
-                }, 360/10)
-                
-            }
-        };
-        
+
         TimerFramesOfAttacks = new Dictionary<string, TimerFramesOfAttack>
         {
             {
@@ -65,22 +59,10 @@ public class MouseCharacter : CharacterData
                         {
                             o.GetComponent<Rigidbody2D>().velocity =
                                 Utils.NormalizedVectorFromAngle(
-                                    o.transform.eulerAngles.z + 90f)*20f;
+                                    o.transform.eulerAngles.z + 90f)*40f;
                             return true;
                         }), 
                 })
-            },
-            {
-                "B",new TimerFramesOfAttack( 60,new []
-                {
-                    new FrameOfAttack(
-                        o =>
-                        {
-                            Instantiate(Prefabs[3]);
-                            return true;
-                        }),
-                    
-                }, 30)
             },
             {
                 "LT", new TimerFramesOfAttack(120, new[]
@@ -92,8 +74,7 @@ public class MouseCharacter : CharacterData
                         Vector2 vectorizedAngleOfAttack = Utils.NormalizedVectorFromAngle(angleOfAttack);
                         Vector2 vectorizedAngleOfAttackOffset = Utils.NormalizedVectorFromAngle(angleOfAttack + 15f);
                         Vector2 spawnPosition = o.transform.position +
-                                                (new Vector3(vectorizedAngleOfAttackOffset.x,
-                                                    vectorizedAngleOfAttackOffset.y)) * 1.0f;
+                                                Utils.Vec22Vec3(vectorizedAngleOfAttackOffset) * 1.0f;
 
                         GameObject projectileThrown = Instantiate(
                             mouseCharacter.Prefabs[1], 
@@ -132,9 +113,9 @@ public class MouseCharacter : CharacterData
 
         if (RTPosition > 0.7f)
         {
-            if (!firedLastTime && TimerFramesOfAttacks["LT"].CanAttack())
+            if (!firedLastTime && TimerFramesOfAttacks["LT"].CanAttack() && AttackState != AttackState.Attacking)
             {
-                Attack.Push(TimerFramesOfAttacks["LT"]);
+                Attack.Enqueue(TimerFramesOfAttacks["LT"]);
                 firedLastTime = true;
             }
             else
@@ -146,15 +127,7 @@ public class MouseCharacter : CharacterData
         }
 
         
-        foreach (var anim in Animations)
-        {
-            if (!anim.Value.Done)
-            {
-                anim.Value.Step(gameObject);
-            }
-        }
-        if (!AnimationIsPlaying())
-            transform.Rotate(0,0, RotateGradually(rotationalTarget, 0.05f));
+        transform.Rotate(0,0, RotateGradually(rotationalTarget, 0.05f));
         
         velocity *= airResistance;
 
@@ -164,28 +137,18 @@ public class MouseCharacter : CharacterData
 
     protected override void AOnperformed(InputAction.CallbackContext ctx)
     {
-        if (ctx.ReadValueAsButton() && TimerFramesOfAttacks["A"].CanAttack())
+        if (ctx.ReadValueAsButton() && TimerFramesOfAttacks["A"].CanAttack() && AttackState != AttackState.Attacking)
         {
-            Attack.Push(TimerFramesOfAttacks["A"]);
-            AttackState = AttackState.Attacking;
-        }
-    }
-    
-    protected override void BOnperformed(InputAction.CallbackContext ctx)
-    {
-        if (ctx.ReadValueAsButton() && TimerFramesOfAttacks["B"].CanAttack())
-        {
-            Attack.Push(TimerFramesOfAttacks["B"]);
-            Animations["B"].Start();
+            Attack.Enqueue(TimerFramesOfAttacks["A"]);
             AttackState = AttackState.Attacking;
         }
     }
 
     protected override void XOnperformed(InputAction.CallbackContext ctx)
     {
-        if (ctx.ReadValueAsButton() && TimerFramesOfAttacks["X"].CanAttack())
+        if (ctx.ReadValueAsButton() && TimerFramesOfAttacks["X"].CanAttack() && AttackState != AttackState.Attacking)
         {
-            Attack.Push(TimerFramesOfAttacks["X"]);
+            Attack.Enqueue(TimerFramesOfAttacks["X"]);
             AttackState = AttackState.Attacking;
         }
     }
@@ -204,8 +167,10 @@ public class MouseCharacter : CharacterData
         return gradualRotation;
     }
 
-    public bool AnimationIsPlaying()
+    public override void Hurt(Vector2 Direction, float Multiplier, float Damage, bool SetKnockback = false)
     {
-        return Animations.Any(o => o.Value.Done);
+        PlayerInfo.Damage -= Damage;
+
+        Rigidbody.velocity += Direction * (Multiplier * (1 + (SetKnockback ? 0 : 2f - PlayerInfo.Damage)));
     }
 }

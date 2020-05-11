@@ -63,58 +63,58 @@ public class FrameOfAttack
 
 public class Attack
 {
-    private Queue<FrameOfAttack> FramesOfAttack;
+    private Queue<FrameOfAttack> framesOfAttack;
 
     public void Wait(int numberOfFrames)
     {
         FrameOfAttack[] frameOfAttacks = new FrameOfAttack[numberOfFrames];
         for (int i = 0; i < numberOfFrames; i++)
             frameOfAttacks[i] = new FrameOfAttack();
-        Push(frameOfAttacks);
+        Enqueue(frameOfAttacks);
     }
     
     public Attack(FrameOfAttack[] framesOfAttack)
     {
-        FramesOfAttack = new Queue<FrameOfAttack>();
-        Push(framesOfAttack);
+        this.framesOfAttack = new Queue<FrameOfAttack>();
+        Enqueue(framesOfAttack);
     }
 
     public Attack()
     {
-        FramesOfAttack = new Queue<FrameOfAttack>();
+        framesOfAttack = new Queue<FrameOfAttack>();
     }
 
-    public FrameOfAttack Pop()
+    public FrameOfAttack Dequeue()
     {
-        if (FramesOfAttack.Any())
-            return FramesOfAttack.Dequeue();
+        if (framesOfAttack.Any())
+            return framesOfAttack.Dequeue();
         return new FrameOfAttack();
     }
 
-    public void Push(FrameOfAttack[] frames)
+    public void Enqueue(FrameOfAttack[] frames)
     {
         for (int i = 0; i < frames.Length; ++i)
-            FramesOfAttack.Enqueue(frames[i]);
+            framesOfAttack.Enqueue(frames[i]);
     }
     
-    public void Push(TimerFramesOfAttack frames)
+    public void Enqueue(TimerFramesOfAttack frames)
     {
         frames.timer = 0;
         for (int i = 0; i < frames.FrameOfAttacks.Length; ++i)
-            FramesOfAttack.Enqueue(frames.FrameOfAttacks[i]);
+            framesOfAttack.Enqueue(frames.FrameOfAttacks[i]);
     }
     
 
     public FrameOfAttack[] GetFrames()
     {
-        return FramesOfAttack.ToArray();
+        return framesOfAttack.ToArray();
     }
     
-    public void Push(FrameOfAttack frame)
+    public void Enqueue(FrameOfAttack frame)
     {
-        Push(new []{frame});
+        Enqueue(new []{frame});
     }
 
-    public void Clear() => FramesOfAttack.Clear();
-    public bool IsEmpty() => !FramesOfAttack.Any();
+    public void Clear() => framesOfAttack.Clear();
+    public bool IsEmpty() => !framesOfAttack.Any();
 }
