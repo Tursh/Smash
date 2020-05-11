@@ -9,6 +9,10 @@ public enum CharacterRenderType
 
 public abstract class CharacterData : MonoBehaviour
 {
+    
+    public float JumpWindup = 20;
+    public float JumpMultiplier = 10;
+    
     public float mvSpeed = 0.025f;
     public float airResistance = 0.9f;
     public float gravity = -0.05f;
@@ -24,7 +28,7 @@ public abstract class CharacterData : MonoBehaviour
     protected PlayerInfo PlayerInfo;
     protected GameObject UiPlayerInfo;
 
-    private Animator Animator;
+    protected Animator Animator;
     private PlayerLoopComponent PlayerLoopComponent;
 
     protected Vector2 LeftJoystickPosition;
@@ -59,6 +63,7 @@ public abstract class CharacterData : MonoBehaviour
     }
 
     private Vector3 lastPlatfromPosition;
+    private bool _isLoopComponentNotNull;
 
     protected virtual void Awake()
     {
@@ -266,8 +271,23 @@ public abstract class CharacterData : MonoBehaviour
     {
         Animator.SetBool(state, status);
         //Set the dummy animation state
-        if (PlayerLoopComponent != null)
+        if (_isLoopComponentNotNull != null)
             PlayerLoopComponent.SetDummyAnimatorState(state, status);
+    }
+    
+    public void SetAnimatorState(int state, int status)
+    {
+        Animator.SetInteger(state, status);
+        //Set the dummy animation state
+        if (_isLoopComponentNotNull)
+            PlayerLoopComponent.SetDummyAnimatorState(state, status);
+    }
+
+    public void setRotation(Quaternion rotation)
+    {
+        transform.rotation = rotation;
+        if(_isLoopComponentNotNull)
+            PlayerLoopComponent.setDummyRotation(rotation);
     }
 
     public void TriggerAnimatorState(string state)

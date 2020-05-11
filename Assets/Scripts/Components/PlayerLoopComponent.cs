@@ -45,4 +45,16 @@ public class PlayerLoopComponent : LoopComponent
         foreach (var dummyComponent in dummyComponents)
             dummyComponent.TriggerAnimationState(state);
     }
+    
+    public void SetDummyAnimatorState(int state, int status)
+    {
+        foreach (var dummyComponent in dummyComponents)
+            dummyComponent.SetAnimationState(state, status);
+    }
+
+    public void setDummyRotation(Quaternion rotation)
+    {
+        foreach (var dummy in dummies)
+            dummy.transform.rotation = rotation;
+    }
 }

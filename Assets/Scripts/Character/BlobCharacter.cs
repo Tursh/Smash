@@ -1,35 +1,25 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public enum CharacterState
-{
-    Idle,
-    Jumping,
-    Falling,
-    Running
-}
-
 public class BlobCharacter : CharacterData
 {
-    public float JumpWindup = 20;
-    public float JumpMultiplier = 10;
+    private enum CharacterState
+    {
+        Idle,
+        Jumping,
+        Falling ,
+        Running
+    }
+
+    private Dictionary<string, int> AnimationIDs;
 
     private static FrameOfAttack[] AAttack;
     private CharacterState BlobState;
 
-    private CharacterState PreviousState;
-    private BoxCollider2D feet;
-    public bool Falling;
-    public Vector2 facing;
-    private Dictionary<string, int> AnimationIDs; 
-
     protected void Start()
     {
         BlobState = CharacterState.Idle;
-        feet = GetComponentInChildren<BoxCollider2D>();
         AnimationIDs = new Dictionary<string, int>();
         AnimationIDs.Add("IsRunning", Animator.StringToHash("IsRunning"));
         AnimationIDs.Add("Falling", Animator.StringToHash("Falling"));

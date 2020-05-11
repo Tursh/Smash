@@ -5,28 +5,28 @@ using UnityEngine;
 
 public class LoopComponent : MonoBehaviour
 {
-    
     [SerializeField] protected GameObject dummyPrefab;
     protected GameObject objectLooping;
-    protected Collider2D Collider2D;
+    [SerializeField] protected Collider2D Collider2D;
     protected Vector2 startWindowPosition, endWindowPosition, windowSizeInWorld;
-    
+
     protected GameObject[] dummies = new GameObject[2];
 
     // Start is called before the first frame update
     protected void Start()
     {
-        Collider2D = GetComponent<Collider2D>();
-        
+        if (Collider2D == null)
+            Collider2D = GetComponent<Collider2D>();
+
         Camera cam = Camera.main;
         startWindowPosition = cam.ScreenToWorldPoint(new Vector3(0, 0, 12));
         endWindowPosition = cam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 12));
         windowSizeInWorld = endWindowPosition - startWindowPosition;
         bool isDummyPrefabSelf = dummyPrefab == null;
-        
+
         if (isDummyPrefabSelf)
             dummyPrefab = gameObject;
-        
+
         for (int i = 0; i < 2; ++i)
         {
             dummies[i] =
@@ -77,7 +77,7 @@ public class LoopComponent : MonoBehaviour
 
     private void OnDestroy()
     {
-        foreach ( var o in dummies)
+        foreach (var o in dummies)
             Destroy(o);
     }
 }
