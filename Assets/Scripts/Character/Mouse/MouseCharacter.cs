@@ -16,6 +16,7 @@ public class MouseCharacter : CharacterData
     {
         base.Awake();
         PlayerInfo.Damage = 2f;
+        InitialDamage = 2f;
     }
 
     void Start()
@@ -133,6 +134,9 @@ public class MouseCharacter : CharacterData
 
         Rigidbody.velocity = velocity;
         EvaluateAttacks(gameObject);
+        //Hurt(Vector2.zero,1,0.01f);
+        if (PlayerInfo.Damage < 0f)
+            Die();
     }
 
     protected override void AOnperformed(InputAction.CallbackContext ctx)
@@ -172,5 +176,11 @@ public class MouseCharacter : CharacterData
         PlayerInfo.Damage -= Damage;
 
         Rigidbody.velocity += Direction * (Multiplier * (1 + (SetKnockback ? 0 : 2f - PlayerInfo.Damage)));
+    }
+
+    protected override void Die()
+    {
+        Instantiate(Prefabs[4]);
+        base.Die();
     }
 }
