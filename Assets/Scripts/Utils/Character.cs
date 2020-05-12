@@ -1,6 +1,9 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.PlayerLoop;
+using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public enum CharacterRenderType
 {
@@ -18,6 +21,8 @@ public abstract class CharacterData : MonoBehaviour
     public float gravity = -0.05f;
     public float distanceToGround = 1;
     public int PlayerNumber;
+    protected float InitialDamage = 0f;
+    protected int InvulnerabilityTimer;
 
     public GameObject[] Prefabs;
 
@@ -27,6 +32,8 @@ public abstract class CharacterData : MonoBehaviour
     protected CharacterRenderType CharacterRenderType;
     protected PlayerInfo PlayerInfo;
     protected GameObject UiPlayerInfo;
+    [SerializeField]
+    protected BlinkingBehaviour BlinkingBehaviour;
 
     protected Animator Animator;
     private PlayerLoopComponent PlayerLoopComponent;
@@ -67,6 +74,7 @@ public abstract class CharacterData : MonoBehaviour
 
     protected virtual void Awake()
     {
+        InvulnerabilityTimer = 60 * 3;
         Attack = new Attack();
         PlayerControls = new PlayerControls();
         Animator = GetComponent<Animator>();
@@ -79,7 +87,6 @@ public abstract class CharacterData : MonoBehaviour
     protected virtual void OnLeftJoystick(InputValue position)
     {
         LeftJoystickPosition = position.Get<Vector2>();
-        Debug.Log(position.Get<Vector2>());
     }
 
     protected virtual void OnRightJoystick(InputValue position)
@@ -204,6 +211,11 @@ public abstract class CharacterData : MonoBehaviour
         }
         else
             lastPlatfromPosition = Vector3.back;
+
+        
+        BlinkingBehaviour.isBlinking = InvulnerabilityTimer-- > 0;
+        
+
     }
 
     protected void DisableAttack()
@@ -226,8 +238,11 @@ public abstract class CharacterData : MonoBehaviour
     /// <param name="SetKnockback">If the knockback is set</param>
     public virtual void Hurt(Vector2 Direction, float Multiplier, float Damage, bool SetKnockback = false)
     {
-        PlayerInfo.Damage = Damage;
-        Rigidbody.velocity += Direction * (Multiplier * (1 + (SetKnockback ? 0 : PlayerInfo.Damage)));
+        if (InvulnerabilityTimer < 0)
+        {
+            PlayerInfo.Damage = Damage;
+            Rigidbody.velocity += Direction * (Multiplier * (1 + (SetKnockback ? 0 : PlayerInfo.Damage)));
+        }
     }
 
     public void SetAnimatorState(string state, bool status)
@@ -301,5 +316,18 @@ public abstract class CharacterData : MonoBehaviour
         }
 
         return !Attack.IsEmpty();
+    }
+
+    protected virtual void Die()
+    {
+        PlayerInfo.Stocks--;
+        PlayerInfo.Damage = InitialDamage;
+        InvulnerabilityTimer = 60 * 3;
+        transform.Translate(new Vector3(Random.Range(-5,5), Random.Range(-5,5)));
+    }
+
+    protected void Lose()
+    {
+        
     }
 }

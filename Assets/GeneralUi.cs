@@ -37,7 +37,7 @@ public class GeneralUi : MonoBehaviour
             else if (textBox.name.Contains("Stocks"))
                 PlayerStocks = textBox;
         }
-
+        
         PlayerName.text = playerInfo.Name;
         PlayerStocks.text = playerInfo.Stocks.ToString();
         PlayerPercent.text = (playerInfo.Damage * 100).ToString("N0") + " %";

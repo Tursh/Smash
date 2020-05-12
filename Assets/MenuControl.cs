@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Users;
 using UnityEngine.UIElements;
 
 public class MenuControl : MonoBehaviour
@@ -19,16 +20,21 @@ public class MenuControl : MonoBehaviour
     private SpriteRenderer platformSpriteRenderer;
     private MeshFilter platformMeshFilter;
     private MeshRenderer platformMeshRender;
+    private PlayerInput PlayerInput;
+    private InputUser inputUser;
 
     private void Awake()
     {
+        inputUser = default;
         PlayerControls = new PlayerControls();
         cameraBase = GameObject.Find("Base");
         MenuManager = GameObject.Find("GameManager").GetComponent<MenuManager>();
-        playerNumber = MenuManager.nbOfPlayers;
+        PlayerInput = GetComponent<PlayerInput>();
+        
+        InputUser.PerformPairingWithDevice(Gamepad.all[playerNumber], inputUser);
         PlayerControls.Menu.RightStick.performed += RightStickOnperformed;
         PlayerControls.Menu.LeftStick.performed += LeftStickOnperformed;
-
+            
         if (playerNumber == 1)
             Platform = Instantiate(PlatformPrefab, new Vector3(-35, -30), Quaternion.identity);
         else
