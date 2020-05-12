@@ -122,27 +122,29 @@ public class NinjaCharacter : CharacterData
 
     private int jumpTimer = 0;
 
-    protected override void KeySpaceOnperformed(InputAction.CallbackContext ctx)
+    protected override void OnKeySpace(InputValue value)
     {
-        if (ctx.ReadValueAsButton() && NinjaState == CharacterState.Idle)
+        if (value.isPressed && NinjaState == CharacterState.Idle)
         {
             NinjaState = CharacterState.Jumping;
             jumpTimer = 0;
         }
     }
 
-    protected override void AOnperformed(InputAction.CallbackContext ctx)
+    protected override void OnA(InputValue value)
     {
-        KeySpaceOnperformed(ctx);
+        OnKeySpace(value);
     }
 
-    protected override void BOnperformed(InputAction.CallbackContext ctx)
+    protected override void OnB(InputValue value)
     {
+        if(value.isPressed)
         kick();
     }
 
-    protected override void XOnperformed(InputAction.CallbackContext ctx)
+    protected override void OnX(InputValue value)
     {
+        if(value.isPressed)
         punch();
     }
 }

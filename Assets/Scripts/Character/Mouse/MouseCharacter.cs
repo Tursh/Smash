@@ -135,18 +135,18 @@ public class MouseCharacter : CharacterData
         EvaluateAttacks(gameObject);
     }
 
-    protected override void AOnperformed(InputAction.CallbackContext ctx)
+    protected override void OnA(InputValue value)
     {
-        if (ctx.ReadValueAsButton() && TimerFramesOfAttacks["A"].CanAttack() && AttackState != AttackState.Attacking)
+        if (value.isPressed && TimerFramesOfAttacks["A"].CanAttack() && AttackState != AttackState.Attacking)
         {
             Attack.Enqueue(TimerFramesOfAttacks["A"]);
             AttackState = AttackState.Attacking;
         }
     }
 
-    protected override void XOnperformed(InputAction.CallbackContext ctx)
+    protected override void OnX(InputValue value)
     {
-        if (ctx.ReadValueAsButton() && TimerFramesOfAttacks["X"].CanAttack() && AttackState != AttackState.Attacking)
+        if (value.isPressed && TimerFramesOfAttacks["X"].CanAttack() && AttackState != AttackState.Attacking)
         {
             Attack.Enqueue(TimerFramesOfAttacks["X"]);
             AttackState = AttackState.Attacking;

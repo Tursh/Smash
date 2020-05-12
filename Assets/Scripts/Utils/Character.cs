@@ -4,15 +4,15 @@ using UnityEngine.InputSystem;
 
 public enum CharacterRenderType
 {
-    Sprite, Model
+    Sprite,
+    Model
 }
 
 public abstract class CharacterData : MonoBehaviour
 {
-    
     public float JumpWindup = 20;
     public float JumpMultiplier = 10;
-    
+
     public float mvSpeed = 0.025f;
     public float airResistance = 0.9f;
     public float gravity = -0.05f;
@@ -74,123 +74,95 @@ public abstract class CharacterData : MonoBehaviour
         BoxCollider = GetComponent<BoxCollider2D>();
         PlayerLoopComponent = GetComponent<PlayerLoopComponent>();
         PlayerInfo = GetComponent<PlayerInfo>();
-        
-
-        //PlayerPhysics.OnGroundEventHandler += OnGround;
-
-        //vector2
-        PlayerControls.Gameplay.LeftJoystick.performed += LeftJoystickOnperformed;
-        PlayerControls.Gameplay.RightJoystick.performed += RightJoystickOnperformed;
-        PlayerControls.Gameplay.DPad.performed += DPadOnperformed;
-
-        //value
-        PlayerControls.Gameplay.LT.performed += LTOnperformed;
-        PlayerControls.Gameplay.RT.performed += RTOnperformed;
-
-        //boolean
-        PlayerControls.Gameplay.A.performed += AOnperformed;
-        PlayerControls.Gameplay.B.performed += BOnperformed;
-        PlayerControls.Gameplay.X.performed += XOnperformed;
-        PlayerControls.Gameplay.Y.performed += YOnperformed;
-        PlayerControls.Gameplay.LB.performed += LBOnperformed;
-        PlayerControls.Gameplay.RB.performed += RBOnperformed;
-        PlayerControls.Gameplay.Start.performed += StartOnperformed;
-        PlayerControls.Gameplay.Select.performed += SelectOnperformed;
-        PlayerControls.Gameplay.LeftJoystickPress.performed += LeftJoystickPressOnperformed;
-        PlayerControls.Gameplay.RightJoystickPress.performed += RightJoystickPressOnperformed;
-
-        //debug stuff with keyboard
-        PlayerControls.Gameplay.KeyA.performed += KeyAOnperformed;
-        PlayerControls.Gameplay.KeyD.performed += KeyDOnperformed;
-        PlayerControls.Gameplay.KeySpace.performed += KeySpaceOnperformed;
-
     }
 
-    protected virtual void LeftJoystickOnperformed(InputAction.CallbackContext ctx)
+    protected virtual void OnLeftJoystick(InputValue position)
     {
-        LeftJoystickPosition = ctx.ReadValue<Vector2>();
+        LeftJoystickPosition = position.Get<Vector2>();
+        Debug.Log(position.Get<Vector2>());
     }
 
-    protected virtual void RightJoystickOnperformed(InputAction.CallbackContext ctx)
+    protected virtual void OnRightJoystick(InputValue position)
     {
-        RightJoystickPosition = ctx.ReadValue<Vector2>();
+        RightJoystickPosition = position.Get<Vector2>();
     }
 
-    protected virtual void DPadOnperformed(InputAction.CallbackContext ctx)
+    protected virtual void OnDPad(InputValue value)
     {
     }
 
-    protected virtual void LTOnperformed(InputAction.CallbackContext ctx)
+    protected virtual void OnLT(InputValue value)
     {
-        LTPosition = ctx.ReadValue<float>();
+        LTPosition = value.Get<float>();
     }
 
-    protected virtual void RTOnperformed(InputAction.CallbackContext ctx)
+    protected virtual void OnRT(InputValue value)
     {
-        RTPosition = ctx.ReadValue<float>();
+        RTPosition = value.Get<float>();
     }
 
-    protected virtual void AOnperformed(InputAction.CallbackContext ctx)
+    protected virtual void OnA(InputValue value)
     {
-        if (ctx.ReadValueAsButton())
+        if (value.isPressed)
             Jump();
     }
 
-    protected virtual void BOnperformed(InputAction.CallbackContext ctx)
+    protected virtual void OnB(InputValue value)
     {
-        if (ctx.ReadValueAsButton())
+        if (value.isPressed)
             Jump();
     }
 
-    protected virtual void XOnperformed(InputAction.CallbackContext ctx)
+    protected virtual void OnX(InputValue value)
     {
     }
 
-    protected virtual void YOnperformed(InputAction.CallbackContext ctx)
+    protected virtual void OnY(InputValue value)
     {
     }
 
-    protected virtual void LBOnperformed(InputAction.CallbackContext ctx)
+    protected virtual void OnLB(InputValue value)
     {
     }
 
-    protected virtual void RBOnperformed(InputAction.CallbackContext ctx)
+    protected virtual void OnRB(InputValue value)
     {
     }
 
-    protected virtual void StartOnperformed(InputAction.CallbackContext ctx)
+    protected virtual void OnStart(InputValue value)
     {
     }
 
-    protected virtual void SelectOnperformed(InputAction.CallbackContext ctx)
+    protected virtual void OnSelect(InputValue value)
     {
     }
 
-    protected virtual void LeftJoystickPressOnperformed(InputAction.CallbackContext obj)
+    protected virtual void OnLeftJoystickPress(InputValue value)
     {
     }
 
-    protected virtual void RightJoystickPressOnperformed(InputAction.CallbackContext obj)
+    protected virtual void OnRightJoystickPress(InputValue value)
     {
     }
 
     //debug purposes
-    protected virtual void KeySpaceOnperformed(InputAction.CallbackContext ctx)
+    protected virtual void OnKeySpace(InputValue value)
     {
-        if (ctx.ReadValueAsButton()) Jump();
+        if (value.isPressed)
+            Jump();
     }
 
-    protected virtual void KeyAOnperformed(InputAction.CallbackContext ctx)
+    protected virtual void OnKeyA(InputValue value)
     {
-        if (ctx.ReadValueAsButton())
+        if (value.isPressed)
             LeftJoystickPosition += Vector2.left;
         else
             LeftJoystickPosition += Vector2.right;
     }
 
-    protected virtual void KeyDOnperformed(InputAction.CallbackContext ctx)
+    protected virtual void OnKeyD(InputValue value)
     {
-        if (ctx.ReadValueAsButton())
+        if (value.isPressed)
             LeftJoystickPosition += Vector2.right;
         else
             LeftJoystickPosition += Vector2.left;
@@ -244,7 +216,7 @@ public abstract class CharacterData : MonoBehaviour
     {
         PlayerControls.Enable();
     }
-    
+
     /// <summary>
     /// 
     /// </summary>
@@ -256,7 +228,6 @@ public abstract class CharacterData : MonoBehaviour
     {
         PlayerInfo.Damage = Damage;
         Rigidbody.velocity += Direction * (Multiplier * (1 + (SetKnockback ? 0 : PlayerInfo.Damage)));
-        
     }
 
     public void SetAnimatorState(string state, bool status)
@@ -266,7 +237,7 @@ public abstract class CharacterData : MonoBehaviour
         if (PlayerLoopComponent != null)
             PlayerLoopComponent.SetDummyAnimatorState(state, status);
     }
-    
+
     public void SetAnimatorState(int state, bool status)
     {
         Animator.SetBool(state, status);
@@ -274,7 +245,7 @@ public abstract class CharacterData : MonoBehaviour
         if (_isLoopComponentNotNull != null)
             PlayerLoopComponent.SetDummyAnimatorState(state, status);
     }
-    
+
     public void SetAnimatorState(int state, int status)
     {
         Animator.SetInteger(state, status);
@@ -286,7 +257,7 @@ public abstract class CharacterData : MonoBehaviour
     public void setRotation(Quaternion rotation)
     {
         transform.rotation = rotation;
-        if(_isLoopComponentNotNull)
+        if (_isLoopComponentNotNull)
             PlayerLoopComponent.setDummyRotation(rotation);
     }
 

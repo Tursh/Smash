@@ -1831,6 +1831,7 @@ MonoBehaviour:
   airResistance: 0.9
   gravity: -1.5
   distanceToGround: 1
+  PlayerNumber: 0
   Prefabs: []
   AttackState: 1
   groundPlatfrom: {fileID: 0}
@@ -1893,7 +1894,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dummyPrefab: {fileID: 6171597423043219655, guid: f6fea924f9d4c95498854019ee1754b0,
     type: 3}
-  PlayerBoxCollider: {fileID: 1879693074083837417}
+  Collider2D: {fileID: 1879693074083837417}
 --- !u!1 &7850962130181541561
 GameObject:
   m_ObjectHideFlags: 0

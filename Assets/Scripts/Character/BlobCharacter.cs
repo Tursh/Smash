@@ -8,7 +8,7 @@ public class BlobCharacter : CharacterData
     {
         Idle,
         Jumping,
-        Falling ,
+        Falling,
         Running
     }
 
@@ -24,7 +24,7 @@ public class BlobCharacter : CharacterData
         AnimationIDs.Add("IsRunning", Animator.StringToHash("IsRunning"));
         AnimationIDs.Add("Falling", Animator.StringToHash("Falling"));
     }
-    
+
 
     protected override void FixedUpdate()
     {
@@ -42,7 +42,7 @@ public class BlobCharacter : CharacterData
         SetAnimatorState(AnimationIDs["Falling"], GroundPlatform == null);
         //If the blob is idle and start moving, set to running animation
         SetAnimatorState(AnimationIDs["IsRunning"], Mathf.Abs(velocity.x) > 0.1f);
-        
+
         SetAnimatorState(AnimationIDs["Jumping"], BlobState == CharacterState.Jumping);
 
         Rigidbody.velocity = velocity;
@@ -57,18 +57,16 @@ public class BlobCharacter : CharacterData
 
     private int jumpTimer = 0;
 
-    protected override void KeySpaceOnperformed(InputAction.CallbackContext ctx)
+    protected override void OnKeySpace(InputValue value)
     {
-        if (ctx.ReadValueAsButton())
+        if (value.isPressed)
         {
             BlobState = CharacterState.Jumping;
             jumpTimer = 0;
         }
     }
 
-    protected override void AOnperformed(InputAction.CallbackContext ctx)
+    protected override void OnA(InputValue value)
     {
-        
     }
-    
 }

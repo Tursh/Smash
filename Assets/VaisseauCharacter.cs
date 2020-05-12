@@ -17,9 +17,9 @@ public class VaisseauCharacter : CharacterData
         RBIsBeingPressed = false;
     }
 
-    protected override void RBOnperformed(InputAction.CallbackContext ctx)
+    protected override void OnRB(InputValue value)
     {
-        RBIsBeingPressed = ctx.ReadValueAsButton();
+        RBIsBeingPressed = value.Get<bool>();
     }
 
     private FrameOfAttack RB = new FrameOfAttack(o =>
