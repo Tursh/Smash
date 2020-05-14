@@ -11,6 +11,11 @@ public enum CharacterRenderType
     Model
 }
 
+public enum Character
+{
+    None = -1, Mouse = 0 , Ship = 1, Ninja = 2
+}
+
 public abstract class CharacterData : MonoBehaviour
 {
     public float JumpWindup = 20;
@@ -20,7 +25,6 @@ public abstract class CharacterData : MonoBehaviour
     public float airResistance = 0.9f;
     public float gravity = -0.05f;
     public float distanceToGround = 1;
-    public int PlayerNumber;
     protected float InitialDamage = 0f;
     protected int InvulnerabilityTimer;
 
@@ -29,21 +33,17 @@ public abstract class CharacterData : MonoBehaviour
     protected PlayerControls PlayerControls;
     protected Rigidbody2D Rigidbody;
     protected BoxCollider2D BoxCollider;
-    protected CharacterRenderType CharacterRenderType;
     protected PlayerInfo PlayerInfo;
-    protected GameObject UiPlayerInfo;
     [SerializeField]
     protected BlinkingBehaviour BlinkingBehaviour;
-
     protected Animator Animator;
-    private PlayerLoopComponent PlayerLoopComponent;
-
+    protected PlayerLoopComponent PlayerLoopComponent;
     protected Vector2 LeftJoystickPosition;
     protected Vector2 RightJoystickPosition;
     protected float LTPosition;
     protected float RTPosition;
-
     protected Attack Attack;
+    
     public AttackState AttackState = AttackState.Idle;
 
     [SerializeField] private GameObject groundPlatfrom;
@@ -76,11 +76,11 @@ public abstract class CharacterData : MonoBehaviour
     {
         InvulnerabilityTimer = 60 * 3;
         Attack = new Attack();
-        PlayerControls = new PlayerControls();
         Animator = GetComponent<Animator>();
         Rigidbody = GetComponent<Rigidbody2D>();
         BoxCollider = GetComponent<BoxCollider2D>();
         PlayerLoopComponent = GetComponent<PlayerLoopComponent>();
+        _isLoopComponentNotNull = PlayerLoopComponent != null;
         PlayerInfo = GetComponent<PlayerInfo>();
     }
 
@@ -211,22 +211,13 @@ public abstract class CharacterData : MonoBehaviour
         }
         else
             lastPlatfromPosition = Vector3.back;
-
-        
         BlinkingBehaviour.isBlinking = InvulnerabilityTimer-- > 0;
-        
-
     }
 
     protected void DisableAttack()
     {
         AttackState = AttackState.Idle;
         Attack.Clear();
-    }
-
-    private void OnEnable()
-    {
-        PlayerControls.Enable();
     }
 
     /// <summary>
@@ -257,7 +248,7 @@ public abstract class CharacterData : MonoBehaviour
     {
         Animator.SetBool(state, status);
         //Set the dummy animation state
-        if (_isLoopComponentNotNull != null)
+        if (_isLoopComponentNotNull)
             PlayerLoopComponent.SetDummyAnimatorState(state, status);
     }
 
@@ -269,7 +260,7 @@ public abstract class CharacterData : MonoBehaviour
             PlayerLoopComponent.SetDummyAnimatorState(state, status);
     }
 
-    public void setRotation(Quaternion rotation)
+    public void SetRotation(Quaternion rotation)
     {
         transform.rotation = rotation;
         if (_isLoopComponentNotNull)

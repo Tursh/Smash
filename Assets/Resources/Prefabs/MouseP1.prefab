@@ -49,7 +49,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Actions: {fileID: -944628639613478452, guid: 4c6b0b9d2aa81604aadebfbc9a2e3b10,
     type: 3}
-  m_NotificationBehavior: 3
+  m_NotificationBehavior: 0
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
     m_PersistentCalls:
@@ -62,7 +62,7 @@ MonoBehaviour:
       m_Calls: []
   m_ActionEvents: []
   m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
+  m_DefaultControlScheme: Gamepad
   m_DefaultActionMap: Menu
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
@@ -78,9 +78,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7e57c21c9b7ccb43ad05720ed006f93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlatformPrefab: {fileID: 2004023954251491190, guid: 003e7c3275b9e6640ac6938701c19833,
+  platformPrefab: {fileID: 2004023954251491190, guid: 003e7c3275b9e6640ac6938701c19833,
     type: 3}
-  Platform: {fileID: 0}
+  platform: {fileID: 0}
   playerNumber: 0
 --- !u!61 &6255404461340680774
 BoxCollider2D:
@@ -122,6 +122,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dummyPrefab: {fileID: 1709483598082440167, guid: 7592fcffeb30e914280fc377fabb3ca4,
     type: 3}
+  Collider2D: {fileID: 0}
 --- !u!1 &6255404462775811933
 GameObject:
   m_ObjectHideFlags: 0

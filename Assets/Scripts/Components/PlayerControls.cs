@@ -383,6 +383,22 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""A"",
+                    ""type"": ""Button"",
+                    ""id"": ""dd383a4f-7440-4567-a0a2-4e85e5a70330"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""B"",
+                    ""type"": ""Button"",
+                    ""id"": ""ad932b84-3826-4b60-b39b-f4f15ac44e32"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -405,6 +421,55 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""processors"": ""StickDeadzone(max=1)"",
                     ""groups"": """",
                     ""action"": ""LeftStick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7ebed276-a40b-4fb3-889e-b42b6d5679cc"",
+                    ""path"": ""<XInputController>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""A"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2019d9de-889c-4562-8b44-3826f9819eeb"",
+                    ""path"": ""<XInputController>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""B"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Debug"",
+            ""id"": ""3cfcf350-65fa-4b80-86f9-963e9897d63d"",
+            ""actions"": [
+                {
+                    ""name"": ""Enter"",
+                    ""type"": ""Button"",
+                    ""id"": ""57cb5532-4c74-430d-9839-dc822e8390bf"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """"
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""614da461-49e6-4b5c-a5f3-ea58ee18cee2"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Enter"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -449,6 +514,11 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Menu = asset.FindActionMap("Menu", throwIfNotFound: true);
         m_Menu_RightStick = m_Menu.FindAction("RightStick", throwIfNotFound: true);
         m_Menu_LeftStick = m_Menu.FindAction("LeftStick", throwIfNotFound: true);
+        m_Menu_A = m_Menu.FindAction("A", throwIfNotFound: true);
+        m_Menu_B = m_Menu.FindAction("B", throwIfNotFound: true);
+        // Debug
+        m_Debug = asset.FindActionMap("Debug", throwIfNotFound: true);
+        m_Debug_Enter = m_Debug.FindAction("Enter", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -669,12 +739,16 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private IMenuActions m_MenuActionsCallbackInterface;
     private readonly InputAction m_Menu_RightStick;
     private readonly InputAction m_Menu_LeftStick;
+    private readonly InputAction m_Menu_A;
+    private readonly InputAction m_Menu_B;
     public struct MenuActions
     {
         private @PlayerControls m_Wrapper;
         public MenuActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @RightStick => m_Wrapper.m_Menu_RightStick;
         public InputAction @LeftStick => m_Wrapper.m_Menu_LeftStick;
+        public InputAction @A => m_Wrapper.m_Menu_A;
+        public InputAction @B => m_Wrapper.m_Menu_B;
         public InputActionMap Get() { return m_Wrapper.m_Menu; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -690,6 +764,12 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @LeftStick.started -= m_Wrapper.m_MenuActionsCallbackInterface.OnLeftStick;
                 @LeftStick.performed -= m_Wrapper.m_MenuActionsCallbackInterface.OnLeftStick;
                 @LeftStick.canceled -= m_Wrapper.m_MenuActionsCallbackInterface.OnLeftStick;
+                @A.started -= m_Wrapper.m_MenuActionsCallbackInterface.OnA;
+                @A.performed -= m_Wrapper.m_MenuActionsCallbackInterface.OnA;
+                @A.canceled -= m_Wrapper.m_MenuActionsCallbackInterface.OnA;
+                @B.started -= m_Wrapper.m_MenuActionsCallbackInterface.OnB;
+                @B.performed -= m_Wrapper.m_MenuActionsCallbackInterface.OnB;
+                @B.canceled -= m_Wrapper.m_MenuActionsCallbackInterface.OnB;
             }
             m_Wrapper.m_MenuActionsCallbackInterface = instance;
             if (instance != null)
@@ -700,10 +780,49 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @LeftStick.started += instance.OnLeftStick;
                 @LeftStick.performed += instance.OnLeftStick;
                 @LeftStick.canceled += instance.OnLeftStick;
+                @A.started += instance.OnA;
+                @A.performed += instance.OnA;
+                @A.canceled += instance.OnA;
+                @B.started += instance.OnB;
+                @B.performed += instance.OnB;
+                @B.canceled += instance.OnB;
             }
         }
     }
     public MenuActions @Menu => new MenuActions(this);
+
+    // Debug
+    private readonly InputActionMap m_Debug;
+    private IDebugActions m_DebugActionsCallbackInterface;
+    private readonly InputAction m_Debug_Enter;
+    public struct DebugActions
+    {
+        private @PlayerControls m_Wrapper;
+        public DebugActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Enter => m_Wrapper.m_Debug_Enter;
+        public InputActionMap Get() { return m_Wrapper.m_Debug; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(DebugActions set) { return set.Get(); }
+        public void SetCallbacks(IDebugActions instance)
+        {
+            if (m_Wrapper.m_DebugActionsCallbackInterface != null)
+            {
+                @Enter.started -= m_Wrapper.m_DebugActionsCallbackInterface.OnEnter;
+                @Enter.performed -= m_Wrapper.m_DebugActionsCallbackInterface.OnEnter;
+                @Enter.canceled -= m_Wrapper.m_DebugActionsCallbackInterface.OnEnter;
+            }
+            m_Wrapper.m_DebugActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Enter.started += instance.OnEnter;
+                @Enter.performed += instance.OnEnter;
+                @Enter.canceled += instance.OnEnter;
+            }
+        }
+    }
+    public DebugActions @Debug => new DebugActions(this);
     private int m_GamepadSchemeIndex = -1;
     public InputControlScheme GamepadScheme
     {
@@ -738,5 +857,11 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     {
         void OnRightStick(InputAction.CallbackContext context);
         void OnLeftStick(InputAction.CallbackContext context);
+        void OnA(InputAction.CallbackContext context);
+        void OnB(InputAction.CallbackContext context);
+    }
+    public interface IDebugActions
+    {
+        void OnEnter(InputAction.CallbackContext context);
     }
 }

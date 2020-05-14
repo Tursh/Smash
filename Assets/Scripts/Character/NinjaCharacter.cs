@@ -78,7 +78,7 @@ public class NinjaCharacter : CharacterData
         SetAnimatorState(ParameterIDs["Jumping"], NinjaState == CharacterState.Jumping);
 
         if (velocity.x != 0)
-            setRotation(Quaternion.AngleAxis(Rigidbody.velocity.x > 0 ? 90 : -90, Vector3.up));
+            SetRotation(Quaternion.AngleAxis(Rigidbody.velocity.x > 0 ? 90 : -90, Vector3.up));
     }
 
 

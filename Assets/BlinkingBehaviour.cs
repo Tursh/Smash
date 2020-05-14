@@ -12,12 +12,12 @@ public class BlinkingBehaviour : MonoBehaviour
     private int timer;
     public bool isBlinking;
     private bool isBlinked;
-    private Renderer renderer;
+    private Renderer rendererToBlink;
 
     private void Start()
     {
-        renderer = GetComponent<Renderer>();
-        renderer.material = NormalColor;
+        rendererToBlink = GetComponent<Renderer>();
+        rendererToBlink.material = NormalColor;
         timer = 0;
     }
 
@@ -33,11 +33,11 @@ public class BlinkingBehaviour : MonoBehaviour
             }
 
             if (isBlinked)
-                renderer.material = BlinkColor;
+                rendererToBlink.material = BlinkColor;
             else
-                renderer.material = NormalColor;
+                rendererToBlink.material = NormalColor;
         }
         else
-            renderer.material = NormalColor;
+            rendererToBlink.material = NormalColor;
     }
 }

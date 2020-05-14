@@ -1,25 +1,17 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.InputSystem;
+﻿using UnityEngine;
 
 public class MenuManager : MonoBehaviour
-{
-    public GameObject platformPrefab;
-    public GameObject Prefab1;
+{ 
+    public int nbOfPlayers { get; private set; }
+    private GameManager gameManager;
 
-    public GameObject Prefab2;
-
-    public int nbOfPlayers = 0;
+    private void Start()
+    {
+        nbOfPlayers = -1;
+    }
 
     void OnPlayerJoined()
     {
         nbOfPlayers++;
-    }
-
-    void Start()
-    {
-        PlayerInput.Instantiate(Prefab1,0);
     }
 }

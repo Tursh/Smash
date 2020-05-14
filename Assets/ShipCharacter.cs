@@ -4,7 +4,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class VaisseauCharacter : CharacterData
+public class ShipCharacter : CharacterData
 {
     private float targetRotation;
     private bool RBIsBeingPressed;
@@ -19,7 +19,7 @@ public class VaisseauCharacter : CharacterData
 
     protected override void OnRB(InputValue value)
     {
-        RBIsBeingPressed = value.Get<bool>();
+        RBIsBeingPressed = value.isPressed;
     }
 
     private FrameOfAttack RB = new FrameOfAttack(o =>

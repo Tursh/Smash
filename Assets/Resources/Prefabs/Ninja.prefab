@@ -1410,6 +1410,7 @@ GameObject:
   m_Component:
   - component: {fileID: 681832718534374915}
   - component: {fileID: 1686098516621020118}
+  - component: {fileID: 9151236836614344696}
   m_Layer: 9
   m_Name: Model
   m_TagString: Untagged
@@ -1547,6 +1548,22 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.0065341294, y: -0.067254454, z: 0.07407127}
     m_Extent: {x: 0.6358659, y: 0.9411087, z: 0.43341517}
   m_DirtyAABB: 0
+--- !u!114 &9151236836614344696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6126704123813121154}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67caf994c4933474ab0bd9a766db2e6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NormalColor: {fileID: 2100000, guid: d5530ecfe6de04149ae9e3ca6e0cd1f3, type: 2}
+  BlinkColor: {fileID: 2100000, guid: 2166f7388d116e840be943b88d6e5fdd, type: 2}
+  Delay: 20
+  isBlinking: 0
 --- !u!1 &6134941856295809382
 GameObject:
   m_ObjectHideFlags: 0
@@ -1749,7 +1766,7 @@ GameObject:
   - component: {fileID: 7581792320602368609}
   - component: {fileID: 7581792320602368613}
   - component: {fileID: 6046247001271158726}
-  - component: {fileID: 1276053883263322029}
+  - component: {fileID: 4062318118292753979}
   m_Layer: 0
   m_Name: Ninja
   m_TagString: Untagged
@@ -1834,6 +1851,7 @@ MonoBehaviour:
   distanceToGround: 1
   PlayerNumber: 0
   Prefabs: []
+  BlinkingBehaviour: {fileID: 9151236836614344696}
   AttackState: 1
   groundPlatfrom: {fileID: 0}
   BoxCollider2DFix: {fileID: 7581792320602368613}
@@ -1896,7 +1914,7 @@ MonoBehaviour:
   dummyPrefab: {fileID: 6171597423043219655, guid: f6fea924f9d4c95498854019ee1754b0,
     type: 3}
   Collider2D: {fileID: 1879693074083837417}
---- !u!114 &1276053883263322029
+--- !u!114 &4062318118292753979
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1905,13 +1923,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 7581792320602368607}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67caf994c4933474ab0bd9a766db2e6a, type: 3}
+  m_Script: {fileID: 11500000, guid: 2bd305d082cce954fb9957f4546007eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NormalColor: {fileID: 2100000, guid: d5530ecfe6de04149ae9e3ca6e0cd1f3, type: 2}
-  BlinkColor: {fileID: 2100000, guid: 2166f7388d116e840be943b88d6e5fdd, type: 2}
-  Delay: 20
-  isBlinking: 0
+  Player: 1
+  Name: Ninja
 --- !u!1 &7850962130181541561
 GameObject:
   m_ObjectHideFlags: 0

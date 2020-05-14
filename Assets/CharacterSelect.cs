@@ -4,8 +4,13 @@ using UnityEngine;
 
 public class CharacterSelect : MonoBehaviour
 {
-    public bool IsSprite = false;
+    public CharacterRenderType CharacterRenderType;
     public Sprite Sprite;
-    public Mesh mesh;
+    public Mesh Mesh;
     public Material Material;
+    
+    public Vector3 Position;
+    public Vector3 Rotation;
+    public Vector3 Scale;
+    public Character Character;
 }
