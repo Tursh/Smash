@@ -278,9 +278,9 @@ public abstract class CharacterData : MonoBehaviour
     {
         float CollisionVelocity = Math.Abs(other.relativeVelocity[Math.Abs(other.contacts[0].normal.x) > 0.1f ? 0 : 1]);
         if (other.gameObject.layer == Layers.STAGE 
-            && (Math.Abs(CollisionVelocity)) > 5)
+            && (Math.Abs(CollisionVelocity)) > 15)
         {
-                Hurt(Vector2.zero, 0, (CollisionVelocity - 5) * 0.005f, false);
+                Hurt(Vector2.zero, 0, (CollisionVelocity - 15) * 0.005f, false);
                 Debug.Log(other.contacts[0].normal * CollisionVelocity);
         }
     }
@@ -293,9 +293,7 @@ public abstract class CharacterData : MonoBehaviour
             Attack.Dequeue().Act(self);
         }
         else
-        {
             AttackState = AttackState.Idle;
-        }
 
         return !Attack.IsEmpty();
     }
