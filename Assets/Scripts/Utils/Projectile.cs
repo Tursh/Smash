@@ -12,11 +12,11 @@ public class Projectile : MonoBehaviour
     public float FramesOfLife;
     public GameObject Source;
 
-    private Rigidbody2D rigidbody2D;
+    private Rigidbody2D rigidBody2D;
     private void Start()
     {
-        rigidbody2D = GetComponent<Rigidbody2D>();
-        rigidbody2D.velocity = Velocity * 10;
+        rigidBody2D = GetComponent<Rigidbody2D>();
+        rigidBody2D.velocity = Velocity * 10;
     }
 
     protected virtual void FixedUpdate()

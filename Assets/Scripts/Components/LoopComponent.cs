@@ -13,7 +13,7 @@ public class LoopComponent : MonoBehaviour
     protected GameObject[] dummies = new GameObject[2];
 
     // Start is called before the first frame update
-    protected void Start()
+    protected virtual void Start()
     {
         if (Collider2D == null)
             Collider2D = GetComponent<Collider2D>();

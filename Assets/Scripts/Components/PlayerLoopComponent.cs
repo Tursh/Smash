@@ -5,9 +5,7 @@ using UnityEngine;
 public class PlayerLoopComponent : LoopComponent
 {
     private DummyComponent[] dummyComponents = new DummyComponent[2];
-    
-    // Start is called before the first frame update
-    void Start()
+    protected override void Start()
     {
         base.Start();
         for (int i = 0; i < 2; ++i)
@@ -15,12 +13,6 @@ public class PlayerLoopComponent : LoopComponent
             dummyComponents[i] = dummies[i].GetComponent<DummyComponent>(); 
             dummyComponents[i].PlayerReference = gameObject;
         }
-    }
-
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-        base.FixedUpdate();
     }
 
     public void SetDummyAnimatorState(string state, bool status)

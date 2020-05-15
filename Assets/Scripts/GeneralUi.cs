@@ -24,7 +24,6 @@ public class GeneralUi : MonoBehaviour
     private Text PlayerName;
     private Text PlayerPercent;
     private Text PlayerStocks;
-    public int PlayerNumber;
     private void Start()
     {
         var textBoxes = GetComponentsInChildren<Text>();

@@ -21,10 +21,7 @@ public class MouseCharacter : CharacterData
 
     void Start()
     {
-        CharacterRenderType = CharacterRenderType.Sprite;
         Attack = new Attack();
-
-
         TimerFramesOfAttacks = new Dictionary<string, TimerFramesOfAttack>
         {
             {

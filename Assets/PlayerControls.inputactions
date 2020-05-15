@@ -370,6 +370,22 @@
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "A",
+                    "type": "Button",
+                    "id": "dd383a4f-7440-4567-a0a2-4e85e5a70330",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "B",
+                    "type": "Button",
+                    "id": "ad932b84-3826-4b60-b39b-f4f15ac44e32",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -392,6 +408,55 @@
                     "processors": "StickDeadzone(max=1)",
                     "groups": "",
                     "action": "LeftStick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7ebed276-a40b-4fb3-889e-b42b6d5679cc",
+                    "path": "<XInputController>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "A",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2019d9de-889c-4562-8b44-3826f9819eeb",
+                    "path": "<XInputController>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "B",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Debug",
+            "id": "3cfcf350-65fa-4b80-86f9-963e9897d63d",
+            "actions": [
+                {
+                    "name": "Enter",
+                    "type": "Button",
+                    "id": "57cb5532-4c74-430d-9839-dc822e8390bf",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "614da461-49e6-4b5c-a5f3-ea58ee18cee2",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Enter",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

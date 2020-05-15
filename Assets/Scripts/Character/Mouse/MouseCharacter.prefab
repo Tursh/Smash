@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: 736166955867917426}
   - component: {fileID: 793693933}
   - component: {fileID: 548759552}
+  - component: {fileID: 3630084319062385931}
+  - component: {fileID: 921474324238435693}
   m_Layer: 0
   m_Name: MouseCharacter
   m_TagString: Untagged
@@ -145,6 +147,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5770583fa1e2ce04780542687d953807, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  JumpWindup: 20
+  JumpMultiplier: 10
   mvSpeed: 0.025
   airResistance: 0.9
   gravity: 0
@@ -155,6 +159,7 @@ MonoBehaviour:
   - {fileID: 535163365376777774, guid: 26e2832948099e64e8916f6474ca94e7, type: 3}
   - {fileID: 1382961427860099412, guid: 241a8db56847ba74d91b8c4487f7cd4d, type: 3}
   - {fileID: 5439255207072039504, guid: 04aded5882674a545a4f10fe554ec496, type: 3}
+  BlinkingBehaviour: {fileID: 921474324238435693}
   AttackState: 1
   groundPlatfrom: {fileID: 0}
 --- !u!114 &793693933
@@ -171,6 +176,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dummyPrefab: {fileID: 630559285971579694, guid: e422e77707dfdcd40aca49601ee56287,
     type: 3}
+  Collider2D: {fileID: 0}
 --- !u!114 &548759552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185,3 +191,50 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player: 1
   Name: Mouse
+--- !u!114 &3630084319062385931
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 736166955867917417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 4c6b0b9d2aa81604aadebfbc9a2e3b10,
+    type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 1
+  m_DefaultControlScheme: Gamepad
+  m_DefaultActionMap: Gameplay
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
+--- !u!114 &921474324238435693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 736166955867917417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67caf994c4933474ab0bd9a766db2e6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NormalColor: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  BlinkColor: {fileID: 2100000, guid: 2166f7388d116e840be943b88d6e5fdd, type: 2}
+  Delay: 20
+  isBlinking: 0

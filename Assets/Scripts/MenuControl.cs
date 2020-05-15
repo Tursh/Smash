@@ -1,64 +1,82 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Users;
-using UnityEngine.UIElements;
+using UnityEngine.PlayerLoop;
 
 public class MenuControl : MonoBehaviour
 {
-    private Vector2 RightStickPosition;
-    private Vector2 LeftStickPosition;
-    private PlayerControls PlayerControls;
-    private GameObject cameraBase;
-    private MenuManager MenuManager;
-    public GameObject PlatformPrefab;
-    public GameObject Platform;
+    [SerializeField]
+    private GameObject platformPrefab;
+    [SerializeField]
+    private GameObject platform;
     public int playerNumber;
+    public Character CharacterSelected;
+    
+    private GameObject cameraBase;
+    private MenuManager menuManager;
+    private GameManager gameManager;
     private SpriteRenderer platformSpriteRenderer;
     private MeshFilter platformMeshFilter;
     private MeshRenderer platformMeshRender;
-    private PlayerInput PlayerInput;
-    private InputUser inputUser;
+    private PlayerInput playerInput;
 
+    private Vector2 rightStickPosition;
+    private Vector2 leftStickPosition;
+    
     private void Awake()
     {
-        inputUser = default;
-        PlayerControls = new PlayerControls();
         cameraBase = GameObject.Find("Base");
-        MenuManager = GameObject.Find("GameManager").GetComponent<MenuManager>();
-        PlayerInput = GetComponent<PlayerInput>();
-        
-        InputUser.PerformPairingWithDevice(Gamepad.all[playerNumber], inputUser);
-        PlayerControls.Menu.RightStick.performed += RightStickOnperformed;
-        PlayerControls.Menu.LeftStick.performed += LeftStickOnperformed;
+        menuManager = GameObject.Find("PlayerInputManager").GetComponent<MenuManager>();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        playerInput = GetComponent<PlayerInput>();
+        playerNumber = menuManager.nbOfPlayers;
+        CharacterSelected = Character.None;
             
-        if (playerNumber == 1)
-            Platform = Instantiate(PlatformPrefab, new Vector3(-35, -30), Quaternion.identity);
+        if (playerNumber == 0)
+            platform = Instantiate(platformPrefab, new Vector3(-35, -30), Quaternion.identity);
         else
-            Platform = Instantiate(PlatformPrefab, new Vector3(35, -30), Quaternion.identity);
+            platform = Instantiate(platformPrefab, new Vector3(35, -30), Quaternion.identity);
         
-        platformSpriteRenderer = Platform.GetComponentInChildren<SpriteRenderer>();
-        platformMeshFilter = Platform.GetComponentInChildren<MeshFilter>();
-        platformMeshRender = Platform.GetComponentInChildren<MeshRenderer>();
+        platformSpriteRenderer = platform.GetComponentInChildren<SpriteRenderer>();
+        platformMeshFilter = platform.GetComponentInChildren<MeshFilter>();
+        platformMeshRender = platform.GetComponentInChildren<MeshRenderer>();
     }
 
-    private void LeftStickOnperformed(InputAction.CallbackContext obj)
+    private void OnLeftStick(InputValue value)
     {
-        LeftStickPosition = obj.ReadValue<Vector2>();
+        if (!gameManager.Players[playerNumber].Ready)
+            leftStickPosition = value.Get<Vector2>();
     }
 
-    public void RightStickOnperformed(InputAction.CallbackContext obj)
+    public void OnRightStick(InputValue value)
     {
-        RightStickPosition = obj.ReadValue<Vector2>();
+        rightStickPosition = value.Get<Vector2>();
+    }
+    
+    private void OnA(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            if (CharacterSelected != Character.None)
+            {
+                gameManager.Players[playerNumber].Ready = true;
+                gameManager.Players[playerNumber].Character = CharacterSelected;
+                gameManager.Players[playerNumber].PlayerInput = playerInput;
+            }
+        }
     }
 
+    private void OnB(InputValue value)
+    {
+        if (value.isPressed)
+            gameManager.Players[playerNumber].Ready = false;
+    }
+    
     private void FixedUpdate()
     {
-        cameraBase.transform.localRotation = Quaternion.Euler(RightStickPosition.y * 30f, -RightStickPosition.x * 30f,0);
-        transform.Translate(new Vector3(LeftStickPosition.x,LeftStickPosition.y));
+        cameraBase.transform.localRotation = Quaternion.Euler(rightStickPosition.y * 30f, -rightStickPosition.x * 30f,0);
+        if (!gameManager.Players[playerNumber].Ready) 
+            transform.Translate(new Vector3(leftStickPosition.x,leftStickPosition.y));
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -67,29 +85,31 @@ public class MenuControl : MonoBehaviour
             return;
 
         CharacterSelect characterSelect = other.gameObject.GetComponent<CharacterSelect>();
-        
-        if (characterSelect.IsSprite)
-        {
+        CharacterSelected = characterSelect.Character;
+
+        bool characterIsSprite = characterSelect.CharacterRenderType == CharacterRenderType.Sprite;
+        if (characterIsSprite)
             platformSpriteRenderer.sprite = characterSelect.Sprite;
-        }
         else
         {
-            platformMeshFilter.mesh = characterSelect.mesh;
+            Transform platformMeshTransform = platformMeshFilter.gameObject.transform;
+            platformMeshTransform.localPosition = characterSelect.Position;
+            platformMeshTransform.eulerAngles = characterSelect.Rotation;
+            platformMeshTransform.localScale = characterSelect.Scale;
+            platformMeshFilter.mesh = characterSelect.Mesh;
             platformMeshRender.material = characterSelect.Material;
         }
         
-        platformSpriteRenderer.enabled = characterSelect.IsSprite;
-        platformMeshRender.enabled = !characterSelect.IsSprite;
+        platformSpriteRenderer.enabled = characterIsSprite;
+        platformMeshRender.enabled = !characterIsSprite;
     }
+
+    
 
     private void OnTriggerExit2D(Collider2D other)
     {
         platformSpriteRenderer.enabled = false;
         platformMeshRender.enabled = false;
-    }
-
-    private void OnEnable()
-    {
-        PlayerControls.Enable();
+        CharacterSelected = Character.None;
     }
 }
