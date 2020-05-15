@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.PlayerLoop;
 using UnityEngine.SceneManagement;
+using UnityEngine.TextCore;
 using Random = UnityEngine.Random;
 
 public enum CharacterRenderType
@@ -32,8 +33,7 @@ public abstract class CharacterData : MonoBehaviour
     protected CharacterRenderType CharacterRenderType;
     protected PlayerInfo PlayerInfo;
     protected GameObject UiPlayerInfo;
-    [SerializeField]
-    protected BlinkingBehaviour BlinkingBehaviour;
+    [SerializeField] protected BlinkingBehaviour BlinkingBehaviour;
 
     protected Animator Animator;
     private PlayerLoopComponent PlayerLoopComponent;
@@ -212,10 +212,8 @@ public abstract class CharacterData : MonoBehaviour
         else
             lastPlatfromPosition = Vector3.back;
 
-        
-        BlinkingBehaviour.isBlinking = InvulnerabilityTimer-- > 0;
-        
 
+        BlinkingBehaviour.isBlinking = InvulnerabilityTimer-- > 0;
     }
 
     protected void DisableAttack()
@@ -240,7 +238,7 @@ public abstract class CharacterData : MonoBehaviour
     {
         if (InvulnerabilityTimer < 0)
         {
-            PlayerInfo.Damage = Damage;
+            PlayerInfo.Damage += Damage;
             Rigidbody.velocity += Direction * (Multiplier * (1 + (SetKnockback ? 0 : PlayerInfo.Damage)));
         }
     }
@@ -285,21 +283,16 @@ public abstract class CharacterData : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject != groundPlatfrom)
-        {
-            other.gameObject.layer =
-                other.transform.position.y <= BoxCollider.bounds.min.y ? Layers.STAGE : Layers.SEMI_STAGE;
-        }
     }
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject != groundPlatfrom)
+        float CollisionVelocity = Math.Abs(other.relativeVelocity[Math.Abs(other.contacts[0].normal.x) > 0.1f ? 0 : 1]);
+        if (other.gameObject.layer == Layers.STAGE 
+            && (Math.Abs(CollisionVelocity)) > 5)
         {
-            other.gameObject.layer =
-                other.contacts[0].normal.y < 0 && other.transform.position.y <= transform.position.y
-                    ? Layers.STAGE
-                    : Layers.SEMI_STAGE;
+                Hurt(Vector2.zero, 0, (CollisionVelocity - 5) * 0.005f, false);
+                Debug.Log(other.contacts[0].normal * CollisionVelocity);
         }
     }
 
@@ -323,11 +316,10 @@ public abstract class CharacterData : MonoBehaviour
         PlayerInfo.Stocks--;
         PlayerInfo.Damage = InitialDamage;
         InvulnerabilityTimer = 60 * 3;
-        transform.Translate(new Vector3(Random.Range(-5,5), Random.Range(-5,5)));
+        transform.Translate(new Vector3(Random.Range(-5, 5), Random.Range(-5, 5)));
     }
 
     protected void Lose()
     {
-        
     }
 }
