@@ -20,6 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SplineMap.unity
     guid: 7f490e96e0069dd4391ba380a559156b
+  - enabled: 1
+    path: Assets/Scenes/MapMenu.unity
+    guid: 6e72f933ba8336449963af58703a5c46
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 4e3a39f7327e04a4a8ba1491a54a0fa0,
       type: 2}

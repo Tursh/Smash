@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 public enum Map
 {
+    Menu = 0,
     Platform3 = 1, 
     Battle = 2,
     Space = 3,
@@ -40,6 +41,7 @@ public class GameManager : MonoBehaviour
 {
     public Player[] Players;
     public Map Map = Map.Space;
+    public GameObject[] CharacterPrefabs;
     private void Awake()
     {
         Players = new Player[2];
@@ -53,7 +55,7 @@ public class GameManager : MonoBehaviour
 
     private void OnPlayerReady(object sender, EventArgs eventArgs)
     {
-        if (Players.All(player => player.Ready))
-            SceneManager.LoadScene((int)Map);
+        //if (Players.All(player => player.Ready))
+            SceneManager.LoadScene(5);
     }
 }

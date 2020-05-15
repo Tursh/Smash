@@ -281,7 +281,6 @@ public abstract class CharacterData : MonoBehaviour
             && (Math.Abs(CollisionVelocity)) > 15)
         {
                 Hurt(Vector2.zero, 0, (CollisionVelocity - 15) * 0.005f, false);
-                Debug.Log(other.contacts[0].normal * CollisionVelocity);
         }
     }
 
