@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -13,11 +16,16 @@ public class MapControl : MonoBehaviour
     private Vector2 leftStickPosition;
 
     private Map SelectedMap;
-    
-    private void Awake()
+
+    private void Start()
     {
         cameraBase = GameObject.Find("Base");
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        if (Array.Exists(gameManager.Players, player => player.Character == Character.Ninja))
+        {
+            Destroy(GameObject.Find("Space Map"));
+            GameObject.Find("3 Stage Map").transform.Translate(new Vector3(39, 0, 0));
+        }
     }
 
     private void OnLeftStick(InputValue value)
@@ -35,11 +43,13 @@ public class MapControl : MonoBehaviour
         if (value.isPressed && SelectedMap != Map.Menu)
         {
             SceneManager.LoadScene((int) SelectedMap);
+            Destroy(this);
         }
     }
     
     private void FixedUpdate()
     {
+        cameraBase.transform.localRotation = Quaternion.Euler(rightStickPosition.y * 30f, -rightStickPosition.x * 30f,0);
         transform.Translate(new Vector3(leftStickPosition.x,leftStickPosition.y));
     }
 

@@ -282,6 +282,11 @@ public abstract class CharacterData : MonoBehaviour
         {
                 Hurt(Vector2.zero, 0, (CollisionVelocity - 15) * 0.005f, false);
         }
+
+        if (other.gameObject.layer == Layers.PLAYER && other.contacts[0].normal.y > 0.1f)
+        {
+            Rigidbody.velocity += Vector2.up * 60;
+        }
     }
 
     protected virtual bool EvaluateAttacks(GameObject self)

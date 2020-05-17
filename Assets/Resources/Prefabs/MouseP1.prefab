@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6255404461340680773}
   - component: {fileID: 6255404461340680774}
   - component: {fileID: 941508049349498552}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: MouseP1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -82,6 +82,7 @@ MonoBehaviour:
     type: 3}
   platform: {fileID: 0}
   playerNumber: 0
+  CharacterSelected: 0
 --- !u!61 &6255404461340680774
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -133,7 +134,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6255404462775811932}
   - component: {fileID: 6255404462775811935}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: RedHand
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -55,7 +55,7 @@ public class GameManager : MonoBehaviour
 
     private void OnPlayerReady(object sender, EventArgs eventArgs)
     {
-        //if (Players.All(player => player.Ready))
+        if (Players.All(player => player.Ready))
             SceneManager.LoadScene(5);
     }
 }

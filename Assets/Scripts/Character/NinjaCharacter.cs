@@ -18,7 +18,8 @@ public class NinjaCharacter : CharacterData
 
     private Dictionary<string, int> ParameterIDs = new Dictionary<string, int>();
 
-    private static FrameOfAttack[] AAttack;
+    private Dictionary<string, TimerFramesOfAttack> TimerFramesOfAttacks;
+
     private CharacterState NinjaState;
 
     static NinjaCharacter()
@@ -42,6 +43,68 @@ public class NinjaCharacter : CharacterData
             new ColliderFixInfo(new Vector2(1.485f, 1.521f), new Vector2(-0.406f, 0.099f)));
         BoxCollider2DFix.AddBoxColliderFix("Running",
             new ColliderFixInfo(new Vector2(1, 1.664f), new Vector2(0, -0.193f)));
+
+        Attack = new Attack();
+        TimerFramesOfAttacks = new Dictionary<string, TimerFramesOfAttack>
+        {
+            {
+                "Kick", new TimerFramesOfAttack(60, new[]
+                {
+                    new FrameOfAttack(
+                        o =>
+                        {
+                            Vector2 positionOffset = new Vector2(-0.5f, 1);
+                            AttackFunctions.SimplePhysicalAttack(
+                                new FrameDataPhysical(
+                                    Utils.Degree2Vec2(o.transform.rotation.z),
+                                    positionOffset,
+                                    Prefabs[0]))(o);
+                            return true;
+                        }),
+                })
+            },
+            {
+                "X", new TimerFramesOfAttack(120, new[]
+                {
+                    new FrameOfAttack(
+                        o =>
+                        {
+                            o.GetComponent<Rigidbody2D>().velocity =
+                                Utils.NormalizedVectorFromAngle(
+                                    o.transform.eulerAngles.z + 90f) * 40f;
+                            return true;
+                        }),
+                })
+            },
+            {
+                "LT", new TimerFramesOfAttack(120, new[]
+                {
+                    new FrameOfAttack(o =>
+                    {
+                        MouseCharacter mouseCharacter = o.GetComponent<MouseCharacter>();
+                        float angleOfAttack = o.transform.eulerAngles.z + 90f;
+                        Vector2 vectorizedAngleOfAttack = Utils.NormalizedVectorFromAngle(angleOfAttack);
+                        Vector2 vectorizedAngleOfAttackOffset = Utils.NormalizedVectorFromAngle(angleOfAttack + 15f);
+                        Vector2 spawnPosition = o.transform.position +
+                                                Utils.Vec22Vec3(vectorizedAngleOfAttackOffset) * 1.0f;
+
+                        GameObject projectileThrown = Instantiate(
+                            mouseCharacter.Prefabs[1],
+                            spawnPosition,
+                            o.transform.rotation);
+                        Projectile projectile = projectileThrown.GetComponent<Projectile>();
+                        projectile.Damage = 0.1f;
+                        projectile.Direction = vectorizedAngleOfAttack;
+                        projectile.Velocity = vectorizedAngleOfAttack;
+                        projectile.Multiplier = 0.5f;
+                        projectile.FramesOfLife = 100;
+                        projectile.Source = o;
+
+                        return true;
+                    })
+                })
+            }
+        };
     }
 
     protected override void FixedUpdate()
@@ -138,13 +201,13 @@ public class NinjaCharacter : CharacterData
 
     protected override void OnB(InputValue value)
     {
-        if(value.isPressed)
-        kick();
+        if (value.isPressed)
+            kick();
     }
 
     protected override void OnX(InputValue value)
     {
-        if(value.isPressed)
-        punch();
+        if (value.isPressed)
+            punch();
     }
 }
