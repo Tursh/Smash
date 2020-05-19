@@ -1849,12 +1849,14 @@ MonoBehaviour:
   airResistance: 0.9
   gravity: -1.5
   distanceToGround: 1
-  PlayerNumber: 0
-  Prefabs: []
+  Prefabs:
+  - {fileID: 5280320822287857134, guid: 9eb147383f9051f4687098a85d103808, type: 3}
+  - {fileID: 5280320822287857134, guid: c7248c1d13c1a5e41830ffc33efe4454, type: 3}
   BlinkingBehaviour: {fileID: 7981306638488116196}
   AttackState: 1
   groundPlatfrom: {fileID: 0}
   BoxCollider2DFix: {fileID: 7581792320602368613}
+  NinjaState: 0
 --- !u!114 &7581792320602368609
 MonoBehaviour:
   m_ObjectHideFlags: 0

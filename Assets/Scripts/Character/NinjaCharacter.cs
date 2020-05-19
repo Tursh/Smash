@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -20,7 +21,7 @@ public class NinjaCharacter : CharacterData
 
     private Dictionary<string, TimerFramesOfAttack> TimerFramesOfAttacks;
 
-    private CharacterState NinjaState;
+    [SerializeField] private CharacterState NinjaState;
 
     static NinjaCharacter()
     {
@@ -48,61 +49,68 @@ public class NinjaCharacter : CharacterData
         TimerFramesOfAttacks = new Dictionary<string, TimerFramesOfAttack>
         {
             {
-                "Kick", new TimerFramesOfAttack(60, new[]
+                "Kick", new TimerFramesOfAttack(20, new[]
                 {
                     new FrameOfAttack(
                         o =>
                         {
-                            Vector2 positionOffset = new Vector2(-0.5f, 1);
+                            Vector2 positionOffset = new Vector2((o.transform.rotation.y > 0 ? 1 : -1) * 30, 0.5f);
                             AttackFunctions.SimplePhysicalAttack(
                                 new FrameDataPhysical(
-                                    Utils.Degree2Vec2(o.transform.rotation.z),
+                                    new Vector2(o.transform.rotation.y > 0 ? 1 : -1, 0),
                                     positionOffset,
-                                    Prefabs[0]))(o);
+                                    Prefabs[0], radius: 0.5f, framesOfLife: 10))(o);
                             return true;
-                        }),
-                })
+                        })
+                }, 25)
             },
             {
-                "X", new TimerFramesOfAttack(120, new[]
+                "Punch 1", new TimerFramesOfAttack(20, new[]
                 {
                     new FrameOfAttack(
                         o =>
                         {
-                            o.GetComponent<Rigidbody2D>().velocity =
-                                Utils.NormalizedVectorFromAngle(
-                                    o.transform.eulerAngles.z + 90f) * 40f;
+                            Vector2 positionOffset = new Vector2((o.transform.rotation.y > 0 ? 1 : -1) * 32, 1.4f);
+                            AttackFunctions.SimplePhysicalAttack(
+                                new FrameDataPhysical(
+                                    new Vector2(o.transform.rotation.y > 0 ? 1 : -1, 0),
+                                    positionOffset,
+                                    Prefabs[0], radius: 0.35f, framesOfLife: 10))(o);
                             return true;
-                        }),
-                })
+                        })
+                }, 10)
             },
             {
-                "LT", new TimerFramesOfAttack(120, new[]
+                "Punch 2", new TimerFramesOfAttack(20, new[]
                 {
-                    new FrameOfAttack(o =>
-                    {
-                        MouseCharacter mouseCharacter = o.GetComponent<MouseCharacter>();
-                        float angleOfAttack = o.transform.eulerAngles.z + 90f;
-                        Vector2 vectorizedAngleOfAttack = Utils.NormalizedVectorFromAngle(angleOfAttack);
-                        Vector2 vectorizedAngleOfAttackOffset = Utils.NormalizedVectorFromAngle(angleOfAttack + 15f);
-                        Vector2 spawnPosition = o.transform.position +
-                                                Utils.Vec22Vec3(vectorizedAngleOfAttackOffset) * 1.0f;
-
-                        GameObject projectileThrown = Instantiate(
-                            mouseCharacter.Prefabs[1],
-                            spawnPosition,
-                            o.transform.rotation);
-                        Projectile projectile = projectileThrown.GetComponent<Projectile>();
-                        projectile.Damage = 0.1f;
-                        projectile.Direction = vectorizedAngleOfAttack;
-                        projectile.Velocity = vectorizedAngleOfAttack;
-                        projectile.Multiplier = 0.5f;
-                        projectile.FramesOfLife = 100;
-                        projectile.Source = o;
-
-                        return true;
-                    })
-                })
+                    new FrameOfAttack(
+                        o =>
+                        {
+                            Vector2 positionOffset = new Vector2((o.transform.rotation.y > 0 ? 1 : -1) * 32, 1.4f);
+                            AttackFunctions.SimplePhysicalAttack(
+                                new FrameDataPhysical(
+                                    new Vector2(o.transform.rotation.y > 0 ? 1 : -1, 0),
+                                    positionOffset,
+                                    Prefabs[0], radius: 0.35f, framesOfLife: 10))(o);
+                            return true;
+                        })
+                }, 10)
+            },
+            {
+                "Punch 3", new TimerFramesOfAttack(30, new[]
+                {
+                    new FrameOfAttack(
+                        o =>
+                        {
+                            Vector2 positionOffset = new Vector2((o.transform.rotation.y > 0 ? 1 : -1) * 30, 1);
+                            AttackFunctions.SimplePhysicalAttack(
+                                new FrameDataPhysical(
+                                    new Vector2(0, 1),
+                                    positionOffset,
+                                    Prefabs[1], radius: 0.5f, framesOfLife: 10, damage:1, multiplier:10))(o);
+                            return true;
+                        })
+                }, 20)
             }
         };
     }
@@ -110,6 +118,9 @@ public class NinjaCharacter : CharacterData
     protected override void FixedUpdate()
     {
         Vector2 velocity = Rigidbody.velocity;
+
+        if (AttackState == AttackState.Attacking)
+            LeftJoystickPosition.x = 0;
 
         base.FixedUpdate();
 
@@ -141,7 +152,7 @@ public class NinjaCharacter : CharacterData
         SetAnimatorState(ParameterIDs["Jumping"], NinjaState == CharacterState.Jumping);
 
         if (velocity.x != 0)
-            SetRotation(Quaternion.AngleAxis(Rigidbody.velocity.x > 0 ? 90 : -90, Vector3.up));
+            SetRotation(Quaternion.AngleAxis(Rigidbody.velocity.x > 0 ? 89 : -89, Vector3.up));
     }
 
 
@@ -154,6 +165,9 @@ public class NinjaCharacter : CharacterData
             SetAnimatorState(ParameterIDs["Kicking"], true);
             kickCoolDown = 20;
             NinjaState = CharacterState.Kicking;
+            if (AttackState == AttackState.Idle)
+                Attack.Enqueue(TimerFramesOfAttacks["Kick"]);
+            AttackState = AttackState.Attacking;
         }
     }
 
@@ -170,6 +184,7 @@ public class NinjaCharacter : CharacterData
         {
             lastPunch = Time.time;
             ++punchState;
+            Attack.Enqueue(TimerFramesOfAttacks["Punch " + punchState]);
             punchCoolDown = 20;
             SetAnimatorState(ParameterIDs["PunchAttackState"], punchState);
             NinjaState = CharacterState.Punching;
@@ -209,5 +224,13 @@ public class NinjaCharacter : CharacterData
     {
         if (value.isPressed)
             punch();
+    }
+
+    protected override void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.layer == Layers.PLAYER && other.contacts[0].normal.y > 0.1f)
+        {
+            Rigidbody.velocity += Vector2.up * 60;
+        }
     }
 }

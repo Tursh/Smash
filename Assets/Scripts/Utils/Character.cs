@@ -274,18 +274,13 @@ public abstract class CharacterData : MonoBehaviour
     {
     }
 
-    private void OnCollisionEnter2D(Collision2D other)
+    protected virtual void OnCollisionEnter2D(Collision2D other)
     {
         float CollisionVelocity = Math.Abs(other.relativeVelocity[Math.Abs(other.contacts[0].normal.x) > 0.1f ? 0 : 1]);
         if (other.gameObject.layer == Layers.STAGE 
             && (Math.Abs(CollisionVelocity)) > 15)
         {
                 Hurt(Vector2.zero, 0, (CollisionVelocity - 15) * 0.005f, false);
-        }
-
-        if (other.gameObject.layer == Layers.PLAYER && other.contacts[0].normal.y > 0.1f)
-        {
-            Rigidbody.velocity += Vector2.up * 60;
         }
     }
 
