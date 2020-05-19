@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,6 +11,7 @@ public class HurtboxComponent : MonoBehaviour
 	public float Damage;
 	public float Multiplier;
 	public int FramesOfLife;
+	public bool setKnockback;
 
 	private void FixedUpdate()
 	{
@@ -19,11 +21,11 @@ public class HurtboxComponent : MonoBehaviour
 
 	private void OnTriggerEnter2D(Collider2D other)
 	{
-		if (other.gameObject.layer == 9)
+		if (other.gameObject.layer == Layers.PLAYER)
 		{
 			Hurt(other.gameObject);
 		}
-		else if (other.gameObject.layer == 11)
+		else if (other.gameObject.layer == Layers.DUMMY)
 		{
 			Hurt(other.gameObject.GetComponent<DummyComponent>().PlayerReference);
 		}
@@ -31,7 +33,8 @@ public class HurtboxComponent : MonoBehaviour
 
 	protected virtual void Hurt(GameObject player)
 	{
-		player.GetComponent<CharacterData>().Hurt(Direction,Multiplier,Damage);
+		player.GetComponent<CharacterData>().Hurt(Direction,Multiplier,Damage, setKnockback);
+		Destroy(gameObject);
 	}
 
 	private void OnTriggerStay2D(Collider2D other)

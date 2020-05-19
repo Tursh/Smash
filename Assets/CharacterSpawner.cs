@@ -7,7 +7,7 @@ public class CharacterSpawner : MonoBehaviour
     public int playerIndex;
     public GameObject[] Characters;
 
-    void Awake()
+    void Start()
     {
 	    GameObject characterSpawned = Instantiate(Characters[
 		    (int) GameObject.Find("GameManager").GetComponent<GameManager>().Players[playerIndex].Character] );

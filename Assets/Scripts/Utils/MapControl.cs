@@ -24,7 +24,7 @@ public class MapControl : MonoBehaviour
         if (Array.Exists(gameManager.Players, player => player.Character == Character.Ninja))
         {
             Destroy(GameObject.Find("Space Map"));
-            GameObject.Find("3 Stage Map").transform.Translate(new Vector3(39, 0, 0));
+            GameObject.Find("3 Stage Map").transform.Translate(new Vector3(39 / 2.0f, 0, 0));
         }
     }
 

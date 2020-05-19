@@ -65,6 +65,6 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(6);
 
         GameObject.Find("Text").GetComponent<Text>().text = "Player " + ((index + 1) % 2 + 1) + " wins";
-        Destroy(this.gameObject);
+        Destroy(gameObject);
     }
 }

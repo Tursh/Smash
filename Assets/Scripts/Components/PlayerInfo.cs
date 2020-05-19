@@ -32,7 +32,7 @@ public class PlayerInfo : MonoBehaviour
     
     public EventHandler<DamageEventArg> Modified;
 
-    public void Awake()
+    public void Start()
     {
         if (Player == 0)
             GameObject.Find("P1").GetComponent<GeneralUi>().playerInfo = this;

@@ -12,6 +12,7 @@ public class FrameDataPhysical
     public Vector2 Offset;
     public GameObject Prefab;
     public int FramesOfLife;
+    public bool SetKnockBack;
 
     public FrameDataPhysical(GameObject prefab)
     {
@@ -22,6 +23,7 @@ public class FrameDataPhysical
         Offset = Vector2.zero;
         Prefab = prefab;
         FramesOfLife = 1;
+        SetKnockBack = false;
     }
 
     public FrameDataPhysical(
@@ -31,7 +33,8 @@ public class FrameDataPhysical
         float damage = 0.1f, 
         float multiplier = 1, 
         float radius = 1,
-        int framesOfLife = 1
+        int framesOfLife = 1,
+        bool setKnockBack = false
         )
     {
         Damage = damage;
@@ -41,6 +44,7 @@ public class FrameDataPhysical
         Offset = offset;
         Prefab = prefab;
         FramesOfLife = framesOfLife;
+        SetKnockBack = setKnockBack;
     }
 
 
@@ -53,7 +57,8 @@ public class FrameDataPhysical
             Damage,
             Multiplier,
             Radius,
-            FramesOfLife
+            FramesOfLife,
+            SetKnockBack
             );
     }
 

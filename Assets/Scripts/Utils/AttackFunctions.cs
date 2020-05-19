@@ -22,6 +22,7 @@ public class AttackFunctions : MonoBehaviour
             hurtboxComponent.Multiplier = tempFrameDataPhysical.Multiplier;
             hurtboxComponent.Damage = tempFrameDataPhysical.Damage;
             hurtboxComponent.FramesOfLife = tempFrameDataPhysical.FramesOfLife;
+            hurtboxComponent.setKnockback = tempFrameDataPhysical.SetKnockBack;
             return true;
         };
     }

@@ -41,7 +41,7 @@ public class NinjaCharacter : CharacterData
         BoxCollider2DFix.AddBoxColliderFix("Jumping",
             new ColliderFixInfo(new Vector2(1, 1.316f), new Vector2(-0.1f, -0.021f)));
         BoxCollider2DFix.AddBoxColliderFix("Falling",
-            new ColliderFixInfo(new Vector2(1.485f, 1.521f), new Vector2(-0.406f, 0.099f)));
+            new ColliderFixInfo(new Vector2(1.084f, 1.521f), new Vector2(-0.206f, 0.099f)));
         BoxCollider2DFix.AddBoxColliderFix("Running",
             new ColliderFixInfo(new Vector2(1, 1.664f), new Vector2(0, -0.193f)));
 
@@ -49,7 +49,7 @@ public class NinjaCharacter : CharacterData
         TimerFramesOfAttacks = new Dictionary<string, TimerFramesOfAttack>
         {
             {
-                "Kick", new TimerFramesOfAttack(20, new[]
+                "Kick", new TimerFramesOfAttack(1, new[]
                 {
                     new FrameOfAttack(
                         o =>
@@ -59,45 +59,45 @@ public class NinjaCharacter : CharacterData
                                 new FrameDataPhysical(
                                     new Vector2(o.transform.rotation.y > 0 ? 1 : -1, 0),
                                     positionOffset,
-                                    Prefabs[0], radius: 0.5f, framesOfLife: 10))(o);
+                                    Prefabs[0], radius: 0.5f, framesOfLife: 10, setKnockBack: true, damage:0.05f, multiplier: 3))(o);
                             return true;
                         })
                 }, 25)
             },
             {
-                "Punch 1", new TimerFramesOfAttack(20, new[]
+                "Punch 1", new TimerFramesOfAttack(1, new[]
                 {
                     new FrameOfAttack(
                         o =>
                         {
-                            Vector2 positionOffset = new Vector2((o.transform.rotation.y > 0 ? 1 : -1) * 32, 1.4f);
+                            Vector2 positionOffset = new Vector2((o.transform.rotation.y > 0 ? 1 : -1) * 32, 1.24f);
                             AttackFunctions.SimplePhysicalAttack(
                                 new FrameDataPhysical(
                                     new Vector2(o.transform.rotation.y > 0 ? 1 : -1, 0),
                                     positionOffset,
-                                    Prefabs[0], radius: 0.35f, framesOfLife: 10))(o);
+                                    Prefabs[0], radius: 0.51f, framesOfLife: 10, damage: 0.01f))(o);
                             return true;
                         })
                 }, 10)
             },
             {
-                "Punch 2", new TimerFramesOfAttack(20, new[]
+                "Punch 2", new TimerFramesOfAttack(1, new[]
                 {
                     new FrameOfAttack(
                         o =>
                         {
-                            Vector2 positionOffset = new Vector2((o.transform.rotation.y > 0 ? 1 : -1) * 32, 1.4f);
+                            Vector2 positionOffset = new Vector2((o.transform.rotation.y > 0 ? 1 : -1) * 32, 1.24f);
                             AttackFunctions.SimplePhysicalAttack(
                                 new FrameDataPhysical(
                                     new Vector2(o.transform.rotation.y > 0 ? 1 : -1, 0),
                                     positionOffset,
-                                    Prefabs[0], radius: 0.35f, framesOfLife: 10))(o);
+                                    Prefabs[0], radius: 0.51f, framesOfLife: 10, damage: 0.01f))(o);
                             return true;
                         })
                 }, 10)
             },
             {
-                "Punch 3", new TimerFramesOfAttack(30, new[]
+                "Punch 3", new TimerFramesOfAttack(1, new[]
                 {
                     new FrameOfAttack(
                         o =>
@@ -107,7 +107,8 @@ public class NinjaCharacter : CharacterData
                                 new FrameDataPhysical(
                                     new Vector2(0, 1),
                                     positionOffset,
-                                    Prefabs[1], radius: 0.5f, framesOfLife: 10, damage:1, multiplier:10))(o);
+                                    Prefabs[0], radius: 0.5f, framesOfLife: 10, damage: 0.2f, multiplier: 20,
+                                    setKnockBack: true))(o);
                             return true;
                         })
                 }, 20)
@@ -117,12 +118,10 @@ public class NinjaCharacter : CharacterData
 
     protected override void FixedUpdate()
     {
-        Vector2 velocity = Rigidbody.velocity;
+        base.FixedUpdate();
 
         if (AttackState == AttackState.Attacking)
-            LeftJoystickPosition.x = 0;
-
-        base.FixedUpdate();
+            Rigidbody.velocity = new Vector2(0, Rigidbody.velocity.y);
 
         if (NinjaState == CharacterState.Jumping)
             if (jumpTimer++ > JumpWindup)
@@ -141,17 +140,26 @@ public class NinjaCharacter : CharacterData
             NinjaState = CharacterState.Idle;
         }
 
+        if (bounceTimer-- > 0 && NinjaState == CharacterState.Jumping)
+        {
+            NinjaState = CharacterState.Idle;
+            Jump();
+            bouncedPlayer.GetComponent<CharacterData>().Hurt(Vector2.down, bounceCombo++ * .5f , 0.02f * bounceCombo++, true);
+        }
+
+        if (bounceCombo > 0 && GroundPlatform != null)
+            bounceCombo = 0;
 
         //Animator.SetFloat("Velocity", Mathf.Abs(velocity.x)*0.4f);
 
         //If ninja is not on ground, set falling animation true
         SetAnimatorState(ParameterIDs["Falling"], GroundPlatform == null);
         //If the ninja is idle and start moving, set to running animation
-        SetAnimatorState(ParameterIDs["Running"], Mathf.Abs(velocity.x) > 0.1f);
+        SetAnimatorState(ParameterIDs["Running"], Mathf.Abs(Rigidbody.velocity.x) > 0.1f);
 
         SetAnimatorState(ParameterIDs["Jumping"], NinjaState == CharacterState.Jumping);
 
-        if (velocity.x != 0)
+        if (Math.Abs(Rigidbody.velocity.x) > 1)
             SetRotation(Quaternion.AngleAxis(Rigidbody.velocity.x > 0 ? 89 : -89, Vector3.up));
     }
 
@@ -199,6 +207,7 @@ public class NinjaCharacter : CharacterData
     }
 
     private int jumpTimer = 0;
+
     protected override void OnA(InputValue value)
     {
         if (value.isPressed && NinjaState == CharacterState.Idle)
@@ -220,11 +229,21 @@ public class NinjaCharacter : CharacterData
             punch();
     }
 
+    private int bounceTimer = 0, bounceCombo = 0;
+    private GameObject bouncedPlayer = null;
+    
     protected override void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject.layer == Layers.PLAYER && other.contacts[0].normal.y > 0.1f)
+        if (other.gameObject.layer == Layers.PLAYER && GroundPlatform == null)
         {
-            Rigidbody.velocity += Vector2.up * 60;
+            Rigidbody.velocity += Vector2.up * 30;
+            bounceTimer = 20;
+            bouncedPlayer = other.gameObject;
         }
+    }
+
+    public override void Hurt(Vector2 Direction, float Multiplier, float Damage, bool SetKnockback = false)
+    {
+        base.Hurt(Direction, Multiplier, Damage, SetKnockback);
     }
 }

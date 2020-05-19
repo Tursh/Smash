@@ -156,10 +156,11 @@ public class MouseCharacter : CharacterData
 
     public override void Hurt(Vector2 Direction, float Multiplier, float Damage, bool SetKnockback = false)
     {
+        Debug.Log(Damage);
         if (InvulnerabilityTimer < 0)
         {
             PlayerInfo.Damage -= Damage;
-            Rigidbody.velocity += Direction * (Multiplier * (1 + (SetKnockback ? 0 : 2f - PlayerInfo.Damage)));
+            Rigidbody.velocity += Direction * (Multiplier * (SetKnockback ? 1 + 2f - PlayerInfo.Damage : 0));
             if (PlayerInfo.Damage < 0f)
                 Die();
         }

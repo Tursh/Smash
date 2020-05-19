@@ -1849,10 +1849,12 @@ MonoBehaviour:
   airResistance: 0.9
   gravity: -1.5
   distanceToGround: 1
-  Prefabs: []
+  InitialDamage: 0
+  Prefabs:
+  - {fileID: 5280320822287857134, guid: 9eb147383f9051f4687098a85d103808, type: 3}
+  - {fileID: 5280320822287857134, guid: c7248c1d13c1a5e41830ffc33efe4454, type: 3}
   BlinkingBehaviour: {fileID: 7981306638488116196}
   AttackState: 1
-  groundPlatfrom: {fileID: 0}
   BoxCollider2DFix: {fileID: 7581792320602368613}
   NinjaState: 0
 --- !u!114 &7581792320602368609
@@ -1898,6 +1900,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84881044e9caf1440982eab6af305a65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CharacterAnimator: {fileID: 1879693074662181723}
   CharacterBoxCollider: {fileID: 1879693074083837417}
 --- !u!114 &6046247001271158726
 MonoBehaviour:

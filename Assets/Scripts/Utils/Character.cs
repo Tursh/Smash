@@ -210,7 +210,7 @@ public abstract class CharacterData : MonoBehaviour
         if (InvulnerabilityTimer < 0)
         {
             PlayerInfo.Damage += Damage;
-            Rigidbody.velocity += Direction * (Multiplier * (1 + (SetKnockback ? 0 : PlayerInfo.Damage)));
+            Rigidbody.velocity += Direction * (Multiplier * (SetKnockback ? 0 : 1 + PlayerInfo.Damage));
             if (PlayerInfo.Damage < 0f)
                 Die();
         }

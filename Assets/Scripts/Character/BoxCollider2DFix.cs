@@ -19,15 +19,15 @@ public struct ColliderFixInfo
 
 public class BoxCollider2DFix : MonoBehaviour
 {
-    private Animator CharacterAnimator;
+    [SerializeField] private Animator CharacterAnimator;
     private Dictionary<String, ColliderFixInfo> Fixes;
-    [SerializeField]
-    private BoxCollider2D CharacterBoxCollider;
+    [SerializeField] private BoxCollider2D CharacterBoxCollider;
     private String lastState;
 
-    private void Start()
+    private void Awake()
     {
-        CharacterAnimator = GetComponent<Animator>();
+        if (CharacterAnimator == null)
+            CharacterAnimator = GetComponent<Animator>();
         Fixes = new Dictionary<string, ColliderFixInfo>();
     }
 

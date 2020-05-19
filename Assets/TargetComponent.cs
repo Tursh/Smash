@@ -20,6 +20,6 @@ public class TargetComponent : CharacterData
 	public override void Hurt(Vector2 Direction, float Multiplier, float Damage, bool SetKnockback = false)
 	{
 		PlayerInfo.Damage += Damage;
-		Rigidbody.velocity += Direction * (Multiplier * (1 + (SetKnockback ? 0 : PlayerInfo.Damage)));
+		Rigidbody.velocity += Direction * (Multiplier * (SetKnockback ? 1 + PlayerInfo.Damage : 0));
 	}
 }
