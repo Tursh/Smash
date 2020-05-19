@@ -37,7 +37,6 @@ public abstract class CharacterData : MonoBehaviour
     protected BoxCollider2D BoxCollider;
     protected PlayerInfo PlayerInfo;
     
-
     protected Animator Animator;
     protected PlayerLoopComponent PlayerLoopComponent;
     protected Vector2 LeftJoystickPosition;

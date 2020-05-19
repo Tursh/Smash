@@ -45,7 +45,11 @@ public class Projectile : MonoBehaviour
 
     void Hurt(GameObject player)
     {
-        player.GetComponent<CharacterData>().Hurt(Direction,Multiplier,Damage);
+        CharacterData characterData = player.GetComponent<CharacterData>();
+        if (characterData == null)
+            characterData = player.transform.parent.GetComponent<CharacterData>();
+
+        characterData.Hurt(Direction,Multiplier,Damage);
     }
 
     protected virtual void Delete()
