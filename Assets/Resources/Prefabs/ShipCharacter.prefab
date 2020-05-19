@@ -202,20 +202,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 6503566100268121457}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f58fb440d91abd24eaeb494a6ef0b754, type: 3}
+  m_Script: {fileID: 11500000, guid: e6c141e0ebf31e94b8e6323e677959fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   JumpWindup: 20
   JumpMultiplier: 10
-  mvSpeed: 5
+  mvSpeed: 2
   airResistance: 0.8
-  gravity: -0.05
+  gravity: 0
   distanceToGround: 1
   Prefabs:
   - {fileID: 3033172143268956793, guid: 94420efc86e0dbf4b8343a5036fcacfb, type: 3}
   BlinkingBehaviour: {fileID: -397509434389117773}
   AttackState: 1
   groundPlatfrom: {fileID: 0}
+  cantShootMaterial: {fileID: 2100000, guid: 08bfa9b9c5e891746acbc53a16b4ac34, type: 2}
+  normalMaterial: {fileID: 2100000, guid: d03e81ebef6fa1449b2ee4654748b60e, type: 2}
 --- !u!114 &-397509434389117773
 MonoBehaviour:
   m_ObjectHideFlags: 0

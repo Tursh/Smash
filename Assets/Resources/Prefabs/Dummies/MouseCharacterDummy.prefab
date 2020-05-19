@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 630559285971579688}
   - component: {fileID: 630559285971579689}
   - component: {fileID: -1924275067828315943}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: MouseCharacterDummy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,7 +120,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: b70ca974c30fd4e4782cf1f8930908df, type: 3}
+  m_Sprite: {fileID: 21300000, guid: cca0e5a620221fa458f95966c0f2d559, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

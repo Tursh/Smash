@@ -11,7 +11,22 @@ public class BlinkingBehaviour : MonoBehaviour
 
     private int timer;
     public bool isBlinking;
+
     private bool isBlinked;
+
+    private bool IsBlinked
+    {
+        get => isBlinked;
+        set
+        {
+            if (value)
+                rendererToBlink.material = BlinkColor;
+            else
+                rendererToBlink.material = NormalColor;
+            isBlinked = value;
+        }
+    }
+
     private Renderer rendererToBlink;
 
     private void Start()
@@ -31,13 +46,6 @@ public class BlinkingBehaviour : MonoBehaviour
                 timer = 0;
                 isBlinked = !isBlinked;
             }
-
-            if (isBlinked)
-                rendererToBlink.material = BlinkColor;
-            else
-                rendererToBlink.material = NormalColor;
         }
-        else
-            rendererToBlink.material = NormalColor;
     }
 }

@@ -1,18 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-942685408788170446
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7799915949122547513}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11024e7dc6163b842a97f7a289a85741, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PlayerReference: {fileID: 0}
 --- !u!1001 &5055611383827293504
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -78,7 +65,7 @@ PrefabInstance:
     - target: {fileID: 3033172143268956793, guid: 94420efc86e0dbf4b8343a5036fcacfb,
         type: 3}
       propertyPath: m_Name
-      value: VaisseauBulletDummy
+      value: ShipBulletDummy
       objectReference: {fileID: 0}
     - target: {fileID: 7292611032457512186, guid: 94420efc86e0dbf4b8343a5036fcacfb,
         type: 3}
@@ -87,10 +74,5 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7261116730121475439, guid: 94420efc86e0dbf4b8343a5036fcacfb, type: 3}
+    - {fileID: 7292611032457512186, guid: 94420efc86e0dbf4b8343a5036fcacfb, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 94420efc86e0dbf4b8343a5036fcacfb, type: 3}
---- !u!1 &7799915949122547513 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3033172143268956793, guid: 94420efc86e0dbf4b8343a5036fcacfb,
-    type: 3}
-  m_PrefabInstance: {fileID: 5055611383827293504}
-  m_PrefabAsset: {fileID: 0}

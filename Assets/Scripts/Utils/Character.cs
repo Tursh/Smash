@@ -14,31 +14,30 @@ public enum CharacterRenderType
 
 public enum Character
 {
-    None = -1, Mouse = 0 , Ship = 1, Ninja = 2
+    None = -1, Mouse = 0 , Ship = 1, Ninja = 2, Target = 3
 }
 
 public abstract class CharacterData : MonoBehaviour
 {
-    public float JumpWindup = 20;
-    public float JumpMultiplier = 10;
-
-    public float mvSpeed = 0.025f;
-    public float airResistance = 0.9f;
-    public float gravity = -0.05f;
-    public float distanceToGround = 1;
-    protected float InitialDamage = 0f;
-    protected int InvulnerabilityTimer;
-
+    [SerializeField] protected float JumpWindup = 20;
+    [SerializeField] protected float JumpMultiplier = 10;
+    [SerializeField] protected float mvSpeed = 0.025f;
+    [SerializeField] protected float airResistance = 0.9f;
+    [SerializeField] protected float gravity = -0.05f;
+    [SerializeField] protected float distanceToGround = 1;
+    [SerializeField] protected float InitialDamage = 0f;
     public GameObject[] Prefabs;
-
-    protected PlayerControls PlayerControls;
+    
+    //This is necessary in case the blinking behaviour is not within the GameObject itself (it would be in one of its children)
+    [SerializeField] 
+    protected BlinkingBehaviour BlinkingBehaviour;
+    
+    protected int InvulnerabilityTimer;
     protected Rigidbody2D Rigidbody;
     protected BoxCollider2D BoxCollider;
     protected PlayerInfo PlayerInfo;
-    protected GameObject UiPlayerInfo;
+    
 
-    [SerializeField] 
-    protected BlinkingBehaviour BlinkingBehaviour;
     protected Animator Animator;
     protected PlayerLoopComponent PlayerLoopComponent;
     protected Vector2 LeftJoystickPosition;
@@ -49,7 +48,7 @@ public abstract class CharacterData : MonoBehaviour
     
     public AttackState AttackState = AttackState.Idle;
 
-    [SerializeField] private GameObject groundPlatfrom;
+    private GameObject groundPlatfrom;
 
     public GameObject GroundPlatform
     {
@@ -60,12 +59,12 @@ public abstract class CharacterData : MonoBehaviour
                 value.gameObject.layer = Layers.STAGE;
 
             groundPlatfrom = value;
-            lastPlatfromPosition = Vector3.back;
+            lastPlatformPosition = Vector3.back;
         }
     }
 
-    private Vector3 lastPlatfromPosition;
-    private bool _isLoopComponentNotNull;
+    private Vector3 lastPlatformPosition;
+    private bool isLoopComponentNotNull;
 
     protected virtual void Awake()
     {
@@ -75,8 +74,10 @@ public abstract class CharacterData : MonoBehaviour
         Rigidbody = GetComponent<Rigidbody2D>();
         BoxCollider = GetComponent<BoxCollider2D>();
         PlayerLoopComponent = GetComponent<PlayerLoopComponent>();
-        _isLoopComponentNotNull = PlayerLoopComponent != null;
+        isLoopComponentNotNull = PlayerLoopComponent != null;
         PlayerInfo = GetComponent<PlayerInfo>();
+        if (BlinkingBehaviour == null)
+            BlinkingBehaviour = GetComponent<BlinkingBehaviour>();
     }
 
     protected virtual void OnLeftJoystick(InputValue position)
@@ -133,6 +134,11 @@ public abstract class CharacterData : MonoBehaviour
 
     protected virtual void OnStart(InputValue value)
     {
+        if (value.isPressed)
+        {
+            SceneManager.LoadScene(0);
+            Destroy(GameObject.Find("GameManager"));
+        }
     }
 
     protected virtual void OnSelect(InputValue value)
@@ -147,29 +153,6 @@ public abstract class CharacterData : MonoBehaviour
     {
     }
 
-    //debug purposes
-    protected virtual void OnKeySpace(InputValue value)
-    {
-        if (value.isPressed)
-            Jump();
-    }
-
-    protected virtual void OnKeyA(InputValue value)
-    {
-        if (value.isPressed)
-            LeftJoystickPosition += Vector2.left;
-        else
-            LeftJoystickPosition += Vector2.right;
-    }
-
-    protected virtual void OnKeyD(InputValue value)
-    {
-        if (value.isPressed)
-            LeftJoystickPosition += Vector2.right;
-        else
-            LeftJoystickPosition += Vector2.left;
-    }
-
     protected virtual void Jump()
     {
     }
@@ -181,8 +164,7 @@ public abstract class CharacterData : MonoBehaviour
         velocity += new Vector2(LeftJoystickPosition.x * mvSpeed, 0);
         velocity *= airResistance;
         velocity.y += gravity;
-
-
+        
         if (!Attack.IsEmpty())
         {
             AttackState = AttackState.Attacking;
@@ -200,12 +182,12 @@ public abstract class CharacterData : MonoBehaviour
         if (GroundPlatform != null)
         {
             Vector3 position = GroundPlatform.transform.position;
-            if (lastPlatfromPosition.z > -0.5f)
-                transform.position += position - lastPlatfromPosition;
-            lastPlatfromPosition = position;
+            if (lastPlatformPosition.z > -0.5f)
+                transform.position += position - lastPlatformPosition;
+            lastPlatformPosition = position;
         }
         else
-            lastPlatfromPosition = Vector3.back;
+            lastPlatformPosition = Vector3.back;
 
         BlinkingBehaviour.isBlinking = InvulnerabilityTimer-- > 0;
     }
@@ -217,18 +199,20 @@ public abstract class CharacterData : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Hurts the player
     /// </summary>
     /// <param name="Direction">Direction Thrown</param>
     /// <param name="Multiplier"></param>
-    /// <param name="Damage"></param>
-    /// <param name="SetKnockback">If the knockback is set</param>
+    /// <param name="Damage">Damage done to the character</param>
+    /// <param name="SetKnockback">If the knockback is set with the multiplier or player percent will scale the knockback</param>
     public virtual void Hurt(Vector2 Direction, float Multiplier, float Damage, bool SetKnockback = false)
     {
         if (InvulnerabilityTimer < 0)
         {
             PlayerInfo.Damage += Damage;
             Rigidbody.velocity += Direction * (Multiplier * (1 + (SetKnockback ? 0 : PlayerInfo.Damage)));
+            if (PlayerInfo.Damage < 0f)
+                Die();
         }
     }
 
@@ -244,7 +228,7 @@ public abstract class CharacterData : MonoBehaviour
     {
         Animator.SetBool(state, status);
         //Set the dummy animation state
-        if (_isLoopComponentNotNull)
+        if (isLoopComponentNotNull)
             PlayerLoopComponent.SetDummyAnimatorState(state, status);
     }
 
@@ -252,14 +236,14 @@ public abstract class CharacterData : MonoBehaviour
     {
         Animator.SetInteger(state, status);
         //Set the dummy animation state
-        if (_isLoopComponentNotNull)
+        if (isLoopComponentNotNull)
             PlayerLoopComponent.SetDummyAnimatorState(state, status);
     }
 
     public void SetRotation(Quaternion rotation)
     {
         transform.rotation = rotation;
-        if (_isLoopComponentNotNull)
+        if (isLoopComponentNotNull)
             PlayerLoopComponent.setDummyRotation(rotation);
     }
 
@@ -282,11 +266,6 @@ public abstract class CharacterData : MonoBehaviour
         {
                 Hurt(Vector2.zero, 0, (CollisionVelocity - 15) * 0.005f, false);
         }
-
-        if (other.gameObject.layer == Layers.PLAYER && other.contacts[0].normal.y > 0.1f)
-        {
-            Rigidbody.velocity += Vector2.up * 60;
-        }
     }
 
     protected virtual bool EvaluateAttacks(GameObject self)
@@ -307,10 +286,13 @@ public abstract class CharacterData : MonoBehaviour
         PlayerInfo.Stocks--;
         PlayerInfo.Damage = InitialDamage;
         InvulnerabilityTimer = 60 * 3;
-        transform.Translate(new Vector3(Random.Range(-5, 5), Random.Range(-5, 5)));
+        transform.Translate(new Vector3(Random.Range(-20, 20), Random.Range(-20, 20)));
+        if (PlayerInfo.Stocks <= 0)
+            Lose();
     }
 
     protected void Lose()
     {
+        GameObject.Find("GameManager").GetComponent<GameManager>().PlayerLoses(PlayerInfo.Player);
     }
 }

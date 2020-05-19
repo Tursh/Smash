@@ -81,6 +81,9 @@ MonoBehaviour:
   platformPrefab: {fileID: 2004023954251491190, guid: 003e7c3275b9e6640ac6938701c19833,
     type: 3}
   platform: {fileID: 0}
+  p2Sprite: {fileID: 21300000, guid: a560eb248dad44347aee5bc2b4b16cb1, type: 3}
+  normalMaterial: {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+  readyMaterial: {fileID: 2100000, guid: e65594b629bdccf45b9a0233dde2ef52, type: 2}
   playerNumber: 0
   CharacterSelected: 0
 --- !u!61 &6255404461340680774

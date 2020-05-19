@@ -57,15 +57,6 @@ public class BlobCharacter : CharacterData
 
     private int jumpTimer = 0;
 
-    protected override void OnKeySpace(InputValue value)
-    {
-        if (value.isPressed)
-        {
-            BlobState = CharacterState.Jumping;
-            jumpTimer = 0;
-        }
-    }
-
     protected override void OnA(InputValue value)
     {
     }

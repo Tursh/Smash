@@ -184,19 +184,13 @@ public class NinjaCharacter : CharacterData
     }
 
     private int jumpTimer = 0;
-
-    protected override void OnKeySpace(InputValue value)
+    protected override void OnA(InputValue value)
     {
         if (value.isPressed && NinjaState == CharacterState.Idle)
         {
             NinjaState = CharacterState.Jumping;
             jumpTimer = 0;
         }
-    }
-
-    protected override void OnA(InputValue value)
-    {
-        OnKeySpace(value);
     }
 
     protected override void OnB(InputValue value)
