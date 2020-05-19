@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public enum Map
 {
@@ -40,8 +41,8 @@ public class Player
 public class GameManager : MonoBehaviour
 {
     public Player[] Players;
-    public Map Map = Map.Space;
     public GameObject[] CharacterPrefabs;
+    
     private void Awake()
     {
         Players = new Player[2];
@@ -57,5 +58,13 @@ public class GameManager : MonoBehaviour
     {
         if (Players.All(player => player.Ready))
             SceneManager.LoadScene(5);
+    }
+
+    public void PlayerLoses(uint index)
+    {
+        SceneManager.LoadScene(6);
+
+        GameObject.Find("Text").GetComponent<Text>().text = "Player " + ((index + 1) % 2 + 1) + " wins";
+        Destroy(this.gameObject);
     }
 }

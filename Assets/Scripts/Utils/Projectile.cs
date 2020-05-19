@@ -27,6 +27,11 @@ public class Projectile : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        
+        if (other.gameObject == Source)
+            return;
+        if (other.gameObject.layer == 14 && other.gameObject.GetComponent<Projectile>().Source == Source)
+            return;
         if (other.gameObject.layer == 9)
         {
             Hurt(other.gameObject);
@@ -35,11 +40,6 @@ public class Projectile : MonoBehaviour
         {
             Hurt(other.gameObject.GetComponent<DummyComponent>().PlayerReference);
         }
-
-        if (other.gameObject == Source)
-            return;
-        if (other.gameObject.layer == 14 && other.gameObject.GetComponent<Projectile>().Source == Source)
-            return;
         Delete();
     }
 

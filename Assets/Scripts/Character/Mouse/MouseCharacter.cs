@@ -15,8 +15,8 @@ public class MouseCharacter : CharacterData
     protected override void Awake()
     {
         base.Awake();
-        PlayerInfo.Damage = 2f;
         InitialDamage = 2f;
+        PlayerInfo.Damage = InitialDamage;
     }
 
     void Start()
@@ -125,15 +125,15 @@ public class MouseCharacter : CharacterData
         }
 
         
-        transform.Rotate(0,0, RotateGradually(rotationalTarget, 0.05f));
+        transform.Rotate(0,0, Utils.RotateGradually(transform.eulerAngles.z,rotationalTarget, 0.05f));
         
         velocity *= airResistance;
 
         Rigidbody.velocity = velocity;
         EvaluateAttacks(gameObject);
-        //Hurt(Vector2.zero,1,0.01f);
-        if (PlayerInfo.Damage < 0f)
-            Die();
+        
+        BlinkingBehaviour.isBlinking = InvulnerabilityTimer-- > 0;
+        
     }
 
     protected override void OnA(InputValue value)
@@ -154,30 +154,22 @@ public class MouseCharacter : CharacterData
         }
     }
 
-    public float RotateGradually(float targetDegrees, float scale)
-    {
-        float gradualRotation = -transform.localRotation.eulerAngles.z + targetDegrees;
-        
-        if (gradualRotation > 180f)
-            gradualRotation -= 360f;
-        else if (gradualRotation < -180f)
-            gradualRotation += 360f;
-
-        gradualRotation *= scale;
-
-        return gradualRotation;
-    }
-
     public override void Hurt(Vector2 Direction, float Multiplier, float Damage, bool SetKnockback = false)
     {
-        PlayerInfo.Damage -= Damage;
-
-        Rigidbody.velocity += Direction * (Multiplier * (1 + (SetKnockback ? 0 : 2f - PlayerInfo.Damage)));
+        if (InvulnerabilityTimer < 0)
+        {
+            PlayerInfo.Damage -= Damage;
+            Rigidbody.velocity += Direction * (Multiplier * (1 + (SetKnockback ? 0 : 2f - PlayerInfo.Damage)));
+            if (PlayerInfo.Damage < 0f)
+                Die();
+        }
     }
 
     protected override void Die()
     {
         Instantiate(Prefabs[4]);
         base.Die();
+        if (PlayerInfo.Stocks <= 0)
+            Lose();
     }
 }

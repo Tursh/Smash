@@ -399,6 +399,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Start"",
+                    ""type"": ""Button"",
+                    ""id"": ""855fe542-195c-442a-923c-ad799de6b186"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -443,6 +451,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""B"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c80336bb-f47d-46b8-9f33-1ffaa76d0581"",
+                    ""path"": ""<XInputController>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Start"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -516,6 +535,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Menu_LeftStick = m_Menu.FindAction("LeftStick", throwIfNotFound: true);
         m_Menu_A = m_Menu.FindAction("A", throwIfNotFound: true);
         m_Menu_B = m_Menu.FindAction("B", throwIfNotFound: true);
+        m_Menu_Start = m_Menu.FindAction("Start", throwIfNotFound: true);
         // Debug
         m_Debug = asset.FindActionMap("Debug", throwIfNotFound: true);
         m_Debug_Enter = m_Debug.FindAction("Enter", throwIfNotFound: true);
@@ -741,6 +761,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_Menu_LeftStick;
     private readonly InputAction m_Menu_A;
     private readonly InputAction m_Menu_B;
+    private readonly InputAction m_Menu_Start;
     public struct MenuActions
     {
         private @PlayerControls m_Wrapper;
@@ -749,6 +770,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @LeftStick => m_Wrapper.m_Menu_LeftStick;
         public InputAction @A => m_Wrapper.m_Menu_A;
         public InputAction @B => m_Wrapper.m_Menu_B;
+        public InputAction @Start => m_Wrapper.m_Menu_Start;
         public InputActionMap Get() { return m_Wrapper.m_Menu; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -770,6 +792,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @B.started -= m_Wrapper.m_MenuActionsCallbackInterface.OnB;
                 @B.performed -= m_Wrapper.m_MenuActionsCallbackInterface.OnB;
                 @B.canceled -= m_Wrapper.m_MenuActionsCallbackInterface.OnB;
+                @Start.started -= m_Wrapper.m_MenuActionsCallbackInterface.OnStart;
+                @Start.performed -= m_Wrapper.m_MenuActionsCallbackInterface.OnStart;
+                @Start.canceled -= m_Wrapper.m_MenuActionsCallbackInterface.OnStart;
             }
             m_Wrapper.m_MenuActionsCallbackInterface = instance;
             if (instance != null)
@@ -786,6 +811,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @B.started += instance.OnB;
                 @B.performed += instance.OnB;
                 @B.canceled += instance.OnB;
+                @Start.started += instance.OnStart;
+                @Start.performed += instance.OnStart;
+                @Start.canceled += instance.OnStart;
             }
         }
     }
@@ -859,6 +887,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnLeftStick(InputAction.CallbackContext context);
         void OnA(InputAction.CallbackContext context);
         void OnB(InputAction.CallbackContext context);
+        void OnStart(InputAction.CallbackContext context);
     }
     public interface IDebugActions
     {

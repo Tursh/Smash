@@ -58,7 +58,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &736166955867917423
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -158,6 +158,7 @@ MonoBehaviour:
   - {fileID: 535163365376777774, guid: 26e2832948099e64e8916f6474ca94e7, type: 3}
   - {fileID: 1382961427860099412, guid: 241a8db56847ba74d91b8c4487f7cd4d, type: 3}
   - {fileID: 5439255207072039504, guid: 04aded5882674a545a4f10fe554ec496, type: 3}
+  - {fileID: 1382961427860099412, guid: 241a8db56847ba74d91b8c4487f7cd4d, type: 3}
   BlinkingBehaviour: {fileID: 921474324238435693}
   AttackState: 1
   groundPlatfrom: {fileID: 0}

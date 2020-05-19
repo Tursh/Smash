@@ -34,9 +34,9 @@ public class PlayerInfo : MonoBehaviour
 
     public void Awake()
     {
-        if (Player == 1)
+        if (Player == 0)
             GameObject.Find("P1").GetComponent<GeneralUi>().playerInfo = this;
-        else if (Player == 2)
+        else if (Player == 1)
             GameObject.Find("P2").GetComponent<GeneralUi>().playerInfo = this;
     }
 }

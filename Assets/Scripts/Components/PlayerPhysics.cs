@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.SceneManagement;
-using UnityEditor.UIElements;
 using UnityEngine;
-using UnityEngine.Serialization;
+
+//Outdated class
 
 public enum Direction
 {
@@ -120,7 +117,7 @@ public class PlayerPhysics : MonoBehaviour
             transform.SetParent(null);
         }
     }
-
+/*
     public void FixedUpdate()
     {
         velocity *= CharacterData.airResistance;
@@ -130,6 +127,5 @@ public class PlayerPhysics : MonoBehaviour
 
         transform.Translate(velocity);
     }
-
-
+*/
 }

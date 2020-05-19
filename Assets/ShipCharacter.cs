@@ -9,41 +9,60 @@ public class ShipCharacter : CharacterData
     private float targetRotation;
     private bool RBIsBeingPressed;
     private int RBTimer;
-
-    protected void Start()
-    {
-        RBTimer = 0;
-        targetRotation = 0f;
-        RBIsBeingPressed = false;
-    }
-
-    protected override void OnRB(InputValue value)
-    {
-        RBIsBeingPressed = value.isPressed;
-    }
+    [SerializeField] private Material cantShootMaterial;
+    [SerializeField] private Material normalMaterial;
+    private MeshRenderer meshRenderer;
 
     private FrameOfAttack RB = new FrameOfAttack(o =>
     {
         AttackFunctions.SimpleProjectileAttack(new FrameDataProjectile(
             Utils.Vec32Vec2(-o.transform.up), 
             Utils.Vec32Vec2(-o.transform.up)*5,
-            Vector2.zero,
-            o.GetComponent<CharacterData>().Prefabs[0],framesOfLife: 100)).Act(o);
+            -o.transform.up*3,
+            o.GetComponent<CharacterData>().Prefabs[0], 0.01f, 1f, framesOfLife: 30)).Act(o);
         return true;
     });
+    
+    protected override void Awake()
+    {
+        base.Awake();
+        InitialDamage = 2f;
+        PlayerInfo.Damage = InitialDamage;
+    }
+    
+    protected void Start()
+    {
+        RBTimer = 0;
+        targetRotation = 0f;
+        RBIsBeingPressed = false;
+        meshRenderer = GetComponent<MeshRenderer>();
+    }
 
+    protected override void OnRB(InputValue value)
+    {
+        RBIsBeingPressed = value.isPressed;
+    }
+    
     protected override void FixedUpdate()
     {
-        if (RBIsBeingPressed && RBTimer > 10)
+        if (RBTimer > 3)
         {
-            Attack.Enqueue(RB);
-            RBTimer = 0;
+            meshRenderer.material = normalMaterial;
+            if (RBIsBeingPressed)
+            {
+                Attack.Enqueue(RB);
+                RBTimer = 0;
+            }
         }
+        else
+            meshRenderer.material = cantShootMaterial;
 
         if (LeftJoystickPosition.magnitude > 0.7f)
             targetRotation = Utils.Vec22Degree(LeftJoystickPosition) + 180f;
             
-        transform.Rotate(0,0,RotateGradually(targetRotation, 0.1f));
+        transform.Rotate(0,0,Utils.RotateGradually(
+            transform.eulerAngles.z,
+            targetRotation, 0.1f));
 
         if (LTPosition > 0.2f)
             Rigidbody.velocity += Utils.Vec32Vec2(-transform.up * (LTPosition * mvSpeed));
@@ -52,20 +71,20 @@ public class ShipCharacter : CharacterData
         EvaluateAttacks(gameObject);
         
         Rigidbody.velocity *= airResistance;
-    }
-
-
-    public float RotateGradually(float targetDegrees, float scale)
-    {
-        float gradualRotation = -transform.localRotation.eulerAngles.z + targetDegrees;
         
-        if (gradualRotation > 180f)
-            gradualRotation -= 360f;
-        else if (gradualRotation < -180f)
-            gradualRotation += 360f;
-
-        gradualRotation *= scale;
-
-        return gradualRotation;
+        BlinkingBehaviour.isBlinking = InvulnerabilityTimer-- > 0;
     }
+    
+    public override void Hurt(Vector2 Direction, float Multiplier, float Damage, bool SetKnockback = false)
+    {
+        if (InvulnerabilityTimer < 0)
+        {
+            PlayerInfo.Damage -= Damage;
+            Rigidbody.velocity += Direction * (Multiplier * (1 + (SetKnockback ? 0 : 2f - PlayerInfo.Damage)));
+            if (PlayerInfo.Damage < 0f)
+                Die();
+        }
+    }
+    
+
 }

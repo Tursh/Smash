@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7551693901571423852}
   - component: {fileID: 7551693901571423855}
   m_Layer: 0
-  m_Name: P1Spawner
+  m_Name: Spawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -48,3 +48,4 @@ MonoBehaviour:
   - {fileID: 736166955867917417, guid: 5521a0f062d8b914bb8027c5a151d87e, type: 3}
   - {fileID: 6503566100268121457, guid: 9471de9b51314534db49a4cee75d0ec1, type: 3}
   - {fileID: 7581792320602368607, guid: 15c3fc4d0a0f62447a266e7245101397, type: 3}
+  - {fileID: 8587434066565609842, guid: b9e847cccbf7b0340b73c7ea1f9921c1, type: 3}

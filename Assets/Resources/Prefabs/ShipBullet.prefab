@@ -15,8 +15,8 @@ GameObject:
   - component: {fileID: 7292611032457512186}
   - component: {fileID: 7261116730121475439}
   - component: {fileID: 7578952973680732343}
-  m_Layer: 0
-  m_Name: VaisseauBullet
+  m_Layer: 14
+  m_Name: ShipBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -93,7 +93,7 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -131,6 +131,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dummyPrefab: {fileID: 7799915949122547513, guid: b6ac0747e57823c46a33d6681b2dc4c3,
     type: 3}
+  Collider2D: {fileID: 0}
 --- !u!50 &7578952973680732343
 Rigidbody2D:
   serializedVersion: 4
